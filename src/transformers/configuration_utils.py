@@ -26,15 +26,15 @@ from packaging import version
 
 from . import __version__
 from .dynamic_module_utils import custom_object_save
-from .modeling_gguf_pytorch_utils import load_gguf_checkpoint
+# from .modeling_gguf_pytorch_utils import load_gguf_checkpoint
 from .utils import (
     CONFIG_NAME,
-    PushToHubMixin,
+    # PushToHubMixin,
     add_model_info_to_auto_map,
     add_model_info_to_custom_pipelines,
     cached_file,
     copy_func,
-    download_url,
+    # download_url,
     extract_commit_hash,
     is_remote_url,
     is_torch_available,
@@ -47,7 +47,7 @@ logger = logging.get_logger(__name__)
 _re_configuration_file = re.compile(r"config\.(.*)\.json")
 
 
-class PretrainedConfig(PushToHubMixin):
+class PretrainedConfig(): # PushToHubMixin
     # no-format
     r"""
     Base class for all configuration classes. Handles a few parameters common to all models' configurations as well as
@@ -654,11 +654,11 @@ class PretrainedConfig(PushToHubMixin):
                 )
 
         try:
-            if gguf_file:
-                config_dict = load_gguf_checkpoint(resolved_config_file, return_tensors=False)["config"]
-            else:
-                # Load config dict
-                config_dict = cls._dict_from_json_file(resolved_config_file)
+            # if gguf_file:
+            #     config_dict = load_gguf_checkpoint(resolved_config_file, return_tensors=False)["config"]
+            # else:
+            # Load config dict
+            config_dict = cls._dict_from_json_file(resolved_config_file)
 
             config_dict["_commit_hash"] = commit_hash
         except (json.JSONDecodeError, UnicodeDecodeError):
@@ -1141,8 +1141,8 @@ def recursive_diff_dict(dict_a, dict_b, config_obj=None):
     return diff
 
 
-PretrainedConfig.push_to_hub = copy_func(PretrainedConfig.push_to_hub)
-if PretrainedConfig.push_to_hub.__doc__ is not None:
-    PretrainedConfig.push_to_hub.__doc__ = PretrainedConfig.push_to_hub.__doc__.format(
-        object="config", object_class="AutoConfig", object_files="configuration file"
-    )
+# PretrainedConfig.push_to_hub = copy_func(PretrainedConfig.push_to_hub)
+# if PretrainedConfig.push_to_hub.__doc__ is not None:
+#     PretrainedConfig.push_to_hub.__doc__ = PretrainedConfig.push_to_hub.__doc__.format(
+#         object="config", object_class="AutoConfig", object_files="configuration file"
+#     )

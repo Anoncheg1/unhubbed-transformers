@@ -15,8 +15,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from huggingface_hub import get_full_repo_name  # for backward compatibility
-from huggingface_hub.constants import HF_HUB_DISABLE_TELEMETRY as DISABLE_TELEMETRY  # for backward compatibility
+# from huggingface_hub import get_full_repo_name  # for backward compatibility
+# from huggingface_hub.constants import HF_HUB_DISABLE_TELEMETRY as DISABLE_TELEMETRY  # for backward compatibility
 from packaging import version
 
 from .. import __version__
@@ -66,34 +66,34 @@ from .generic import (
     working_or_temp_dir,
 )
 from .hub import (
-    CLOUDFRONT_DISTRIB_PREFIX,
-    HF_MODULES_CACHE,
-    HUGGINGFACE_CO_PREFIX,
-    HUGGINGFACE_CO_RESOLVE_ENDPOINT,
-    PYTORCH_PRETRAINED_BERT_CACHE,
-    PYTORCH_TRANSFORMERS_CACHE,
-    S3_BUCKET_PREFIX,
-    TRANSFORMERS_CACHE,
-    TRANSFORMERS_DYNAMIC_MODULE_NAME,
-    EntryNotFoundError,
-    PushInProgress,
-    PushToHubMixin,
-    RepositoryNotFoundError,
-    RevisionNotFoundError,
+#     CLOUDFRONT_DISTRIB_PREFIX,
+#     HF_MODULES_CACHE,
+#     HUGGINGFACE_CO_PREFIX,
+#     HUGGINGFACE_CO_RESOLVE_ENDPOINT,
+#     PYTORCH_PRETRAINED_BERT_CACHE,
+#     PYTORCH_TRANSFORMERS_CACHE,
+#     S3_BUCKET_PREFIX,
+#     TRANSFORMERS_CACHE,
+#     TRANSFORMERS_DYNAMIC_MODULE_NAME,
+#     EntryNotFoundError,
+#     PushInProgress,
+#     PushToHubMixin,
+#     RepositoryNotFoundError,
+#     RevisionNotFoundError,
     cached_file,
     default_cache_path,
-    define_sagemaker_information,
-    download_url,
+#     define_sagemaker_information,
+#     download_url,
     extract_commit_hash,
-    get_cached_models,
-    get_file_from_repo,
-    has_file,
-    http_user_agent,
+#     get_cached_models,
+#     get_file_from_repo,
+#     has_file,
+#     http_user_agent,
     is_offline_mode,
     is_remote_url,
-    move_cache,
-    send_example_telemetry,
-    try_to_load_from_cache,
+#     move_cache,
+#     send_example_telemetry,
+#     try_to_load_from_cache,
 )
 from .import_utils import (
     ACCELERATE_MIN_VERSION,

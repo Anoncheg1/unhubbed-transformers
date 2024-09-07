@@ -17,7 +17,7 @@ from typing import Dict, Optional, Union
 
 from packaging import version
 
-from .hub import cached_file
+# from .hub import cached_file
 from .import_utils import is_peft_available
 
 
@@ -80,27 +80,28 @@ def find_adapter_config_file(
     adapter_cached_filename = None
     if model_id is None:
         return None
-    elif os.path.isdir(model_id):
+    else:
+        assert os.path.isdir(model_id)
         list_remote_files = os.listdir(model_id)
         if ADAPTER_CONFIG_NAME in list_remote_files:
             adapter_cached_filename = os.path.join(model_id, ADAPTER_CONFIG_NAME)
-    else:
-        adapter_cached_filename = cached_file(
-            model_id,
-            ADAPTER_CONFIG_NAME,
-            cache_dir=cache_dir,
-            force_download=force_download,
-            resume_download=resume_download,
-            proxies=proxies,
-            token=token,
-            revision=revision,
-            local_files_only=local_files_only,
-            subfolder=subfolder,
-            _commit_hash=_commit_hash,
-            _raise_exceptions_for_gated_repo=False,
-            _raise_exceptions_for_missing_entries=False,
-            _raise_exceptions_for_connection_errors=False,
-        )
+    # else:
+    #     adapter_cached_filename = cached_file(
+    #         model_id,
+    #         ADAPTER_CONFIG_NAME,
+    #         cache_dir=cache_dir,
+    #         force_download=force_download,
+    #         resume_download=resume_download,
+    #         proxies=proxies,
+    #         token=token,
+    #         revision=revision,
+    #         local_files_only=local_files_only,
+    #         subfolder=subfolder,
+    #         _commit_hash=_commit_hash,
+    #         _raise_exceptions_for_gated_repo=False,
+    #         _raise_exceptions_for_missing_entries=False,
+    #         _raise_exceptions_for_connection_errors=False,
+    #     )
 
     return adapter_cached_filename
 

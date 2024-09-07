@@ -30,11 +30,11 @@ pkgs_to_check_at_runtime = [
     "packaging",
     "filelock",
     "numpy",
-    "tokenizers",
-    "huggingface-hub",
+    # "tokenizers",
+    # "huggingface-hub",
     "safetensors",
-    "accelerate",
-    "pyyaml",
+    # "accelerate",
+    # "pyyaml",
 ]
 
 for pkg in pkgs_to_check_at_runtime:

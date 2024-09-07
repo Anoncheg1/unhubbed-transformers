@@ -30,11 +30,11 @@ from pathlib import Path
 from types import ModuleType
 from typing import Any, Dict, List, Optional, Union
 
-from huggingface_hub import try_to_load_from_cache
+# from huggingface_hub import try_to_load_from_cache
 
 from .utils import (
-    HF_MODULES_CACHE,
-    TRANSFORMERS_DYNAMIC_MODULE_NAME,
+    # HF_MODULES_CACHE,
+    # TRANSFORMERS_DYNAMIC_MODULE_NAME,
     cached_file,
     extract_commit_hash,
     is_offline_mode,
@@ -323,13 +323,13 @@ def get_cached_module_file(
     # Download and cache module_file from the repo `pretrained_model_name_or_path` of grab it if it's a local file.
     pretrained_model_name_or_path = str(pretrained_model_name_or_path)
     is_local = os.path.isdir(pretrained_model_name_or_path)
-    if is_local:
-        submodule = os.path.basename(pretrained_model_name_or_path)
-    else:
-        submodule = pretrained_model_name_or_path.replace("/", os.path.sep)
-        cached_module = try_to_load_from_cache(
-            pretrained_model_name_or_path, module_file, cache_dir=cache_dir, revision=_commit_hash, repo_type=repo_type
-        )
+    assert is_local
+    submodule = os.path.basename(pretrained_model_name_or_path)
+    # else:
+    #     submodule = pretrained_model_name_or_path.replace("/", os.path.sep)
+    #     cached_module = try_to_load_from_cache(
+    #         pretrained_model_name_or_path, module_file, cache_dir=cache_dir, revision=_commit_hash, repo_type=repo_type
+    #     )
 
     new_files = []
     try:

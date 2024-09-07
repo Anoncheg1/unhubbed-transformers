@@ -26,11 +26,11 @@ from ..configuration_utils import PretrainedConfig
 from ..utils import (
     GENERATION_CONFIG_NAME,
     ExplicitEnum,
-    PushToHubMixin,
-    cached_file,
-    download_url,
-    extract_commit_hash,
-    is_remote_url,
+    # PushToHubMixin,
+    # cached_file,
+    # download_url,
+    # extract_commit_hash,
+    # is_remote_url,
     is_torch_available,
     logging,
 )
@@ -91,7 +91,7 @@ class GenerationMode(ExplicitEnum):
     GROUP_BEAM_SEARCH = "group_beam_search"
 
 
-class GenerationConfig(PushToHubMixin):
+class GenerationConfig(): # PushToHubMixin
     # no-format
     rf"""
     Class that holds a configuration for a generation task. A `generate` call supports the following generation methods

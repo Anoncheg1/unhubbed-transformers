@@ -450,7 +450,7 @@ setup(
     extras_require=extras,
     entry_points={"console_scripts": ["transformers-cli=transformers.commands.transformers_cli:main"]},
     python_requires=">=3.8.0",
-    install_requires=list(install_requires),
+    # install_requires=list(install_requires), # we disabled instllation from pypi.org
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Developers",

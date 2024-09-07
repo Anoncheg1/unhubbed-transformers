@@ -22,8 +22,8 @@ from collections import OrderedDict
 from typing import TYPE_CHECKING, Dict, Optional, Tuple, Union
 
 from ...configuration_utils import PretrainedConfig
-from ...dynamic_module_utils import get_class_from_dynamic_module, resolve_trust_remote_code
-from ...modeling_gguf_pytorch_utils import load_gguf_checkpoint
+# from ...dynamic_module_utils import get_class_from_dynamic_module, resolve_trust_remote_code
+# from ...modeling_gguf_pytorch_utils import load_gguf_checkpoint
 from ...tokenization_utils import PreTrainedTokenizer
 from ...tokenization_utils_base import TOKENIZER_CONFIG_FILE
 from ...utils import (
@@ -870,9 +870,9 @@ class AutoTokenizer:
                 or tokenizer_class_from_name(config_tokenizer_class + "Fast") is not None
             )
         )
-        trust_remote_code = resolve_trust_remote_code(
-            trust_remote_code, pretrained_model_name_or_path, has_local_code, has_remote_code
-        )
+        # trust_remote_code = resolve_trust_remote_code(
+        #     trust_remote_code, pretrained_model_name_or_path, has_local_code, has_remote_code
+        # )
 
         if has_remote_code and trust_remote_code:
             if use_fast and tokenizer_auto_map[1] is not None:

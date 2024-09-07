@@ -28,13 +28,13 @@ import numpy as np
 from .dynamic_module_utils import custom_object_save
 from .utils import (
     FEATURE_EXTRACTOR_NAME,
-    PushToHubMixin,
+    # PushToHubMixin,
     TensorType,
     add_model_info_to_auto_map,
     add_model_info_to_custom_pipelines,
     cached_file,
     copy_func,
-    download_url,
+    # download_url,
     is_flax_available,
     is_jax_tensor,
     is_numpy_array,
@@ -248,7 +248,7 @@ class BatchFeature(UserDict):
         return self
 
 
-class FeatureExtractionMixin(PushToHubMixin):
+class FeatureExtractionMixin(): # PushToHubMixin
     """
     This is a feature extraction mixin used to provide saving/loading functionality for sequential and image feature
     extractors.
@@ -693,8 +693,8 @@ class FeatureExtractionMixin(PushToHubMixin):
         cls._auto_class = auto_class
 
 
-FeatureExtractionMixin.push_to_hub = copy_func(FeatureExtractionMixin.push_to_hub)
-if FeatureExtractionMixin.push_to_hub.__doc__ is not None:
-    FeatureExtractionMixin.push_to_hub.__doc__ = FeatureExtractionMixin.push_to_hub.__doc__.format(
-        object="feature extractor", object_class="AutoFeatureExtractor", object_files="feature extractor file"
-    )
+# FeatureExtractionMixin.push_to_hub = copy_func(FeatureExtractionMixin.push_to_hub)
+# if FeatureExtractionMixin.push_to_hub.__doc__ is not None:
+#     FeatureExtractionMixin.push_to_hub.__doc__ = FeatureExtractionMixin.push_to_hub.__doc__.format(
+#         object="feature extractor", object_class="AutoFeatureExtractor", object_files="feature extractor file"
+#     )

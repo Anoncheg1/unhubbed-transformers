@@ -17,14 +17,14 @@ File utilities: utilities related to download and cache models
 This module should not be update anymore and is only left for backward compatibility.
 """
 
-from huggingface_hub import get_full_repo_name  # for backward compatibility
-from huggingface_hub.constants import HF_HUB_DISABLE_TELEMETRY as DISABLE_TELEMETRY  # for backward compatibility
+# from huggingface_hub import get_full_repo_name  # for backward compatibility
+# from huggingface_hub.constants import HF_HUB_DISABLE_TELEMETRY as DISABLE_TELEMETRY  # for backward compatibility
 
 from . import __version__
 
 # Backward compatibility imports, to make sure all those objects can be found in file_utils
 from .utils import (
-    CLOUDFRONT_DISTRIB_PREFIX,
+    # CLOUDFRONT_DISTRIB_PREFIX,
     CONFIG_NAME,
     DUMMY_INPUTS,
     DUMMY_MASK,
@@ -32,21 +32,21 @@ from .utils import (
     ENV_VARS_TRUE_VALUES,
     FEATURE_EXTRACTOR_NAME,
     FLAX_WEIGHTS_NAME,
-    HF_MODULES_CACHE,
-    HUGGINGFACE_CO_PREFIX,
-    HUGGINGFACE_CO_RESOLVE_ENDPOINT,
+    # HF_MODULES_CACHE,
+    # HUGGINGFACE_CO_PREFIX,
+    # HUGGINGFACE_CO_RESOLVE_ENDPOINT,
     MODEL_CARD_NAME,
     MULTIPLE_CHOICE_DUMMY_INPUTS,
-    PYTORCH_PRETRAINED_BERT_CACHE,
-    PYTORCH_TRANSFORMERS_CACHE,
-    S3_BUCKET_PREFIX,
+    # PYTORCH_PRETRAINED_BERT_CACHE,
+    # PYTORCH_TRANSFORMERS_CACHE,
+    # S3_BUCKET_PREFIX,
     SENTENCEPIECE_UNDERLINE,
     SPIECE_UNDERLINE,
     TF2_WEIGHTS_NAME,
     TF_WEIGHTS_NAME,
     TORCH_FX_REQUIRED_VERSION,
-    TRANSFORMERS_CACHE,
-    TRANSFORMERS_DYNAMIC_MODULE_NAME,
+    # TRANSFORMERS_CACHE,
+    # TRANSFORMERS_DYNAMIC_MODULE_NAME,
     USE_JAX,
     USE_TF,
     USE_TORCH,
@@ -54,13 +54,13 @@ from .utils import (
     WEIGHTS_NAME,
     ContextManagers,
     DummyObject,
-    EntryNotFoundError,
+    # EntryNotFoundError,
     ExplicitEnum,
     ModelOutput,
     PaddingStrategy,
-    PushToHubMixin,
-    RepositoryNotFoundError,
-    RevisionNotFoundError,
+    # PushToHubMixin,
+    # RepositoryNotFoundError,
+    # RevisionNotFoundError,
     TensorType,
     _LazyModule,
     add_code_sample_docstrings,
@@ -70,12 +70,12 @@ from .utils import (
     cached_property,
     copy_func,
     default_cache_path,
-    define_sagemaker_information,
-    get_cached_models,
-    get_file_from_repo,
+    # define_sagemaker_information,
+    # get_cached_models,
+    # get_file_from_repo,
     get_torch_version,
-    has_file,
-    http_user_agent,
+    # has_file,
+    # http_user_agent,
     is_apex_available,
     is_bs4_available,
     is_coloredlogs_available,

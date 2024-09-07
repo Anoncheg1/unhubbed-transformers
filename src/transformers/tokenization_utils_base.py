@@ -34,18 +34,18 @@ import numpy as np
 from packaging import version
 
 from . import __version__
-from .dynamic_module_utils import custom_object_save
+# from .dynamic_module_utils import custom_object_save
 from .utils import (
     ExplicitEnum,
     PaddingStrategy,
-    PushToHubMixin,
+    # PushToHubMixin,
     TensorType,
     add_end_docstrings,
     add_model_info_to_auto_map,
     add_model_info_to_custom_pipelines,
     cached_file,
     copy_func,
-    download_url,
+    # download_url,
     extract_commit_hash,
     get_json_schema,
     is_flax_available,
@@ -117,6 +117,17 @@ else:
 
         def __str__(self):
             return self.content
+        def __setstate__(self, state):
+            self.__dict__.update(state)
+        def __hash__(self):
+            return hash((self.content, self.single_word, self.lstrip, self.rstrip, self.special, self.normalized))
+
+        def __eq__(self, other):
+            if not isinstance(other, AddedToken):
+                return False
+            return (self.content, self.single_word, self.lstrip, self.rstrip, self.special, self.normalized) == (
+                other.content, other.single_word, other.lstrip, other.rstrip, other.special, other.normalized
+            )
 
     @dataclass
     class EncodingFast:
@@ -1561,7 +1572,7 @@ INIT_TOKENIZER_DOCSTRING = r"""
 
 
 @add_end_docstrings(INIT_TOKENIZER_DOCSTRING)
-class PreTrainedTokenizerBase(SpecialTokensMixin, PushToHubMixin):
+class PreTrainedTokenizerBase(SpecialTokensMixin): # PushToHubMixin
     """
     Base class for [`PreTrainedTokenizer`] and [`PreTrainedTokenizerFast`].
 
@@ -2147,7 +2158,7 @@ class PreTrainedTokenizerBase(SpecialTokensMixin, PushToHubMixin):
                         _raise_exceptions_for_connection_errors=False,
                         _commit_hash=commit_hash,
                     )
-                    commit_hash = extract_commit_hash(resolved_config_file, commit_hash)
+                    # commit_hash = extract_commit_hash(resolved_config_file, commit_hash)
                     if resolved_config_file is not None:
                         with open(resolved_config_file, encoding="utf-8") as reader:
                             tokenizer_config = json.load(reader)
@@ -2630,8 +2641,8 @@ class PreTrainedTokenizerBase(SpecialTokensMixin, PushToHubMixin):
 
         # If we have a custom model, we copy the file defining it in the folder and set the attributes so it can be
         # loaded from the Hub.
-        if self._auto_class is not None:
-            custom_object_save(self, save_directory, config=tokenizer_config)
+        # if self._auto_class is not None:
+        #     custom_object_save(self, save_directory, config=tokenizer_config)
 
         # remove private information
         if "name_or_path" in tokenizer_config:
@@ -4278,8 +4289,8 @@ def get_fast_tokenizer_file(tokenization_files: List[str]) -> str:
 
 
 # To update the docstring, we need to copy the method, otherwise we change the original docstring.
-PreTrainedTokenizerBase.push_to_hub = copy_func(PreTrainedTokenizerBase.push_to_hub)
-if PreTrainedTokenizerBase.push_to_hub.__doc__ is not None:
-    PreTrainedTokenizerBase.push_to_hub.__doc__ = PreTrainedTokenizerBase.push_to_hub.__doc__.format(
-        object="tokenizer", object_class="AutoTokenizer", object_files="tokenizer files"
-    )
+# PreTrainedTokenizerBase.push_to_hub = copy_func(PreTrainedTokenizerBase.push_to_hub)
+# if PreTrainedTokenizerBase.push_to_hub.__doc__ is not None:
+#     PreTrainedTokenizerBase.push_to_hub.__doc__ = PreTrainedTokenizerBase.push_to_hub.__doc__.format(
+#         object="tokenizer", object_class="AutoTokenizer", object_files="tokenizer files"
+#     )

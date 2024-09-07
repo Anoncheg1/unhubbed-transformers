@@ -34,7 +34,7 @@ from typing import Any, Callable, Dict, List, Optional, Set, Tuple, Union
 from zipfile import is_zipfile
 
 import torch
-from huggingface_hub import split_torch_state_dict_into_shards
+# from huggingface_hub import split_torch_state_dict_into_shards
 from packaging import version
 from torch import Tensor, nn
 from torch.nn import CrossEntropyLoss, Identity
@@ -42,7 +42,7 @@ from torch.utils.checkpoint import checkpoint
 
 from .activations import get_activation
 from .configuration_utils import PretrainedConfig
-from .dynamic_module_utils import custom_object_save
+# from .dynamic_module_utils import custom_object_save
 from .generation import GenerationConfig, GenerationMixin
 from .integrations import PeftAdapterMixin, deepspeed_config, is_deepspeed_zero3_enabled
 from .pytorch_utils import (  # noqa: F401
@@ -73,12 +73,12 @@ from .utils import (
     WEIGHTS_NAME,
     ContextManagers,
     ModelOutput,
-    PushToHubMixin,
+    # PushToHubMixin,
     cached_file,
     copy_func,
-    download_url,
+    # download_url,
     extract_commit_hash,
-    has_file,
+    # has_file,
     is_accelerate_available,
     is_bitsandbytes_available,
     is_flash_attn_2_available,
@@ -1301,7 +1301,7 @@ class ModuleUtilsMixin:
         return 6 * self.estimate_tokens(input_dict) * self.num_parameters(exclude_embeddings=exclude_embeddings)
 
 
-class PreTrainedModel(nn.Module, ModuleUtilsMixin, GenerationMixin, PushToHubMixin, PeftAdapterMixin):
+class PreTrainedModel(nn.Module, ModuleUtilsMixin, GenerationMixin, PeftAdapterMixin): # PushToHubMixin
     r"""
     Base class for all models.
 
@@ -2826,21 +2826,21 @@ class PreTrainedModel(nn.Module, ModuleUtilsMixin, GenerationMixin, PushToHubMix
                 token=token,
             )
 
-    @wraps(PushToHubMixin.push_to_hub)
-    def push_to_hub(self, *args, **kwargs):
-        tags = self.model_tags if self.model_tags is not None else []
+    # @wraps(PushToHubMixin.push_to_hub)
+    # def push_to_hub(self, *args, **kwargs):
+    #     tags = self.model_tags if self.model_tags is not None else []
 
-        tags_kwargs = kwargs.get("tags", [])
-        if isinstance(tags_kwargs, str):
-            tags_kwargs = [tags_kwargs]
+    #     tags_kwargs = kwargs.get("tags", [])
+    #     if isinstance(tags_kwargs, str):
+    #         tags_kwargs = [tags_kwargs]
 
-        for tag in tags_kwargs:
-            if tag not in tags:
-                tags.append(tag)
+    #     for tag in tags_kwargs:
+    #         if tag not in tags:
+    #             tags.append(tag)
 
-        if tags:
-            kwargs["tags"] = tags
-        return super().push_to_hub(*args, **kwargs)
+    #     if tags:
+    #         kwargs["tags"] = tags
+    #     return super().push_to_hub(*args, **kwargs)
 
     def get_memory_footprint(self, return_buffers=True):
         r"""
@@ -4736,11 +4736,11 @@ class PreTrainedModel(nn.Module, ModuleUtilsMixin, GenerationMixin, PushToHubMix
         return self.hf_quantizer.is_trainable
 
 
-PreTrainedModel.push_to_hub = copy_func(PreTrainedModel.push_to_hub)
-if PreTrainedModel.push_to_hub.__doc__ is not None:
-    PreTrainedModel.push_to_hub.__doc__ = PreTrainedModel.push_to_hub.__doc__.format(
-        object="model", object_class="AutoModel", object_files="model file"
-    )
+# PreTrainedModel.push_to_hub = copy_func(PreTrainedModel.push_to_hub)
+# if PreTrainedModel.push_to_hub.__doc__ is not None:
+#     PreTrainedModel.push_to_hub.__doc__ = PreTrainedModel.push_to_hub.__doc__.format(
+#         object="model", object_class="AutoModel", object_files="model file"
+#     )
 
 
 class PoolerStartLogits(nn.Module):

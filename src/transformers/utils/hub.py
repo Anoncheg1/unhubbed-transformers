@@ -29,38 +29,38 @@ from typing import Dict, List, Optional, Tuple, Union
 from urllib.parse import urlparse
 from uuid import uuid4
 
-import huggingface_hub
-import requests
-from huggingface_hub import (
-    _CACHED_NO_EXIST,
-    CommitOperationAdd,
-    ModelCard,
-    ModelCardData,
-    constants,
-    create_branch,
-    create_commit,
-    create_repo,
-    get_hf_file_metadata,
-    hf_hub_download,
-    hf_hub_url,
-    try_to_load_from_cache,
-)
-from huggingface_hub.file_download import REGEX_COMMIT_HASH, http_get
-from huggingface_hub.utils import (
-    EntryNotFoundError,
-    GatedRepoError,
-    HfHubHTTPError,
-    HFValidationError,
-    LocalEntryNotFoundError,
-    OfflineModeIsEnabled,
-    RepositoryNotFoundError,
-    RevisionNotFoundError,
-    build_hf_headers,
-    get_session,
-    hf_raise_for_status,
-    send_telemetry,
-)
-from huggingface_hub.utils._deprecation import _deprecate_method
+# import huggingface_hub
+# import requests
+# from huggingface_hub import (
+#     _CACHED_NO_EXIST,
+#     CommitOperationAdd,
+#     ModelCard,
+#     ModelCardData,
+#     constants,
+#     create_branch,
+#     create_commit,
+#     create_repo,
+#     get_hf_file_metadata,
+#     hf_hub_download,
+#     hf_hub_url,
+#     try_to_load_from_cache,
+# )
+# from huggingface_hub.file_download import REGEX_COMMIT_HASH, http_get
+# from huggingface_hub.utils import (
+#     EntryNotFoundError,
+#     GatedRepoError,
+#     HfHubHTTPError,
+#     HFValidationError,
+#     LocalEntryNotFoundError,
+#     OfflineModeIsEnabled,
+#     RepositoryNotFoundError,
+#     RevisionNotFoundError,
+#     build_hf_headers,
+#     get_session,
+#     hf_raise_for_status,
+#     send_telemetry,
+# )
+# from huggingface_hub.utils._deprecation import _deprecate_method
 from requests.exceptions import HTTPError
 
 from . import __version__, logging
@@ -78,7 +78,170 @@ from .logging import tqdm
 
 logger = logging.get_logger(__name__)  # pylint: disable=invalid-name
 
-_is_offline_mode = huggingface_hub.constants.HF_HUB_OFFLINE
+# replacement for huggingface_hub.constants
+import re
+
+class huggingface_hub:
+    class constants:
+        HF_HOME = os.path.expanduser(
+            os.getenv(
+                "HF_HOME",
+                os.path.join(os.path.expanduser("~"), ".cache", "huggingface"),
+            )
+        )
+        HF_HUB_OFFLINE=True
+        default_cache_path = os.path.join(HF_HOME, "hub")
+        HF_HUB_CACHE = default_cache_path
+        HF_HUB_DISABLE_TELEMETRY=False
+        REGEX_COMMIT_HASH=re.compile(r"^[0-9a-f]{40}$")
+constants = huggingface_hub.constants
+
+class GatedRepoError(Exception):
+    pass
+
+# Return value when trying to load a file from cache but the file does not exist in the distant repo.
+from typing import Any
+
+_CACHED_NO_EXIST = object()
+_CACHED_NO_EXIST_T = Any
+
+REPO_TYPE_DATASET = "dataset"
+REPO_TYPE_SPACE = "space"
+REPO_TYPE_MODEL = "model"
+REPO_TYPES = [None, REPO_TYPE_MODEL, REPO_TYPE_DATASET, REPO_TYPE_SPACE]
+
+from typing import Any
+
+def try_to_load_from_cache(
+    repo_id: str,
+    filename: str,
+    cache_dir: Union[str, Path, None] = None,
+    revision: Optional[str] = None,
+    repo_type: Optional[str] = None,
+) -> Union[str, _CACHED_NO_EXIST_T, None]:
+    """
+    Explores the cache to return the latest cached file for a given revision if\
+ found.
+
+    Args:
+        cache_dir (`str` or `os.PathLike`):
+            The folder where the cached files lie.
+        repo_id (`str`):
+            The ID of the repo on huggingface.co.
+        filename (`str`):
+            The filename to look for inside `repo_id`.
+        revision (`str`, *optional*):
+            The specific model version to use. Will default to `"main"` if it's not provided and no `commit_hash` is
+            provided either.
+        repo_type (`str`, *optional*):
+            The type of the repository. Will default to `"model"`.
+
+    Returns:
+        `Optional[str]` or `_CACHED_NO_EXIST`:
+            Will return `None` if the file was not cached. Otherwise:
+            - The exact path to the cached file if it's found in the cache
+            - A special value `_CACHED_NO_EXIST` if the file does not exist at the given commit hash and this fact was
+              cached.
+
+    Example:
+
+    ```python
+    from huggingface_hub import try_to_load_from_cache, _CACHED_NO_EXIST
+
+    filepath = try_to_load_from_cache()
+    if isinstance(filepath, str):
+        # file exists and is cached
+        ...
+    elif filepath is _CACHED_NO_EXIST:
+        # non-existence of file is cached
+        ...
+    else:
+        # file is not cached
+        ...
+    ```
+    """
+    if revision is None:
+        revision = "main"
+    if repo_type is None:
+        repo_type = "model"
+    if repo_type not in REPO_TYPES:
+        raise ValueError(f"Invalid repo type: {repo_type}. Accepted repo types are: {str(REPO_TYPES)}")
+    if cache_dir is None:
+        cache_dir = HF_HUB_CACHE
+
+    object_id = repo_id.replace("/", "--")
+    repo_cache = os.path.join(cache_dir, f"{repo_type}s--{object_id}")
+    if not os.path.isdir(repo_cache):
+        # No cache for this model
+        return None
+
+    refs_dir = os.path.join(repo_cache, "refs")
+    snapshots_dir = os.path.join(repo_cache, "snapshots")
+    no_exist_dir = os.path.join(repo_cache, ".no_exist")
+
+    # Resolve refs (for instance to convert main to the associated commit sha)
+    if os.path.isdir(refs_dir):
+        revision_file = os.path.join(refs_dir, revision)
+        if os.path.isfile(revision_file):
+            with open(revision_file) as f:
+                revision = f.read()
+
+    # Check if file is cached as "no_exist"
+    if os.path.isfile(os.path.join(no_exist_dir, revision, filename)):
+        return _CACHED_NO_EXIST
+
+    # Check if revision folder exists
+    if not os.path.exists(snapshots_dir):
+        return None
+    cached_shas = os.listdir(snapshots_dir)
+    if revision not in cached_shas:
+        # No cache for this revision and we won't try to return a random revision
+        return None
+
+    # Check if file exists in cache
+    cached_file = os.path.join(snapshots_dir, revision, filename)
+    return cached_file if os.path.isfile(cached_file) else None
+
+
+DEFAULT_ETAG_TIMEOUT = 10
+from typing import Literal
+
+def hf_hub_download(
+        repo_id: str,
+        filename: str,
+        *,
+        subfolder: Optional[str] = None,
+        repo_type: Optional[str] = None,
+        revision: Optional[str] = None,
+        library_name: Optional[str] = None,
+        library_version: Optional[str] = None,
+        cache_dir: Union[str, Path, None] = None,
+        local_dir: Union[str, Path, None] = None,
+        user_agent: Union[Dict, str, None] = None,
+        force_download: bool = False,
+        proxies: Optional[Dict] = None,
+        etag_timeout: float = DEFAULT_ETAG_TIMEOUT,
+        token: Union[bool, str, None] = None,
+        local_files_only: bool = False,
+        headers: Optional[Dict[str, str]] = None,
+        endpoint: Optional[str] = None,
+        # Deprecated args
+        legacy_cache_layout: bool = False,
+        resume_download: Optional[bool] = None,
+        force_filename: Optional[str] = None,
+        local_dir_use_symlinks: Union[bool, Literal["auto"]] = "auto"):
+    if subfolder is not None or subfolder == "":
+        filename = os.path.join(subfolder, filename)
+    if repo_id is None:
+        repo_id = ""
+    if os.path.isdir(repo_id):
+        return os.path.join(repo_id, filename)
+    else:
+        return os.path.join(default_cache_path, filename)
+
+
+# ---- continue normal file
+_is_offline_mode =  huggingface_hub.constants.HF_HUB_OFFLINE
 
 
 def is_offline_mode():
@@ -168,7 +331,7 @@ def is_remote_url(url_or_filename):
 # TODO: remove this once fully deprecated
 # TODO? remove from './examples/research_projects/lxmert/utils.py' as well
 # TODO? remove from './examples/research_projects/visual_bert/utils.py' as well
-@_deprecate_method(version="4.39.0", message="This method is outdated and does not support the new cache system.")
+# @_deprecate_method(version="4.39.0", message="This method is outdated and does not support the new cache system.")
 def get_cached_models(cache_dir: Union[str, Path] = None) -> List[Tuple]:
     """
     Returns a list of tuples representing model binaries that are cached locally. Each tuple has shape `(model_url,
