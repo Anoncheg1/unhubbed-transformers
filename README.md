@@ -1,4 +1,5 @@
-# Dependencies, from file ‘dependency_versions_check.py’
+# Dependencies
+from file ‘dependency_versions_check.py’
 - "python",
 - regex - for OpenAI GPT
   - https://pypi.org/project/regex/ https://github.com/mrabarnett/mrab-regex/
@@ -8,16 +9,16 @@
 - packaging - parse versions
 - filelock - filesystem locks, e.g., to prevent parallel downloads
 - numpy
-- # tokenizers (commented) - https://github.com/huggingface/tokenizers
+- tokenizers (commented) - https://github.com/huggingface/tokenizers
   - Provides “Fast” Rust implementations of today's most used tokenizers.
   - Big amount of Rust Carge open-source dependencies.
-- # "huggingface-hub"(commented) - communication with HF site.
+- "huggingface-hub"(commented) - communication with HF site.
 - safetensors - HF model format for deep learning models, essential dependency.
   - https://github.com/huggingface/safetensors
   - Big amount of Rust Carge open-source (in theory) dependencies.
-- # "accelerate" (commented) - simplify processes of training at devices and nodes.
+- "accelerate" (commented) - simplify processes of training at devices and nodes.
   - https://github.com/huggingface/accelerate
-- # "pyyaml" (commented) - used for the model cards metadata, YAML parser-framework.
+- "pyyaml" (commented) - used for the model cards metadata, YAML parser-framework.
 # Dependencies installation
 ```sh
 pip install regex tqdm filelock requests packaging filelock numpy
