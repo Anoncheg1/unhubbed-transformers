@@ -58,3 +58,10 @@ Or just copy `src/transformers` to `~/.local/lib/python3.12/site-packages/transf
  src/transformers/utils/peft_utils.py               |   39 +-
  19 files changed, 685 insertions(+), 792 deletions(-)
 ```
+# Internet request
+In convert and text files enconter links that requested by “requests” and passed to “Pillow” library mainly.
+
+Can be found by command:
+```grep -RinE "\"https?:" | grep .py | grep -Eo "(http|https)://[a-zA-Z0-9./?=_%:-]*" | sort -u```
+
+Potentially may carry backdoors payloads.
