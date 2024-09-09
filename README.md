@@ -1,5 +1,5 @@
 # Dependencies
-from file ‘dependency_versions_check.py’
+from file [dependency_versions_check.py](blob/main/src/transformers/dependency_versions_check.py "dependency_versions_check.py")
 - "python",
 - regex - for OpenAI GPT
   - https://pypi.org/project/regex/ https://github.com/mrabarnett/mrab-regex/
