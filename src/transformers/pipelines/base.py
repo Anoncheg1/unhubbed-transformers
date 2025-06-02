@@ -39,7 +39,7 @@ from ..processing_utils import ProcessorMixin
 from ..tokenization_utils import PreTrainedTokenizer
 from ..utils import (
     ModelOutput,
-    PushToHubMixin,
+    # PushToHubMixin,
     add_end_docstrings,
     copy_func,
     infer_framework,
@@ -881,7 +881,7 @@ if is_torch_available():
         has_tokenizer=True, has_feature_extractor=True, has_image_processor=True, has_processor=True
     )
 )
-class Pipeline(_ScikitCompat, PushToHubMixin):
+class Pipeline(_ScikitCompat): # , PushToHubMixin
     """
     The Pipeline class is the class from which all pipelines inherit. Refer to this class for methods shared across
     different pipelines.
@@ -1446,11 +1446,11 @@ class Pipeline(_ScikitCompat, PushToHubMixin):
             yield self.run_single(input_, preprocess_params, forward_params, postprocess_params)
 
 
-Pipeline.push_to_hub = copy_func(Pipeline.push_to_hub)
-if Pipeline.push_to_hub.__doc__ is not None:
-    Pipeline.push_to_hub.__doc__ = Pipeline.push_to_hub.__doc__.format(
-        object="pipe", object_class="pipeline", object_files="pipeline file"
-    ).replace(".from_pretrained", "")
+# Pipeline.push_to_hub = copy_func(Pipeline.push_to_hub)
+# if Pipeline.push_to_hub.__doc__ is not None:
+#     Pipeline.push_to_hub.__doc__ = Pipeline.push_to_hub.__doc__.format(
+#         object="pipe", object_class="pipeline", object_files="pipeline file"
+#     ).replace(".from_pretrained", "")
 
 
 class ChunkPipeline(Pipeline):

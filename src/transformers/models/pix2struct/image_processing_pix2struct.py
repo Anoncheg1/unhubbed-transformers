@@ -19,7 +19,7 @@ import math
 from typing import Dict, Optional, Union
 
 import numpy as np
-from huggingface_hub import hf_hub_download
+# from huggingface_hub import hf_hub_download
 
 from ...image_processing_utils import BaseImageProcessor, BatchFeature
 from ...image_transforms import convert_to_rgb, normalize, to_channel_dimension_format, to_pil_image

@@ -41,7 +41,7 @@ from .utils import (
     add_start_docstrings,
     cached_file,
     copy_func,
-    download_url,
+    # download_url,
     is_offline_mode,
     is_remote_url,
     is_torch_available,
@@ -558,7 +558,7 @@ class BaseVideoProcessor(BaseImageProcessorFast):
             is_local = True
         elif is_remote_url(pretrained_model_name_or_path):
             video_processor_file = pretrained_model_name_or_path
-            resolved_video_processor_file = download_url(pretrained_model_name_or_path)
+            # resolved_video_processor_file = download_url(pretrained_model_name_or_path)
         else:
             try:
                 # Try to load with a new config name first and if not successfull try with
@@ -793,8 +793,8 @@ class BaseVideoProcessor(BaseImageProcessorFast):
             raise TypeError(f"only a single or a list of entries is supported but got type={type(video_url_or_urls)}")
 
 
-BaseVideoProcessor.push_to_hub = copy_func(BaseVideoProcessor.push_to_hub)
-if BaseVideoProcessor.push_to_hub.__doc__ is not None:
-    BaseVideoProcessor.push_to_hub.__doc__ = BaseVideoProcessor.push_to_hub.__doc__.format(
-        object="video processor", object_class="AutoVideoProcessor", object_files="video processor file"
-    )
+# BaseVideoProcessor.push_to_hub = copy_func(BaseVideoProcessor.push_to_hub)
+# if BaseVideoProcessor.push_to_hub.__doc__ is not None:
+#     BaseVideoProcessor.push_to_hub.__doc__ = BaseVideoProcessor.push_to_hub.__doc__.format(
+#         object="video processor", object_class="AutoVideoProcessor", object_files="video processor file"
+#     )

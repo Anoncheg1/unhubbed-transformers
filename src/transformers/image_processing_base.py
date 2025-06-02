@@ -21,18 +21,18 @@ from io import BytesIO
 from typing import Any, Optional, TypeVar, Union
 
 import numpy as np
-import requests
+# import requests
 
 from .dynamic_module_utils import custom_object_save
 from .feature_extraction_utils import BatchFeature as BaseBatchFeature
 from .utils import (
     IMAGE_PROCESSOR_NAME,
-    PushToHubMixin,
+    # PushToHubMixin,
     add_model_info_to_auto_map,
     add_model_info_to_custom_pipelines,
     cached_file,
     copy_func,
-    download_url,
+    # download_url,
     is_offline_mode,
     is_remote_url,
     is_vision_available,
@@ -68,7 +68,7 @@ class BatchFeature(BaseBatchFeature):
 
 
 # TODO: (Amy) - factor out the common parts of this and the feature extractor
-class ImageProcessingMixin(PushToHubMixin):
+class ImageProcessingMixin(): # PushToHubMixin
     """
     This is an image processor mixin used to provide saving/loading functionality for sequential and image feature
     extractors.
@@ -332,7 +332,7 @@ class ImageProcessingMixin(PushToHubMixin):
             is_local = True
         elif is_remote_url(pretrained_model_name_or_path):
             image_processor_file = pretrained_model_name_or_path
-            resolved_image_processor_file = download_url(pretrained_model_name_or_path)
+            # resolved_image_processor_file = download_url(pretrained_model_name_or_path)
         else:
             image_processor_file = image_processor_filename
             try:
@@ -551,8 +551,8 @@ class ImageProcessingMixin(PushToHubMixin):
             raise TypeError(f"only a single or a list of entries is supported but got type={type(image_url_or_urls)}")
 
 
-ImageProcessingMixin.push_to_hub = copy_func(ImageProcessingMixin.push_to_hub)
-if ImageProcessingMixin.push_to_hub.__doc__ is not None:
-    ImageProcessingMixin.push_to_hub.__doc__ = ImageProcessingMixin.push_to_hub.__doc__.format(
-        object="image processor", object_class="AutoImageProcessor", object_files="image processor file"
-    )
+# ImageProcessingMixin.push_to_hub = copy_func(ImageProcessingMixin.push_to_hub)
+# if ImageProcessingMixin.push_to_hub.__doc__ is not None:
+#     ImageProcessingMixin.push_to_hub.__doc__ = ImageProcessingMixin.push_to_hub.__doc__.format(
+#         object="image processor", object_class="AutoImageProcessor", object_files="image processor file"
+#     )

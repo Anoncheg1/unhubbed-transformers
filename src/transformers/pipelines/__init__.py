@@ -18,7 +18,7 @@ import warnings
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, Union
 
-from huggingface_hub import model_info
+# from huggingface_hub import model_info
 
 from ..configuration_utils import PretrainedConfig
 from ..dynamic_module_utils import get_class_from_dynamic_module

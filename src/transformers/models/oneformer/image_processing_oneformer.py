@@ -19,8 +19,8 @@ import os
 from typing import Any, Dict, Iterable, List, Optional, Set, Tuple, Union
 
 import numpy as np
-from huggingface_hub import hf_hub_download
-from huggingface_hub.utils import RepositoryNotFoundError
+# from huggingface_hub import hf_hub_download
+# from huggingface_hub.utils import RepositoryNotFoundError
 
 from ...image_processing_utils import INIT_SERVICE_KWARGS, BaseImageProcessor, BatchFeature, get_size_dict
 from ...image_transforms import (

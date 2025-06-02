@@ -27,7 +27,7 @@ from typing import Any, Dict, List, Optional, TypedDict, Union
 
 import numpy as np
 import typing_extensions
-from huggingface_hub.errors import EntryNotFoundError
+# from huggingface_hub.errors import EntryNotFoundError
 
 from .audio_utils import load_audio
 from .dynamic_module_utils import custom_object_save
@@ -48,21 +48,21 @@ from .tokenization_utils_base import (
     TruncationStrategy,
 )
 from .utils import (
-    CHAT_TEMPLATE_DIR,
-    CHAT_TEMPLATE_FILE,
-    LEGACY_PROCESSOR_CHAT_TEMPLATE_FILE,
+    # CHAT_TEMPLATE_DIR,
+    # CHAT_TEMPLATE_FILE,
+    # LEGACY_PROCESSOR_CHAT_TEMPLATE_FILE,
     PROCESSOR_NAME,
-    PushToHubMixin,
+    # PushToHubMixin,
     TensorType,
     add_model_info_to_auto_map,
     add_model_info_to_custom_pipelines,
     cached_file,
     copy_func,
     direct_transformers_import,
-    download_url,
+    # download_url,
     is_offline_mode,
     is_remote_url,
-    list_repo_templates,
+    # list_repo_templates,
     logging,
 )
 
@@ -457,7 +457,7 @@ class AllKwargsForChatTemplate(
     }
 
 
-class ProcessorMixin(PushToHubMixin):
+class ProcessorMixin(): # PushToHubMixin
     """
     This is a mixin used to provide saving/loading functionality for all processor classes.
     """
@@ -774,28 +774,28 @@ class ProcessorMixin(PushToHubMixin):
             is_local = True
         elif is_remote_url(pretrained_model_name_or_path):
             processor_file = pretrained_model_name_or_path
-            resolved_processor_file = download_url(pretrained_model_name_or_path)
+            # resolved_processor_file = download_url(pretrained_model_name_or_path)
             # can't load chat-template when given a file url as pretrained_model_name_or_path
             resolved_chat_template_file = None
             resolved_raw_chat_template_file = None
         else:
-            if is_local:
-                template_dir = Path(pretrained_model_name_or_path, CHAT_TEMPLATE_DIR)
-                if template_dir.is_dir():
-                    for template_file in template_dir.glob("*.jinja"):
-                        template_name = template_file.stem
-                        additional_chat_template_files[template_name] = f"{CHAT_TEMPLATE_DIR}/{template_file.name}"
-            else:
-                try:
-                    for template in list_repo_templates(
-                        pretrained_model_name_or_path,
-                        local_files_only=local_files_only,
-                        revision=revision,
-                        cache_dir=cache_dir,
-                    ):
-                        additional_chat_template_files[template] = f"{CHAT_TEMPLATE_DIR}/{template}.jinja"
-                except EntryNotFoundError:
-                    pass  # No template dir means no template files
+            # if is_local:
+            template_dir = Path(pretrained_model_name_or_path, CHAT_TEMPLATE_DIR)
+            if template_dir.is_dir():
+                for template_file in template_dir.glob("*.jinja"):
+                    template_name = template_file.stem
+                    additional_chat_template_files[template_name] = f"{CHAT_TEMPLATE_DIR}/{template_file.name}"
+            # else:
+            #     try:
+            #         for template in list_repo_templates(
+            #             pretrained_model_name_or_path,
+            #             local_files_only=local_files_only,
+            #             revision=revision,
+            #             cache_dir=cache_dir,
+            #         ):
+            #             additional_chat_template_files[template] = f"{CHAT_TEMPLATE_DIR}/{template}.jinja"
+            #     except EntryNotFoundError:
+            #         pass  # No template dir means no template files
             processor_file = PROCESSOR_NAME
 
             try:
@@ -1726,8 +1726,8 @@ def _validate_images_text_input_order(images, text):
     raise ValueError("Invalid input type. Check that `images` and/or `text` are valid inputs.")
 
 
-ProcessorMixin.push_to_hub = copy_func(ProcessorMixin.push_to_hub)
-if ProcessorMixin.push_to_hub.__doc__ is not None:
-    ProcessorMixin.push_to_hub.__doc__ = ProcessorMixin.push_to_hub.__doc__.format(
-        object="processor", object_class="AutoProcessor", object_files="processor files"
-    )
+# ProcessorMixin.push_to_hub = copy_func(ProcessorMixin.push_to_hub)
+# if ProcessorMixin.push_to_hub.__doc__ is not None:
+#     ProcessorMixin.push_to_hub.__doc__ = ProcessorMixin.push_to_hub.__doc__.format(
+#         object="processor", object_class="AutoProcessor", object_files="processor files"
+#     )

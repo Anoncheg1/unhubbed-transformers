@@ -35,19 +35,21 @@ from packaging import version
 
 from . import __version__
 from .dynamic_module_utils import custom_object_save
+CHAT_TEMPLATE_DIR = ""
+CHAT_TEMPLATE_FILE = "t.txt"
 from .utils import (
-    CHAT_TEMPLATE_DIR,
-    CHAT_TEMPLATE_FILE,
+    # ,
+    # CHAT_TEMPLATE_FILE,
     ExplicitEnum,
     PaddingStrategy,
-    PushToHubMixin,
+    # PushToHubMixin,
     TensorType,
     add_end_docstrings,
     add_model_info_to_auto_map,
     add_model_info_to_custom_pipelines,
     cached_file,
     copy_func,
-    download_url,
+    # download_url,
     extract_commit_hash,
     is_flax_available,
     is_jax_tensor,
@@ -62,7 +64,7 @@ from .utils import (
     is_torch_available,
     is_torch_device,
     is_torch_tensor,
-    list_repo_templates,
+    # list_repo_templates,
     logging,
     requires_backends,
     to_py_obj,
@@ -1384,7 +1386,7 @@ INIT_TOKENIZER_DOCSTRING = r"""
 
 
 @add_end_docstrings(INIT_TOKENIZER_DOCSTRING)
-class PreTrainedTokenizerBase(SpecialTokensMixin, PushToHubMixin):
+class PreTrainedTokenizerBase(SpecialTokensMixin): #, PushToHubMixin
     """
     Base class for [`PreTrainedTokenizer`] and [`PreTrainedTokenizerFast`].
 
@@ -1911,7 +1913,7 @@ class PreTrainedTokenizerBase(SpecialTokensMixin, PushToHubMixin):
                     "tokenizer_config_file": TOKENIZER_CONFIG_FILE,
                     # tokenizer_file used to initialize a slow from a fast. Properly copy the `addedTokens` instead of adding in random orders
                     "tokenizer_file": FULL_TOKENIZER_FILE,
-                    "chat_template_file": CHAT_TEMPLATE_FILE,
+                    # "chat_template_file": CHAT_TEMPLATE_FILE,
                 }
 
                 vocab_files = {**cls.vocab_files_names, **additional_files_names}
@@ -1964,14 +1966,14 @@ class PreTrainedTokenizerBase(SpecialTokensMixin, PushToHubMixin):
                                 vocab_files[f"chat_template_{template_name}"] = (
                                     f"{CHAT_TEMPLATE_DIR}/{template_file.name}"
                                 )
-                    else:
-                        for template in list_repo_templates(
-                            pretrained_model_name_or_path,
-                            local_files_only=local_files_only,
-                            revision=revision,
-                            cache_dir=cache_dir,
-                        ):
-                            vocab_files[f"chat_template_{template}"] = f"{CHAT_TEMPLATE_DIR}/{template}.jinja"
+                    # else:
+                    #     for template in list_repo_templates(
+                    #         pretrained_model_name_or_path,
+                    #         local_files_only=local_files_only,
+                    #         revision=revision,
+                    #         cache_dir=cache_dir,
+                    #     ):
+                    #         vocab_files[f"chat_template_{template}"] = f"{CHAT_TEMPLATE_DIR}/{template}.jinja"
 
         # Get files from url, cache, or disk depending on the case
         resolved_vocab_files = {}
@@ -1981,8 +1983,8 @@ class PreTrainedTokenizerBase(SpecialTokensMixin, PushToHubMixin):
             elif single_file_id == file_id:
                 if os.path.isfile(file_path):
                     resolved_vocab_files[file_id] = file_path
-                elif is_remote_url(file_path):
-                    resolved_vocab_files[file_id] = download_url(file_path, proxies=proxies)
+                # elif is_remote_url(file_path):
+                #     resolved_vocab_files[file_id] = download_url(file_path, proxies=proxies)
             else:
                 try:
                     resolved_vocab_files[file_id] = cached_file(
@@ -4147,9 +4149,9 @@ def get_fast_tokenizer_file(tokenization_files: List[str]) -> str:
     return tokenizer_file
 
 
-# To update the docstring, we need to copy the method, otherwise we change the original docstring.
-PreTrainedTokenizerBase.push_to_hub = copy_func(PreTrainedTokenizerBase.push_to_hub)
-if PreTrainedTokenizerBase.push_to_hub.__doc__ is not None:
-    PreTrainedTokenizerBase.push_to_hub.__doc__ = PreTrainedTokenizerBase.push_to_hub.__doc__.format(
-        object="tokenizer", object_class="AutoTokenizer", object_files="tokenizer files"
-    )
+# # To update the docstring, we need to copy the method, otherwise we change the original docstring.
+# PreTrainedTokenizerBase.push_to_hub = copy_func(PreTrainedTokenizerBase.push_to_hub)
+# if PreTrainedTokenizerBase.push_to_hub.__doc__ is not None:
+#     PreTrainedTokenizerBase.push_to_hub.__doc__ = PreTrainedTokenizerBase.push_to_hub.__doc__.format(
+#         object="tokenizer", object_class="AutoTokenizer", object_files="tokenizer files"
+#     )

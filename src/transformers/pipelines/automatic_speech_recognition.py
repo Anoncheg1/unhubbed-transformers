@@ -15,7 +15,7 @@ from collections import defaultdict
 from typing import TYPE_CHECKING, Dict, Optional, Union
 
 import numpy as np
-import requests
+# import requests
 
 from ..generation import GenerationConfig
 from ..tokenization_utils import PreTrainedTokenizer

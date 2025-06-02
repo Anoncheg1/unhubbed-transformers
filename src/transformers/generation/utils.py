@@ -23,7 +23,7 @@ from typing import TYPE_CHECKING, Any, Callable, Dict, List, Optional, Tuple, Un
 import numpy as np
 import torch
 import torch.distributed as dist
-from huggingface_hub import file_exists
+# from huggingface_hub import file_exists
 from packaging import version
 from torch import nn
 from torch.nn import functional as F

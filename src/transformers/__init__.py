@@ -24,7 +24,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 # Check the dependencies satisfy the minimal versions required.
-from . import dependency_versions_check
+# from . import dependency_versions_check
 from .utils import (
     OptionalDependencyNotAvailable,
     _LazyModule,
@@ -98,7 +98,7 @@ _import_structure = {
     "data.metrics": [],
     "data.processors": [],
     "debug_utils": [],
-    "dependency_versions_check": [],
+    # "dependency_versions_check": [],
     "dependency_versions_table": [],
     "dynamic_module_utils": [],
     "feature_extraction_sequence_utils": ["SequenceFeatureExtractor"],

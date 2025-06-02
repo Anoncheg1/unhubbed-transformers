@@ -16,8 +16,8 @@
 
 from functools import lru_cache
 
-from huggingface_hub import get_full_repo_name  # for backward compatibility
-from huggingface_hub.constants import HF_HUB_DISABLE_TELEMETRY as DISABLE_TELEMETRY  # for backward compatibility
+# from huggingface_hub import get_full_repo_name  # for backward compatibility
+# from huggingface_hub.constants import HF_HUB_DISABLE_TELEMETRY as DISABLE_TELEMETRY  # for backward compatibility
 from packaging import version
 
 from .. import __version__
@@ -32,7 +32,6 @@ from .args_doc import (
     set_min_indent,
     source_args_doc,
 )
-from .backbone_utils import BackboneConfigMixin, BackboneMixin
 from .chat_template_utils import DocstringParsingException, TypeHintParsingException, get_json_schema
 from .constants import IMAGENET_DEFAULT_MEAN, IMAGENET_DEFAULT_STD, IMAGENET_STANDARD_MEAN, IMAGENET_STANDARD_STD
 from .doc import (
@@ -82,35 +81,35 @@ from .generic import (
     working_or_temp_dir,
 )
 from .hub import (
-    CHAT_TEMPLATE_DIR,
-    CHAT_TEMPLATE_FILE,
-    CLOUDFRONT_DISTRIB_PREFIX,
-    HF_MODULES_CACHE,
-    HUGGINGFACE_CO_PREFIX,
-    HUGGINGFACE_CO_RESOLVE_ENDPOINT,
-    LEGACY_PROCESSOR_CHAT_TEMPLATE_FILE,
+    # CHAT_TEMPLATE_DIR,
+    # CHAT_TEMPLATE_FILE,
+    # CLOUDFRONT_DISTRIB_PREFIX,
+    # HF_MODULES_CACHE,
+    # HUGGINGFACE_CO_PREFIX,
+    # HUGGINGFACE_CO_RESOLVE_ENDPOINT,
+    # LEGACY_PROCESSOR_CHAT_TEMPLATE_FILE,
     PYTORCH_PRETRAINED_BERT_CACHE,
     PYTORCH_TRANSFORMERS_CACHE,
-    S3_BUCKET_PREFIX,
+    # S3_BUCKET_PREFIX,
     TRANSFORMERS_CACHE,
     TRANSFORMERS_DYNAMIC_MODULE_NAME,
-    EntryNotFoundError,
-    PushInProgress,
-    PushToHubMixin,
-    RepositoryNotFoundError,
-    RevisionNotFoundError,
+    # EntryNotFoundError,
+    # PushInProgress,
+    # PushToHubMixin,
+    # RepositoryNotFoundError,
+    # RevisionNotFoundError,
     cached_file,
     default_cache_path,
-    define_sagemaker_information,
-    download_url,
+    # define_sagemaker_information,
+    # download_url,
     extract_commit_hash,
     has_file,
-    http_user_agent,
+    # http_user_agent,
     is_offline_mode,
     is_remote_url,
-    list_repo_templates,
-    send_example_telemetry,
-    try_to_load_from_cache,
+    # list_repo_templates,
+    # send_example_telemetry,
+    # try_to_load_from_cache,
 )
 from .import_utils import (
     ACCELERATE_MIN_VERSION,
@@ -266,6 +265,7 @@ from .import_utils import (
     requires_backends,
     torch_only_method,
 )
+from .backbone_utils import BackboneConfigMixin, BackboneMixin
 from .peft_utils import (
     ADAPTER_CONFIG_NAME,
     ADAPTER_SAFE_WEIGHTS_NAME,

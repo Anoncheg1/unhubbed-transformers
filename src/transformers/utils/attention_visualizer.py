@@ -13,7 +13,7 @@
 # limitations under the License.
 
 
-import requests
+# import requests
 from PIL import Image
 
 from ..models.auto.auto_factory import _get_model_class

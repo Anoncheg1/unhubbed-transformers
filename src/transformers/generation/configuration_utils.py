@@ -27,9 +27,9 @@ from ..configuration_utils import PretrainedConfig
 from ..utils import (
     GENERATION_CONFIG_NAME,
     ExplicitEnum,
-    PushToHubMixin,
+    # PushToHubMixin,
     cached_file,
-    download_url,
+    # download_url,
     extract_commit_hash,
     is_remote_url,
     is_torch_available,
@@ -101,7 +101,7 @@ class GenerationMode(ExplicitEnum):
     GROUP_BEAM_SEARCH = "group_beam_search"
 
 
-class GenerationConfig(PushToHubMixin):
+class GenerationConfig(): # PushToHubMixin
     # no-format
     """
     Class that holds a configuration for a generation task. A `generate` call supports the following generation methods
@@ -1042,7 +1042,7 @@ class GenerationConfig(PushToHubMixin):
             is_local = True
         elif is_remote_url(config_path):
             configuration_file = config_path
-            resolved_config_file = download_url(config_path)
+            # resolved_config_file = download_url(config_path)
         else:
             configuration_file = config_file_name
             try:

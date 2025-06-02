@@ -15,7 +15,7 @@ import subprocess
 from typing import Union
 
 import numpy as np
-import requests
+# import requests
 
 from ..utils import add_end_docstrings, is_torch_available, is_torchaudio_available, logging
 from .base import Pipeline, build_pipeline_init_args

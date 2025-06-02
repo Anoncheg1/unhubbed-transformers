@@ -6,7 +6,7 @@ from typing import Callable, Optional, Union
 
 import numpy as np
 import tensorflow as tf
-from huggingface_hub import Repository, create_repo
+# from huggingface_hub import Repository, create_repo
 from packaging.version import parse
 
 from . import IntervalStrategy, PreTrainedTokenizerBase

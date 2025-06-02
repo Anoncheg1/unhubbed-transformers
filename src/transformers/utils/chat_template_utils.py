@@ -30,12 +30,12 @@ from .import_utils import is_jinja_available, is_torch_available, is_vision_avai
 
 logger = logging.get_logger(__name__)
 
-if is_jinja_available():
-    import jinja2
-    from jinja2.ext import Extension
-    from jinja2.sandbox import ImmutableSandboxedEnvironment
-else:
-    jinja2 = None
+# if is_jinja_available():
+#     import jinja2
+#     from jinja2.ext import Extension
+#     from jinja2.sandbox import ImmutableSandboxedEnvironment
+# else:
+#     jinja2 = None
 
 if is_vision_available():
     from PIL.Image import Image

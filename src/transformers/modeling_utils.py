@@ -37,8 +37,8 @@ from typing import Any, Callable, Dict, List, Optional, Set, Tuple, Type, TypeVa
 from zipfile import is_zipfile
 
 import torch
-import torch.distributed.tensor
-from huggingface_hub import split_torch_state_dict_into_shards
+# import torch.distributed.tensor
+# from huggingface_hub import split_torch_state_dict_into_shards
 from packaging import version
 from torch import Tensor, nn
 from torch.distributions import constraints
@@ -97,11 +97,11 @@ from .utils import (
     WEIGHTS_NAME,
     ContextManagers,
     ModelOutput,
-    PushToHubMixin,
+    # PushToHubMixin,
     cached_file,
     check_torch_load_is_safe,
     copy_func,
-    download_url,
+    # download_url,
     extract_commit_hash,
     has_file,
     is_accelerate_available,
@@ -124,7 +124,7 @@ from .utils import (
     replace_return_docstrings,
     strtobool,
 )
-from .utils.hub import create_and_tag_model_card, get_checkpoint_shard_files
+from .utils.hub import get_checkpoint_shard_files # create_and_tag_model_card,
 from .utils.import_utils import (
     ENV_VARS_TRUE_VALUES,
     is_huggingface_hub_greater_or_equal,
@@ -991,7 +991,7 @@ def _get_resolved_checkpoint_files(
             is_local = True
         elif is_remote_url(pretrained_model_name_or_path):
             filename = pretrained_model_name_or_path
-            resolved_archive_file = download_url(pretrained_model_name_or_path)
+            # resolved_archive_file = download_url(pretrained_model_name_or_path)
         else:
             # set correct filename
             if transformers_explicit_filename is not None:
@@ -1782,7 +1782,7 @@ class ModuleUtilsMixin:
         return 6 * self.estimate_tokens(input_dict) * self.num_parameters(exclude_embeddings=exclude_embeddings)
 
 
-class PreTrainedModel(nn.Module, ModuleUtilsMixin, PushToHubMixin, PeftAdapterMixin):
+class PreTrainedModel(nn.Module, ModuleUtilsMixin, PeftAdapterMixin): # PushToHubMixin,
     r"""
     Base class for all models.
 
@@ -3753,21 +3753,21 @@ class PreTrainedModel(nn.Module, ModuleUtilsMixin, PushToHubMixin, PeftAdapterMi
                 token=token,
             )
 
-    @wraps(PushToHubMixin.push_to_hub)
-    def push_to_hub(self, *args, **kwargs):
-        tags = self.model_tags if self.model_tags is not None else []
+    # @wraps(PushToHubMixin.push_to_hub)
+    # def push_to_hub(self, *args, **kwargs):
+    #     tags = self.model_tags if self.model_tags is not None else []
 
-        tags_kwargs = kwargs.get("tags", [])
-        if isinstance(tags_kwargs, str):
-            tags_kwargs = [tags_kwargs]
+    #     tags_kwargs = kwargs.get("tags", [])
+    #     if isinstance(tags_kwargs, str):
+    #         tags_kwargs = [tags_kwargs]
 
-        for tag in tags_kwargs:
-            if tag not in tags:
-                tags.append(tag)
+    #     for tag in tags_kwargs:
+    #         if tag not in tags:
+    #             tags.append(tag)
 
-        if tags:
-            kwargs["tags"] = tags
-        return super().push_to_hub(*args, **kwargs)
+    #     if tags:
+    #         kwargs["tags"] = tags
+    #     return super().push_to_hub(*args, **kwargs)
 
     def get_memory_footprint(self, return_buffers=True):
         r"""
@@ -5493,11 +5493,11 @@ class PreTrainedModel(nn.Module, ModuleUtilsMixin, PushToHubMixin, PeftAdapterMi
         raise AttributeError(f"`{target}` is neither a parameter nor a buffer.")
 
 
-PreTrainedModel.push_to_hub = copy_func(PreTrainedModel.push_to_hub)
-if PreTrainedModel.push_to_hub.__doc__ is not None:
-    PreTrainedModel.push_to_hub.__doc__ = PreTrainedModel.push_to_hub.__doc__.format(
-        object="model", object_class="AutoModel", object_files="model file"
-    )
+# PreTrainedModel.push_to_hub = copy_func(PreTrainedModel.push_to_hub)
+# if PreTrainedModel.push_to_hub.__doc__ is not None:
+#     PreTrainedModel.push_to_hub.__doc__ = PreTrainedModel.push_to_hub.__doc__.format(
+#         object="model", object_class="AutoModel", object_files="model file"
+#     )
 
 
 class PoolerStartLogits(nn.Module):

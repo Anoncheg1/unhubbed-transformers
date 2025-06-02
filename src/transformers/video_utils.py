@@ -21,7 +21,7 @@ from typing import Callable, Dict, Iterable, List, Optional, Tuple, Union
 from urllib.parse import urlparse
 
 import numpy as np
-import requests
+# import requests
 
 from .image_transforms import PaddingMode, to_channel_dimension_format
 from .image_utils import ChannelDimension, infer_channel_dimension_format, is_valid_image

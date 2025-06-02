@@ -21,10 +21,10 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Optional, Union
 
-import requests
+# import requests
 import yaml
-from huggingface_hub import model_info
-from huggingface_hub.utils import HFValidationError
+# from huggingface_hub import model_info
+# from huggingface_hub.utils import HFValidationError
 
 from . import __version__
 from .models.auto.modeling_auto import (

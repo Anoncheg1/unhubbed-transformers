@@ -31,7 +31,7 @@ from logging import (
 from logging import captureWarnings as _captureWarnings
 from typing import Optional
 
-import huggingface_hub.utils as hf_hub_utils
+# import huggingface_hub.utils as hf_hub_utils
 from tqdm import auto as tqdm_lib
 
 
@@ -49,7 +49,7 @@ log_levels = {
 
 _default_log_level = logging.WARNING
 
-_tqdm_active = not hf_hub_utils.are_progress_bars_disabled()
+_tqdm_active = True
 
 
 def _get_default_logging_level():
@@ -400,11 +400,11 @@ def enable_progress_bar():
     """Enable tqdm progress bar."""
     global _tqdm_active
     _tqdm_active = True
-    hf_hub_utils.enable_progress_bars()
+    # hf_hub_utils.enable_progress_bars()
 
 
 def disable_progress_bar():
     """Disable tqdm progress bar."""
     global _tqdm_active
     _tqdm_active = False
-    hf_hub_utils.disable_progress_bars()
+    # hf_hub_utils.disable_progress_bars()

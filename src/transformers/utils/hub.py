@@ -27,38 +27,39 @@ from typing import Optional, Union
 from urllib.parse import urlparse
 from uuid import uuid4
 
-import huggingface_hub
-import requests
-from huggingface_hub import (
-    _CACHED_NO_EXIST,
-    CommitOperationAdd,
-    ModelCard,
-    ModelCardData,
-    constants,
-    create_branch,
-    create_commit,
-    create_repo,
-    hf_hub_download,
-    hf_hub_url,
-    list_repo_tree,
-    snapshot_download,
-    try_to_load_from_cache,
-)
-from huggingface_hub.file_download import REGEX_COMMIT_HASH, http_get
-from huggingface_hub.utils import (
-    EntryNotFoundError,
-    GatedRepoError,
-    HfHubHTTPError,
-    LocalEntryNotFoundError,
-    OfflineModeIsEnabled,
-    RepositoryNotFoundError,
-    RevisionNotFoundError,
-    build_hf_headers,
-    get_session,
-    hf_raise_for_status,
-    send_telemetry,
-)
-from requests.exceptions import HTTPError
+# import huggingface_hub
+# import requests
+# from huggingface_hub import (
+#     _CACHED_NO_EXIST,
+#     CommitOperationAdd,
+#     ModelCard,
+#     ModelCardData,
+#     constants,
+#     create_branch,
+#     create_commit,
+#     create_repo,
+#     hf_hub_download,
+#     hf_hub_url,
+#     list_repo_tree,
+#     snapshot_download,
+#     try_to_load_from_cache,
+# )
+# from huggingface_hub.file_download import REGEX_COMMIT_HASH, http_get
+# from huggingface_hub.utils import (
+#     EntryNotFoundError,
+#     GatedRepoError,
+#     HfHubHTTPError,
+#     LocalEntryNotFoundError,
+#     OfflineModeIsEnabled,
+#     RepositoryNotFoundError,
+#     RevisionNotFoundError,
+#     build_hf_headers,
+#     get_session,
+#     hf_raise_for_status,
+#     send_telemetry,
+# )
+from . import constants
+# from requests.exceptions import HTTPError
 
 from . import __version__, logging
 from .generic import working_or_temp_dir
@@ -79,7 +80,7 @@ CHAT_TEMPLATE_DIR = "additional_chat_templates"
 
 logger = logging.get_logger(__name__)  # pylint: disable=invalid-name
 
-_is_offline_mode = huggingface_hub.constants.HF_HUB_OFFLINE
+_is_offline_mode = constants.HF_HUB_OFFLINE
 
 
 def is_offline_mode():
@@ -146,7 +147,7 @@ def _get_cache_file_to_return(
 def list_repo_templates(
     repo_id: str,
     *,
-    local_files_only: bool,
+    local_files_only: bool = True,
     revision: Optional[str] = None,
     cache_dir: Optional[str] = None,
 ) -> list[str]:
@@ -156,19 +157,19 @@ def list_repo_templates(
     If working in offline mode or if internet is down, the method will list jinja template from the local cache - if any.
     """
 
-    if not local_files_only:
-        try:
-            return [
-                entry.path.removeprefix(f"{CHAT_TEMPLATE_DIR}/")
-                for entry in list_repo_tree(
-                    repo_id=repo_id, revision=revision, path_in_repo=CHAT_TEMPLATE_DIR, recursive=False
-                )
-                if entry.path.endswith(".jinja")
-            ]
-        except (GatedRepoError, RepositoryNotFoundError, RevisionNotFoundError):
-            raise  # valid errors => do not catch
-        except (ConnectionError, HTTPError):
-            pass  # offline mode, internet down, etc. => try local files
+    # if not local_files_only:
+    #     try:
+    #         return [
+    #             entry.path.removeprefix(f"{CHAT_TEMPLATE_DIR}/")
+    #             for entry in list_repo_tree(
+    #                 repo_id=repo_id, revision=revision, path_in_repo=CHAT_TEMPLATE_DIR, recursive=False
+    #             )
+    #             if entry.path.endswith(".jinja")
+    #         ]
+    #     except (GatedRepoError, RepositoryNotFoundError, RevisionNotFoundError):
+    #         raise  # valid errors => do not catch
+    #     except (ConnectionError, HTTPError):
+    #         pass  # offline mode, internet down, etc. => try local files
 
     # check local files
     try:
@@ -464,101 +465,101 @@ def cached_files(
 
     user_agent = http_user_agent(user_agent)
     # download the files if needed
-    try:
-        if len(full_filenames) == 1:
-            # This is slightly better for only 1 file
-            hf_hub_download(
-                path_or_repo_id,
-                filenames[0],
-                subfolder=None if len(subfolder) == 0 else subfolder,
-                repo_type=repo_type,
-                revision=revision,
-                cache_dir=cache_dir,
-                user_agent=user_agent,
-                force_download=force_download,
-                proxies=proxies,
-                resume_download=resume_download,
-                token=token,
-                local_files_only=local_files_only,
-            )
-        else:
-            snapshot_download(
-                path_or_repo_id,
-                allow_patterns=full_filenames,
-                repo_type=repo_type,
-                revision=revision,
-                cache_dir=cache_dir,
-                user_agent=user_agent,
-                force_download=force_download,
-                proxies=proxies,
-                resume_download=resume_download,
-                token=token,
-                local_files_only=local_files_only,
-            )
+    # try:
+    #     if len(full_filenames) == 1:
+    #         # This is slightly better for only 1 file
+    #         hf_hub_download(
+    #             path_or_repo_id,
+    #             filenames[0],
+    #             subfolder=None if len(subfolder) == 0 else subfolder,
+    #             repo_type=repo_type,
+    #             revision=revision,
+    #             cache_dir=cache_dir,
+    #             user_agent=user_agent,
+    #             force_download=force_download,
+    #             proxies=proxies,
+    #             resume_download=resume_download,
+    #             token=token,
+    #             local_files_only=local_files_only,
+    #         )
+    #     else:
+    #         snapshot_download(
+    #             path_or_repo_id,
+    #             allow_patterns=full_filenames,
+    #             repo_type=repo_type,
+    #             revision=revision,
+    #             cache_dir=cache_dir,
+    #             user_agent=user_agent,
+    #             force_download=force_download,
+    #             proxies=proxies,
+    #             resume_download=resume_download,
+    #             token=token,
+    #             local_files_only=local_files_only,
+    #         )
 
-    except Exception as e:
-        # We cannot recover from them
-        if isinstance(e, RepositoryNotFoundError) and not isinstance(e, GatedRepoError):
-            raise OSError(
-                f"{path_or_repo_id} is not a local folder and is not a valid model identifier "
-                "listed on 'https://huggingface.co/models'\nIf this is a private repository, make sure to pass a token "
-                "having permission to this repo either by logging in with `huggingface-cli login` or by passing "
-                "`token=<your_token>`"
-            ) from e
-        elif isinstance(e, RevisionNotFoundError):
-            raise OSError(
-                f"{revision} is not a valid git identifier (branch name, tag name or commit id) that exists "
-                "for this model name. Check the model page at "
-                f"'https://huggingface.co/{path_or_repo_id}' for available revisions."
-            ) from e
-        elif isinstance(e, PermissionError):
-            raise OSError(
-                f"PermissionError at {e.filename} when downloading {path_or_repo_id}. "
-                "Check cache directory permissions. Common causes: 1) another user is downloading the same model (please wait); "
-                "2) a previous download was canceled and the lock file needs manual removal."
-            ) from e
+    # except Exception as e:
+    #     # We cannot recover from them
+    #     if isinstance(e, RepositoryNotFoundError) and not isinstance(e, GatedRepoError):
+    #         raise OSError(
+    #             f"{path_or_repo_id} is not a local folder and is not a valid model identifier "
+    #             "listed on 'https://huggingface.co/models'\nIf this is a private repository, make sure to pass a token "
+    #             "having permission to this repo either by logging in with `huggingface-cli login` or by passing "
+    #             "`token=<your_token>`"
+    #         ) from e
+    #     elif isinstance(e, RevisionNotFoundError):
+    #         raise OSError(
+    #             f"{revision} is not a valid git identifier (branch name, tag name or commit id) that exists "
+    #             "for this model name. Check the model page at "
+    #             f"'https://huggingface.co/{path_or_repo_id}' for available revisions."
+    #         ) from e
+    #     elif isinstance(e, PermissionError):
+    #         raise OSError(
+    #             f"PermissionError at {e.filename} when downloading {path_or_repo_id}. "
+    #             "Check cache directory permissions. Common causes: 1) another user is downloading the same model (please wait); "
+    #             "2) a previous download was canceled and the lock file needs manual removal."
+    #         ) from e
 
-        # Now we try to recover if we can find all files correctly in the cache
-        resolved_files = [
-            _get_cache_file_to_return(path_or_repo_id, filename, cache_dir, revision) for filename in full_filenames
-        ]
-        if all(file is not None for file in resolved_files):
-            return resolved_files
+    #     # Now we try to recover if we can find all files correctly in the cache
+    #     resolved_files = [
+    #         _get_cache_file_to_return(path_or_repo_id, filename, cache_dir, revision) for filename in full_filenames
+    #     ]
+    #     if all(file is not None for file in resolved_files):
+    #         return resolved_files
 
-        # Raise based on the flags. Note that we will raise for missing entries at the very end, even when
-        # not entering this Except block, as it may also happen when `snapshot_download` does not raise
-        if isinstance(e, GatedRepoError):
-            if not _raise_exceptions_for_gated_repo:
-                return None
-            raise OSError(
-                "You are trying to access a gated repo.\nMake sure to have access to it at "
-                f"https://huggingface.co/{path_or_repo_id}.\n{str(e)}"
-            ) from e
-        elif isinstance(e, LocalEntryNotFoundError):
-            if not _raise_exceptions_for_connection_errors:
-                return None
-            # Here we only raise if both flags for missing entry and connection errors are True (because it can be raised
-            # even when `local_files_only` is True, in which case raising for connections errors only would not make sense)
-            elif _raise_exceptions_for_missing_entries:
-                raise OSError(
-                    f"We couldn't connect to '{HUGGINGFACE_CO_RESOLVE_ENDPOINT}' to load the files, and couldn't find them in the"
-                    f" cached files.\nCheckout your internet connection or see how to run the library in offline mode at"
-                    " 'https://huggingface.co/docs/transformers/installation#offline-mode'."
-                ) from e
-        # snapshot_download will not raise EntryNotFoundError, but hf_hub_download can. If this is the case, it will be treated
-        # later on anyway and re-raised if needed
-        elif isinstance(e, HTTPError) and not isinstance(e, EntryNotFoundError):
-            if not _raise_exceptions_for_connection_errors:
-                return None
-            raise OSError(f"There was a specific connection error when trying to load {path_or_repo_id}:\n{e}")
-        # Any other Exception type should now be re-raised, in order to provide helpful error messages and break the execution flow
-        # (EntryNotFoundError will be treated outside this block and correctly re-raised if needed)
-        elif not isinstance(e, EntryNotFoundError):
-            raise e
+    #     # Raise based on the flags. Note that we will raise for missing entries at the very end, even when
+    #     # not entering this Except block, as it may also happen when `snapshot_download` does not raise
+    #     if isinstance(e, GatedRepoError):
+    #         if not _raise_exceptions_for_gated_repo:
+    #             return None
+    #         raise OSError(
+    #             "You are trying to access a gated repo.\nMake sure to have access to it at "
+    #             f"https://huggingface.co/{path_or_repo_id}.\n{str(e)}"
+    #         ) from e
+    #     elif isinstance(e, LocalEntryNotFoundError):
+    #         if not _raise_exceptions_for_connection_errors:
+    #             return None
+    #         # Here we only raise if both flags for missing entry and connection errors are True (because it can be raised
+    #         # even when `local_files_only` is True, in which case raising for connections errors only would not make sense)
+    #         elif _raise_exceptions_for_missing_entries:
+    #             raise OSError(
+    #                 f"We couldn't connect to '{HUGGINGFACE_CO_RESOLVE_ENDPOINT}' to load the files, and couldn't find them in the"
+    #                 f" cached files.\nCheckout your internet connection or see how to run the library in offline mode at"
+    #                 " 'https://huggingface.co/docs/transformers/installation#offline-mode'."
+    #             ) from e
+    #     # snapshot_download will not raise EntryNotFoundError, but hf_hub_download can. If this is the case, it will be treated
+    #     # later on anyway and re-raised if needed
+    #     elif isinstance(e, HTTPError) and not isinstance(e, EntryNotFoundError):
+    #         if not _raise_exceptions_for_connection_errors:
+    #             return None
+    #         raise OSError(f"There was a specific connection error when trying to load {path_or_repo_id}:\n{e}")
+    #     # Any other Exception type should now be re-raised, in order to provide helpful error messages and break the execution flow
+    #     # (EntryNotFoundError will be treated outside this block and correctly re-raised if needed)
+    #     elif not isinstance(e, EntryNotFoundError):
+    #         raise e
 
-    resolved_files = [
-        _get_cache_file_to_return(path_or_repo_id, filename, cache_dir, revision) for filename in full_filenames
-    ]
+    # resolved_files = [
+    #     _get_cache_file_to_return(path_or_repo_id, filename, cache_dir, revision) for filename in full_filenames
+    # ]
     # If there are any missing file and the flag is active, raise
     if any(file is None for file in resolved_files) and _raise_exceptions_for_missing_entries:
         missing_entries = [original for original, resolved in zip(full_filenames, resolved_files) if resolved is None]
@@ -665,49 +666,49 @@ def has_file(
     if local_files_only:
         return has_file_in_cache
 
-    # Check if the file exists
-    try:
-        response = get_session().head(
-            hf_hub_url(path_or_repo, filename=filename, revision=revision, repo_type=repo_type),
-            headers=build_hf_headers(token=token, user_agent=http_user_agent()),
-            allow_redirects=False,
-            proxies=proxies,
-            timeout=10,
-        )
-    except (requests.exceptions.SSLError, requests.exceptions.ProxyError):
-        # Actually raise for those subclasses of ConnectionError
-        raise
-    except (
-        requests.exceptions.ConnectionError,
-        requests.exceptions.Timeout,
-        OfflineModeIsEnabled,
-    ):
-        return has_file_in_cache
+    # # Check if the file exists
+    # try:
+    #     response = get_session().head(
+    #         hf_hub_url(path_or_repo, filename=filename, revision=revision, repo_type=repo_type),
+    #         headers=build_hf_headers(token=token, user_agent=http_user_agent()),
+    #         allow_redirects=False,
+    #         proxies=proxies,
+    #         timeout=10,
+    #     )
+    # except (requests.exceptions.SSLError, requests.exceptions.ProxyError):
+    #     # Actually raise for those subclasses of ConnectionError
+    #     raise
+    # except (
+    #     requests.exceptions.ConnectionError,
+    #     requests.exceptions.Timeout,
+    #     OfflineModeIsEnabled,
+    # ):
+    #     return has_file_in_cache
 
-    try:
-        hf_raise_for_status(response)
-        return True
-    except GatedRepoError as e:
-        logger.error(e)
-        raise OSError(
-            f"{path_or_repo} is a gated repository. Make sure to request access at "
-            f"https://huggingface.co/{path_or_repo} and pass a token having permission to this repo either by "
-            "logging in with `huggingface-cli login` or by passing `token=<your_token>`."
-        ) from e
-    except RepositoryNotFoundError as e:
-        logger.error(e)
-        raise OSError(f"{path_or_repo} is not a local folder or a valid repository name on 'https://hf.co'.") from e
-    except RevisionNotFoundError as e:
-        logger.error(e)
-        raise OSError(
-            f"{revision} is not a valid git identifier (branch name, tag name or commit id) that exists for this "
-            f"model name. Check the model page at 'https://huggingface.co/{path_or_repo}' for available revisions."
-        ) from e
-    except EntryNotFoundError:
-        return False  # File does not exist
-    except requests.HTTPError:
-        # Any authentication/authorization error will be caught here => default to cache
-        return has_file_in_cache
+    # try:
+    #     hf_raise_for_status(response)
+    #     return True
+    # except GatedRepoError as e:
+    #     logger.error(e)
+    #     raise OSError(
+    #         f"{path_or_repo} is a gated repository. Make sure to request access at "
+    #         f"https://huggingface.co/{path_or_repo} and pass a token having permission to this repo either by "
+    #         "logging in with `huggingface-cli login` or by passing `token=<your_token>`."
+    #     ) from e
+    # except RepositoryNotFoundError as e:
+    #     logger.error(e)
+    #     raise OSError(f"{path_or_repo} is not a local folder or a valid repository name on 'https://hf.co'.") from e
+    # except RevisionNotFoundError as e:
+    #     logger.error(e)
+    #     raise OSError(
+    #         f"{revision} is not a valid git identifier (branch name, tag name or commit id) that exists for this "
+    #         f"model name. Check the model page at 'https://huggingface.co/{path_or_repo}' for available revisions."
+    #     ) from e
+    # except EntryNotFoundError:
+    #     return False  # File does not exist
+    # except requests.HTTPError:
+    #     # Any authentication/authorization error will be caught here => default to cache
+    #     return has_file_in_cache
 
 
 class PushToHubMixin:

@@ -43,10 +43,10 @@ from typing import Any, Callable, Optional, Union
 from unittest import mock
 from unittest.mock import patch
 
-import huggingface_hub.utils
-import requests
+# import huggingface_hub.utils
+# import requests
 import urllib3
-from huggingface_hub import delete_repo
+# from huggingface_hub import delete_repo
 from packaging import version
 
 from transformers import Trainer

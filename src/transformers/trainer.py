@@ -45,11 +45,11 @@ from .integrations import (
 
 # isort: on
 
-import huggingface_hub.utils as hf_hub_utils
+# import huggingface_hub.utils as hf_hub_utils
 import numpy as np
 import torch
 import torch.distributed as dist
-from huggingface_hub import ModelCard, create_repo, upload_folder
+# from huggingface_hub import ModelCard, create_repo, upload_folder
 from packaging import version
 from torch import nn
 from torch.utils.data import DataLoader, Dataset, IterableDataset, RandomSampler, SequentialSampler
@@ -146,7 +146,7 @@ from .utils import (
     WEIGHTS_NAME,
     XLA_FSDPV2_MIN_VERSION,
     PushInProgress,
-    PushToHubMixin,
+    # PushToHubMixin,
     can_return_loss,
     check_torch_load_is_safe,
     find_labels,
@@ -2227,15 +2227,15 @@ class Trainer:
         if args.push_to_hub:
             try:
                 # Disable progress bars when uploading models during checkpoints to avoid polluting stdout
-                hf_hub_utils.disable_progress_bars()
+                # hf_hub_utils.disable_progress_bars()
                 return inner_training_loop(
                     args=args,
                     resume_from_checkpoint=resume_from_checkpoint,
                     trial=trial,
                     ignore_keys_for_eval=ignore_keys_for_eval,
                 )
-            finally:
-                hf_hub_utils.enable_progress_bars()
+            # finally:
+            #     hf_hub_utils.enable_progress_bars()
         else:
             return inner_training_loop(
                 args=args,
@@ -3927,7 +3927,8 @@ class Trainer:
 
         # Save a trained model and configuration using `save_pretrained()`.
         # They can then be reloaded using `from_pretrained()`
-        supported_classes = (PushToHubMixin,)
+        # supported_classes = (PushToHubMixin,)
+        supported_classes = []
         xm.rendezvous("saving_checkpoint")
         if self.is_fsdp_xla_v1_enabled:
             ckpt = {

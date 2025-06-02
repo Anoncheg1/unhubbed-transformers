@@ -22,7 +22,7 @@ from io import BytesIO
 from typing import List, Optional, Tuple, Union
 
 import numpy as np
-import requests
+# import requests
 
 from .utils import (
     is_librosa_available,

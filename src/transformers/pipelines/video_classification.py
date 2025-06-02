@@ -15,7 +15,7 @@ import warnings
 from io import BytesIO
 from typing import List, Optional, Union
 
-import requests
+# import requests
 
 from ..utils import (
     add_end_docstrings,

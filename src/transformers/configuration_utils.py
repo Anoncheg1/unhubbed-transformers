@@ -27,12 +27,12 @@ from .dynamic_module_utils import custom_object_save
 from .modeling_gguf_pytorch_utils import load_gguf_checkpoint
 from .utils import (
     CONFIG_NAME,
-    PushToHubMixin,
+    # PushToHubMixin,
     add_model_info_to_auto_map,
     add_model_info_to_custom_pipelines,
     cached_file,
     copy_func,
-    download_url,
+    # download_url,
     extract_commit_hash,
     is_remote_url,
     is_torch_available,
@@ -44,7 +44,7 @@ from .utils.generic import is_timm_config_dict
 logger = logging.get_logger(__name__)
 
 
-class PretrainedConfig(PushToHubMixin):
+class PretrainedConfig(): # PushToHubMixin
     # no-format
     r"""
     Base class for all configuration classes. Handles a few parameters common to all models' configurations as well as
@@ -645,7 +645,7 @@ class PretrainedConfig(PushToHubMixin):
             is_local = True
         elif is_remote_url(pretrained_model_name_or_path):
             configuration_file = pretrained_model_name_or_path if gguf_file is None else gguf_file
-            resolved_config_file = download_url(pretrained_model_name_or_path)
+            # resolved_config_file = download_url(pretrained_model_name_or_path)
         else:
             configuration_file = kwargs.pop("_configuration_file", CONFIG_NAME) if gguf_file is None else gguf_file
 
@@ -1204,8 +1204,8 @@ def recursive_diff_dict(dict_a, dict_b, config_obj=None):
     return diff
 
 
-PretrainedConfig.push_to_hub = copy_func(PretrainedConfig.push_to_hub)
-if PretrainedConfig.push_to_hub.__doc__ is not None:
-    PretrainedConfig.push_to_hub.__doc__ = PretrainedConfig.push_to_hub.__doc__.format(
-        object="config", object_class="AutoConfig", object_files="configuration file"
-    )
+# PretrainedConfig.push_to_hub = copy_func(PretrainedConfig.push_to_hub)
+# if PretrainedConfig.push_to_hub.__doc__ is not None:
+#     PretrainedConfig.push_to_hub.__doc__ = PretrainedConfig.push_to_hub.__doc__.format(
+#         object="config", object_class="AutoConfig", object_files="configuration file"
+#     )

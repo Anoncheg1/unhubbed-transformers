@@ -1,23 +1,25 @@
 from typing import Optional
 
-import requests
-from huggingface_hub import Discussion, HfApi, get_repo_discussions
+# import requests
+# from huggingface_hub import Discussion, HfApi, get_repo_discussions
 
-from .utils import cached_file, http_user_agent, logging
+from .utils import cached_file, logging
+# http_user_agent,
+
 
 
 logger = logging.get_logger(__name__)
 
 
-def previous_pr(api: HfApi, model_id: str, pr_title: str, token: str) -> Optional["Discussion"]:
-    main_commit = api.list_repo_commits(model_id, token=token)[0].commit_id
-    for discussion in get_repo_discussions(repo_id=model_id, token=token):
-        if discussion.title == pr_title and discussion.status == "open" and discussion.is_pull_request:
-            commits = api.list_repo_commits(model_id, revision=discussion.git_reference, token=token)
+# def previous_pr(api: HfApi, model_id: str, pr_title: str, token: str) -> Optional["Discussion"]:
+#     main_commit = api.list_repo_commits(model_id, token=token)[0].commit_id
+#     for discussion in get_repo_discussions(repo_id=model_id, token=token):
+#         if discussion.title == pr_title and discussion.status == "open" and discussion.is_pull_request:
+#             commits = api.list_repo_commits(model_id, revision=discussion.git_reference, token=token)
 
-            if main_commit == commits[1].commit_id:
-                return discussion
-    return None
+#             if main_commit == commits[1].commit_id:
+#                 return discussion
+#     return None
 
 
 def spawn_conversion(token: str, private: bool, model_id: str):
@@ -55,7 +57,7 @@ def spawn_conversion(token: str, private: bool, model_id: str):
             logger.warning(f"Error during conversion: {repr(e)}")
 
 
-def get_conversion_pr_reference(api: HfApi, model_id: str, **kwargs):
+def get_conversion_pr_reference(api, model_id: str, **kwargs):
     private = api.model_info(model_id).private
 
     logger.info("Attempting to create safetensors variant")
@@ -65,13 +67,13 @@ def get_conversion_pr_reference(api: HfApi, model_id: str, **kwargs):
     # This looks into the current repo's open PRs to see if a PR for safetensors was already open. If so, it
     # returns it. It checks that the PR was opened by the bot and not by another user so as to prevent
     # security breaches.
-    pr = previous_pr(api, model_id, pr_title, token=token)
+    # pr = previous_pr(api, model_id, pr_title, token=token)
 
-    if pr is None or (not private and pr.author != "SFconvertbot"):
-        spawn_conversion(token, private, model_id)
-        pr = previous_pr(api, model_id, pr_title, token=token)
-    else:
-        logger.info("Safetensors PR exists")
+    # if pr is None or (not private and pr.author != "SFconvertbot"):
+    #     spawn_conversion(token, private, model_id)
+    #     pr = previous_pr(api, model_id, pr_title, token=token)
+    # else:
+    #     logger.info("Safetensors PR exists")
 
     sha = f"refs/pr/{pr.num}"
 
@@ -80,8 +82,9 @@ def get_conversion_pr_reference(api: HfApi, model_id: str, **kwargs):
 
 def auto_conversion(pretrained_model_name_or_path: str, ignore_errors_during_conversion=False, **cached_file_kwargs):
     try:
-        api = HfApi(token=cached_file_kwargs.get("token"), headers={"user-agent": http_user_agent()})
-        sha = get_conversion_pr_reference(api, pretrained_model_name_or_path, **cached_file_kwargs)
+        # api = HfApi(token=cached_file_kwargs.get("token"), headers={"user-agent": http_user_agent()})
+        # sha = get_conversion_pr_reference(api, pretrained_model_name_or_path, **cached_file_kwargs)
+        sha = None
 
         if sha is None:
             return None, None

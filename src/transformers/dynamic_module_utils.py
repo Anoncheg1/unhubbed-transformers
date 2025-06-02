@@ -30,12 +30,12 @@ from pathlib import Path
 from types import ModuleType
 from typing import Any, Optional, Union
 
-from huggingface_hub import try_to_load_from_cache
+# from huggingface_hub import try_to_load_from_cache
 from packaging import version
 
 from .utils import (
-    HF_MODULES_CACHE,
-    TRANSFORMERS_DYNAMIC_MODULE_NAME,
+    # HF_MODULES_CACHE,
+    # TRANSFORMERS_DYNAMIC_MODULE_NAME,
     cached_file,
     extract_commit_hash,
     is_offline_mode,

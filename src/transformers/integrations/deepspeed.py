@@ -21,7 +21,7 @@ import importlib.util
 import weakref
 from functools import partialmethod
 
-from ..dependency_versions_check import dep_version_check
+# from ..dependency_versions_check import dep_version_check
 from ..utils import is_accelerate_available, is_torch_available, logging
 
 
@@ -74,8 +74,8 @@ class HfDeepSpeedConfig(DeepSpeedConfig):
     def __init__(self, config_file_or_dict):
         # set global weakref object
         set_hf_deepspeed_config(self)
-        dep_version_check("accelerate")
-        dep_version_check("deepspeed")
+        # dep_version_check("accelerate")
+        # dep_version_check("deepspeed")
         super().__init__(config_file_or_dict)
 
 

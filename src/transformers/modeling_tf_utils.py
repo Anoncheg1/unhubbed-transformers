@@ -55,9 +55,9 @@ from .utils import (
     WEIGHTS_INDEX_NAME,
     WEIGHTS_NAME,
     ModelOutput,
-    PushToHubMixin,
+    # PushToHubMixin,
     cached_file,
-    download_url,
+    # download_url,
     find_labels,
     has_file,
     is_offline_mode,
@@ -1106,7 +1106,7 @@ def init_copy_embeddings(old_embeddings, new_num_tokens):
     return mask, current_weights
 
 
-class TFPreTrainedModel(keras.Model, TFModelUtilsMixin, TFGenerationMixin, PushToHubMixin):
+class TFPreTrainedModel(keras.Model, TFModelUtilsMixin, TFGenerationMixin): # , PushToHubMixin
     r"""
     Base class for all TF models.
 
@@ -2786,7 +2786,7 @@ class TFPreTrainedModel(keras.Model, TFModelUtilsMixin, TFGenerationMixin, PushT
                 is_local = True
             elif is_remote_url(pretrained_model_name_or_path):
                 filename = pretrained_model_name_or_path
-                resolved_archive_file = download_url(pretrained_model_name_or_path)
+                # resolved_archive_file = download_url(pretrained_model_name_or_path)
             else:
                 # set correct filename
                 if from_pt:

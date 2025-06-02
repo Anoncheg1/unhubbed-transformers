@@ -16,7 +16,7 @@ from collections import UserDict
 from typing import Union
 
 import numpy as np
-import requests
+# import requests
 
 from ..utils import (
     add_end_docstrings,

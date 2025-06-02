@@ -42,12 +42,12 @@ from .utils import (
     SAFE_WEIGHTS_NAME,
     WEIGHTS_INDEX_NAME,
     WEIGHTS_NAME,
-    PushToHubMixin,
+    # PushToHubMixin,
     add_code_sample_docstrings,
     add_start_docstrings_to_model_forward,
     cached_file,
     copy_func,
-    download_url,
+    # download_url,
     has_file,
     is_offline_mode,
     is_remote_url,
@@ -147,7 +147,7 @@ def flax_shard_checkpoint(params, max_shard_size="10GB"):
     return shards, index
 
 
-class FlaxPreTrainedModel(PushToHubMixin, FlaxGenerationMixin):
+class FlaxPreTrainedModel(FlaxGenerationMixin): # PushToHubMixin,
     r"""
     Base class for all models.
 
@@ -753,7 +753,7 @@ class FlaxPreTrainedModel(PushToHubMixin, FlaxGenerationMixin):
                 is_local = True
             elif is_remote_url(pretrained_model_name_or_path):
                 filename = pretrained_model_name_or_path
-                resolved_archive_file = download_url(pretrained_model_name_or_path)
+                # resolved_archive_file = download_url(pretrained_model_name_or_path)
             else:
                 if from_pt:
                     filename = WEIGHTS_NAME
@@ -1239,12 +1239,12 @@ class FlaxPreTrainedModel(PushToHubMixin, FlaxGenerationMixin):
         cls._auto_class = auto_class
 
 
-# To update the docstring, we need to copy the method, otherwise we change the original docstring.
-FlaxPreTrainedModel.push_to_hub = copy_func(FlaxPreTrainedModel.push_to_hub)
-if FlaxPreTrainedModel.push_to_hub.__doc__ is not None:
-    FlaxPreTrainedModel.push_to_hub.__doc__ = FlaxPreTrainedModel.push_to_hub.__doc__.format(
-        object="model", object_class="FlaxAutoModel", object_files="model checkpoint"
-    )
+# # To update the docstring, we need to copy the method, otherwise we change the original docstring.
+# FlaxPreTrainedModel.push_to_hub = copy_func(FlaxPreTrainedModel.push_to_hub)
+# if FlaxPreTrainedModel.push_to_hub.__doc__ is not None:
+#     FlaxPreTrainedModel.push_to_hub.__doc__ = FlaxPreTrainedModel.push_to_hub.__doc__.format(
+#         object="model", object_class="FlaxAutoModel", object_files="model checkpoint"
+#     )
 
 
 def overwrite_call_docstring(model_class, docstring):

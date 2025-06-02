@@ -20,7 +20,7 @@ from io import BytesIO
 from typing import Optional, Union
 
 import numpy as np
-import requests
+# import requests
 from packaging import version
 
 from .utils import (

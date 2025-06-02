@@ -20,7 +20,7 @@ import os
 import platform
 from argparse import ArgumentParser
 
-import huggingface_hub
+# import huggingface_hub
 
 from .. import __version__ as version
 from ..integrations.deepspeed import is_deepspeed_available
