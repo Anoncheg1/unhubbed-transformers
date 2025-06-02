@@ -1,0 +1,1440 @@
+diff --git a/README.md b/README.md
+index f808355..7c5b0b2 100644
+--- a/README.md
++++ b/README.md
+@@ -1,321 +1,59 @@
+-<!---
+-Copyright 2020 The HuggingFace Team. All rights reserved.
+-
+-Licensed under the Apache License, Version 2.0 (the "License");
+-you may not use this file except in compliance with the License.
+-You may obtain a copy of the License at
+-
+-    http://www.apache.org/licenses/LICENSE-2.0
+-
+-Unless required by applicable law or agreed to in writing, software
+-distributed under the License is distributed on an "AS IS" BASIS,
+-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-See the License for the specific language governing permissions and
+-limitations under the License.
+--->
+-
+-<p align="center">
+-  <picture>
+-    <source media="(prefers-color-scheme: dark)" srcset="https://huggingface.co/datasets/huggingface/documentation-images/raw/main/transformers-logo-dark.svg">
+-    <source media="(prefers-color-scheme: light)" srcset="https://huggingface.co/datasets/huggingface/documentation-images/raw/main/transformers-logo-light.svg">
+-    <img alt="Hugging Face Transformers Library" src="https://huggingface.co/datasets/huggingface/documentation-images/raw/main/transformers-logo-light.svg" width="352" height="59" style="max-width: 100%;">
+-  </picture>
+-  <br/>
+-  <br/>
+-</p>
+-
+-<p align="center">
+-    <a href="https://circleci.com/gh/huggingface/transformers"><img alt="Build" src="https://img.shields.io/circleci/build/github/huggingface/transformers/main"></a>
+-    <a href="https://github.com/huggingface/transformers/blob/main/LICENSE"><img alt="GitHub" src="https://img.shields.io/github/license/huggingface/transformers.svg?color=blue"></a>
+-    <a href="https://huggingface.co/docs/transformers/index"><img alt="Documentation" src="https://img.shields.io/website/http/huggingface.co/docs/transformers/index.svg?down_color=red&down_message=offline&up_message=online"></a>
+-    <a href="https://github.com/huggingface/transformers/releases"><img alt="GitHub release" src="https://img.shields.io/github/release/huggingface/transformers.svg"></a>
+-    <a href="https://github.com/huggingface/transformers/blob/main/CODE_OF_CONDUCT.md"><img alt="Contributor Covenant" src="https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg"></a>
+-    <a href="https://zenodo.org/badge/latestdoi/155220641"><img src="https://zenodo.org/badge/155220641.svg" alt="DOI"></a>
+-</p>
+-
+-<h4 align="center">
+-    <p>
+-        <b>English</b> |
+-        <a href="https://github.com/huggingface/transformers/blob/main/i18n/README_zh-hans.md">简体中文</a> |
+-        <a href="https://github.com/huggingface/transformers/blob/main/i18n/README_zh-hant.md">繁體中文</a> |
+-        <a href="https://github.com/huggingface/transformers/blob/main/i18n/README_ko.md">한국어</a> |
+-        <a href="https://github.com/huggingface/transformers/blob/main/i18n/README_es.md">Español</a> |
+-        <a href="https://github.com/huggingface/transformers/blob/main/i18n/README_ja.md">日本語</a> |
+-        <a href="https://github.com/huggingface/transformers/blob/main/i18n/README_hd.md">हिन्दी</a> |
+-        <a href="https://github.com/huggingface/transformers/blob/main/i18n/README_ru.md">Русский</a> |
+-        <a href="https://github.com/huggingface/transformers/blob/main/i18n/README_pt-br.md">Рortuguês</a> |
+-        <a href="https://github.com/huggingface/transformers/blob/main/i18n/README_te.md">తెలుగు</a> |
+-        <a href="https://github.com/huggingface/transformers/blob/main/i18n/README_fr.md">Français</a> |
+-        <a href="https://github.com/huggingface/transformers/blob/main/i18n/README_de.md">Deutsch</a> |
+-        <a href="https://github.com/huggingface/transformers/blob/main/i18n/README_vi.md">Tiếng Việt</a> |
+-	<a href="https://github.com/huggingface/transformers/blob/main/i18n/README_ar.md">العربية</a> |
+-    </p>
+-</h4>
+-
+-<h3 align="center">
+-    <p>State-of-the-art Machine Learning for JAX, PyTorch and TensorFlow</p>
+-</h3>
+-
+-<h3 align="center">
+-    <a href="https://hf.co/course"><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/course_banner.png"></a>
+-</h3>
+-
+-🤗 Transformers provides thousands of pretrained models to perform tasks on different modalities such as text, vision, and audio.
+-
+-These models can be applied on:
+-
+-* 📝 Text, for tasks like text classification, information extraction, question answering, summarization, translation, and text generation, in over 100 languages.
+-* 🖼️ Images, for tasks like image classification, object detection, and segmentation.
+-* 🗣️ Audio, for tasks like speech recognition and audio classification.
+-
+-Transformer models can also perform tasks on **several modalities combined**, such as table question answering, optical character recognition, information extraction from scanned documents, video classification, and visual question answering.
+-
+-🤗 Transformers provides APIs to quickly download and use those pretrained models on a given text, fine-tune them on your own datasets and then share them with the community on our [model hub](https://huggingface.co/models). At the same time, each python module defining an architecture is fully standalone and can be modified to enable quick research experiments.
+-
+-🤗 Transformers is backed by the three most popular deep learning libraries — [Jax](https://jax.readthedocs.io/en/latest/), [PyTorch](https://pytorch.org/) and [TensorFlow](https://www.tensorflow.org/) — with a seamless integration between them. It's straightforward to train your models with one before loading them for inference with the other.
+-
+-## Online demos
+-
+-You can test most of our models directly on their pages from the [model hub](https://huggingface.co/models). We also offer [private model hosting, versioning, & an inference API](https://huggingface.co/pricing) for public and private models.
+-
+-Here are a few examples:
+-
+-In Natural Language Processing:
+-- [Masked word completion with BERT](https://huggingface.co/google-bert/bert-base-uncased?text=Paris+is+the+%5BMASK%5D+of+France)
+-- [Named Entity Recognition with Electra](https://huggingface.co/dbmdz/electra-large-discriminator-finetuned-conll03-english?text=My+name+is+Sarah+and+I+live+in+London+city)
+-- [Text generation with Mistral](https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.2)
+-- [Natural Language Inference with RoBERTa](https://huggingface.co/FacebookAI/roberta-large-mnli?text=The+dog+was+lost.+Nobody+lost+any+animal)
+-- [Summarization with BART](https://huggingface.co/facebook/bart-large-cnn?text=The+tower+is+324+metres+%281%2C063+ft%29+tall%2C+about+the+same+height+as+an+81-storey+building%2C+and+the+tallest+structure+in+Paris.+Its+base+is+square%2C+measuring+125+metres+%28410+ft%29+on+each+side.+During+its+construction%2C+the+Eiffel+Tower+surpassed+the+Washington+Monument+to+become+the+tallest+man-made+structure+in+the+world%2C+a+title+it+held+for+41+years+until+the+Chrysler+Building+in+New+York+City+was+finished+in+1930.+It+was+the+first+structure+to+reach+a+height+of+300+metres.+Due+to+the+addition+of+a+broadcasting+aerial+at+the+top+of+the+tower+in+1957%2C+it+is+now+taller+than+the+Chrysler+Building+by+5.2+metres+%2817+ft%29.+Excluding+transmitters%2C+the+Eiffel+Tower+is+the+second+tallest+free-standing+structure+in+France+after+the+Millau+Viaduct)
+-- [Question answering with DistilBERT](https://huggingface.co/distilbert/distilbert-base-uncased-distilled-squad?text=Which+name+is+also+used+to+describe+the+Amazon+rainforest+in+English%3F&context=The+Amazon+rainforest+%28Portuguese%3A+Floresta+Amaz%C3%B4nica+or+Amaz%C3%B4nia%3B+Spanish%3A+Selva+Amaz%C3%B3nica%2C+Amazon%C3%ADa+or+usually+Amazonia%3B+French%3A+For%C3%AAt+amazonienne%3B+Dutch%3A+Amazoneregenwoud%29%2C+also+known+in+English+as+Amazonia+or+the+Amazon+Jungle%2C+is+a+moist+broadleaf+forest+that+covers+most+of+the+Amazon+basin+of+South+America.+This+basin+encompasses+7%2C000%2C000+square+kilometres+%282%2C700%2C000+sq+mi%29%2C+of+which+5%2C500%2C000+square+kilometres+%282%2C100%2C000+sq+mi%29+are+covered+by+the+rainforest.+This+region+includes+territory+belonging+to+nine+nations.+The+majority+of+the+forest+is+contained+within+Brazil%2C+with+60%25+of+the+rainforest%2C+followed+by+Peru+with+13%25%2C+Colombia+with+10%25%2C+and+with+minor+amounts+in+Venezuela%2C+Ecuador%2C+Bolivia%2C+Guyana%2C+Suriname+and+French+Guiana.+States+or+departments+in+four+nations+contain+%22Amazonas%22+in+their+names.+The+Amazon+represents+over+half+of+the+planet%27s+remaining+rainforests%2C+and+comprises+the+largest+and+most+biodiverse+tract+of+tropical+rainforest+in+the+world%2C+with+an+estimated+390+billion+individual+trees+divided+into+16%2C000+species)
+-- [Translation with T5](https://huggingface.co/google-t5/t5-base?text=My+name+is+Wolfgang+and+I+live+in+Berlin)
+-
+-In Computer Vision:
+-- [Image classification with ViT](https://huggingface.co/google/vit-base-patch16-224)
+-- [Object Detection with DETR](https://huggingface.co/facebook/detr-resnet-50)
+-- [Semantic Segmentation with SegFormer](https://huggingface.co/nvidia/segformer-b0-finetuned-ade-512-512)
+-- [Panoptic Segmentation with Mask2Former](https://huggingface.co/facebook/mask2former-swin-large-coco-panoptic)
+-- [Depth Estimation with Depth Anything](https://huggingface.co/docs/transformers/main/model_doc/depth_anything)
+-- [Video Classification with VideoMAE](https://huggingface.co/docs/transformers/model_doc/videomae)
+-- [Universal Segmentation with OneFormer](https://huggingface.co/shi-labs/oneformer_ade20k_dinat_large)
+-
+-In Audio:
+-- [Automatic Speech Recognition with Whisper](https://huggingface.co/openai/whisper-large-v3)
+-- [Keyword Spotting with Wav2Vec2](https://huggingface.co/superb/wav2vec2-base-superb-ks)
+-- [Audio Classification with Audio Spectrogram Transformer](https://huggingface.co/MIT/ast-finetuned-audioset-10-10-0.4593)
+-
+-In Multimodal tasks:
+-- [Table Question Answering with TAPAS](https://huggingface.co/google/tapas-base-finetuned-wtq)
+-- [Visual Question Answering with ViLT](https://huggingface.co/dandelin/vilt-b32-finetuned-vqa)
+-- [Image captioning with LLaVa](https://huggingface.co/llava-hf/llava-1.5-7b-hf)
+-- [Zero-shot Image Classification with SigLIP](https://huggingface.co/google/siglip-so400m-patch14-384)
+-- [Document Question Answering with LayoutLM](https://huggingface.co/impira/layoutlm-document-qa)
+-- [Zero-shot Video Classification with X-CLIP](https://huggingface.co/docs/transformers/model_doc/xclip)
+-- [Zero-shot Object Detection with OWLv2](https://huggingface.co/docs/transformers/en/model_doc/owlv2)
+-- [Zero-shot Image Segmentation with CLIPSeg](https://huggingface.co/docs/transformers/model_doc/clipseg)
+-- [Automatic Mask Generation with SAM](https://huggingface.co/docs/transformers/model_doc/sam)
+-
+-
+-## 100 projects using Transformers
+-
+-Transformers is more than a toolkit to use pretrained models: it's a community of projects built around it and the
+-Hugging Face Hub. We want Transformers to enable developers, researchers, students, professors, engineers, and anyone
+-else to build their dream projects.
+-
+-In order to celebrate the 100,000 stars of transformers, we have decided to put the spotlight on the
+-community, and we have created the [awesome-transformers](./awesome-transformers.md) page which lists 100
+-incredible projects built in the vicinity of transformers.
+-
+-If you own or use a project that you believe should be part of the list, please open a PR to add it!
+-
+-## If you are looking for custom support from the Hugging Face team
+-
+-<a target="_blank" href="https://huggingface.co/support">
+-    <img alt="HuggingFace Expert Acceleration Program" src="https://cdn-media.huggingface.co/marketing/transformers/new-support-improved.png" style="max-width: 600px; border: 1px solid #eee; border-radius: 4px; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);">
+-</a><br>
+-
+-## Quick tour
+-
+-To immediately use a model on a given input (text, image, audio, ...), we provide the `pipeline` API. Pipelines group together a pretrained model with the preprocessing that was used during that model's training. Here is how to quickly use a pipeline to classify positive versus negative texts:
+-
+-```python
+->>> from transformers import pipeline
+-
+-# Allocate a pipeline for sentiment-analysis
+->>> classifier = pipeline('sentiment-analysis')
+->>> classifier('We are very happy to introduce pipeline to the transformers repository.')
+-[{'label': 'POSITIVE', 'score': 0.9996980428695679}]
++# Dependencies, from file ‘dependency_versions_check.py’
++- "python",
++- regex - for OpenAI GPT
++  - https://pypi.org/project/regex/ https://github.com/mrabarnett/mrab-regex/
++- tqdm - to print progress bar.
++- filelock https://github.com/tox-dev/filelock/ https://pypi.org/project/filelock/
++- requests - HTTP requests
++- packaging - parse versions
++- filelock - filesystem locks, e.g., to prevent parallel downloads
++- numpy
++- # tokenizers (commented) - https://github.com/huggingface/tokenizers
++  - Provides “Fast” Rust implementations of today's most used tokenizers.
++  - Big amount of Rust Carge open-source dependencies.
++- # "huggingface-hub"(commented) - communication with HF site.
++- safetensors - HF model format for deep learning models, essential dependency.
++  - https://github.com/huggingface/safetensors
++  - Big amount of Rust Carge open-source (in theory) dependencies.
++- # "accelerate" (commented) - simplify processes of training at devices and nodes.
++  - https://github.com/huggingface/accelerate
++- # "pyyaml" (commented) - used for the model cards metadata, YAML parser-framework.
++# Dependencies installation
++```sh
++pip install regex tqdm filelock requests packaging filelock numpy
++pip install safetensors
+ ```
+-
+-The second line of code downloads and caches the pretrained model used by the pipeline, while the third evaluates it on the given text. Here, the answer is "positive" with a confidence of 99.97%.
+-
+-Many tasks have a pre-trained `pipeline` ready to go, in NLP but also in computer vision and speech. For example, we can easily extract detected objects in an image:
+-
+-``` python
+->>> import requests
+->>> from PIL import Image
+->>> from transformers import pipeline
+-
+-# Download an image with cute cats
+->>> url = "https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/coco_sample.png"
+->>> image_data = requests.get(url, stream=True).raw
+->>> image = Image.open(image_data)
+-
+-# Allocate a pipeline for object detection
+->>> object_detector = pipeline('object-detection')
+->>> object_detector(image)
+-[{'score': 0.9982201457023621,
+-  'label': 'remote',
+-  'box': {'xmin': 40, 'ymin': 70, 'xmax': 175, 'ymax': 117}},
+- {'score': 0.9960021376609802,
+-  'label': 'remote',
+-  'box': {'xmin': 333, 'ymin': 72, 'xmax': 368, 'ymax': 187}},
+- {'score': 0.9954745173454285,
+-  'label': 'couch',
+-  'box': {'xmin': 0, 'ymin': 1, 'xmax': 639, 'ymax': 473}},
+- {'score': 0.9988006353378296,
+-  'label': 'cat',
+-  'box': {'xmin': 13, 'ymin': 52, 'xmax': 314, 'ymax': 470}},
+- {'score': 0.9986783862113953,
+-  'label': 'cat',
+-  'box': {'xmin': 345, 'ymin': 23, 'xmax': 640, 'ymax': 368}}]
++# Installation
++```sh
++python setup.py install --user
+ ```
+-
+-Here, we get a list of objects detected in the image, with a box surrounding the object and a confidence score. Here is the original image on the left, with the predictions displayed on the right:
+-
+-<h3 align="center">
+-    <a><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/coco_sample.png" width="400"></a>
+-    <a><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/coco_sample_post_processed.png" width="400"></a>
+-</h3>
+-
+-You can learn more about the tasks supported by the `pipeline` API in [this tutorial](https://huggingface.co/docs/transformers/task_summary).
+-
+-In addition to `pipeline`, to download and use any of the pretrained models on your given task, all it takes is three lines of code. Here is the PyTorch version:
+-```python
+->>> from transformers import AutoTokenizer, AutoModel
+-
+->>> tokenizer = AutoTokenizer.from_pretrained("google-bert/bert-base-uncased")
+->>> model = AutoModel.from_pretrained("google-bert/bert-base-uncased")
+-
+->>> inputs = tokenizer("Hello world!", return_tensors="pt")
+->>> outputs = model(**inputs)
+-```
+-
+-And here is the equivalent code for TensorFlow:
+-```python
+->>> from transformers import AutoTokenizer, TFAutoModel
+-
+->>> tokenizer = AutoTokenizer.from_pretrained("google-bert/bert-base-uncased")
+->>> model = TFAutoModel.from_pretrained("google-bert/bert-base-uncased")
+-
+->>> inputs = tokenizer("Hello world!", return_tensors="tf")
+->>> outputs = model(**inputs)
+-```
+-
+-The tokenizer is responsible for all the preprocessing the pretrained model expects and can be called directly on a single string (as in the above examples) or a list. It will output a dictionary that you can use in downstream code or simply directly pass to your model using the ** argument unpacking operator.
+-
+-The model itself is a regular [Pytorch `nn.Module`](https://pytorch.org/docs/stable/nn.html#torch.nn.Module) or a [TensorFlow `tf.keras.Model`](https://www.tensorflow.org/api_docs/python/tf/keras/Model) (depending on your backend) which you can use as usual. [This tutorial](https://huggingface.co/docs/transformers/training) explains how to integrate such a model into a classic PyTorch or TensorFlow training loop, or how to use our `Trainer` API to quickly fine-tune on a new dataset.
+-
+-## Why should I use transformers?
+-
+-1. Easy-to-use state-of-the-art models:
+-    - High performance on natural language understanding & generation, computer vision, and audio tasks.
+-    - Low barrier to entry for educators and practitioners.
+-    - Few user-facing abstractions with just three classes to learn.
+-    - A unified API for using all our pretrained models.
+-
+-1. Lower compute costs, smaller carbon footprint:
+-    - Researchers can share trained models instead of always retraining.
+-    - Practitioners can reduce compute time and production costs.
+-    - Dozens of architectures with over 400,000 pretrained models across all modalities.
+-
+-1. Choose the right framework for every part of a model's lifetime:
+-    - Train state-of-the-art models in 3 lines of code.
+-    - Move a single model between TF2.0/PyTorch/JAX frameworks at will.
+-    - Seamlessly pick the right framework for training, evaluation, and production.
+-
+-1. Easily customize a model or an example to your needs:
+-    - We provide examples for each architecture to reproduce the results published by its original authors.
+-    - Model internals are exposed as consistently as possible.
+-    - Model files can be used independently of the library for quick experiments.
+-
+-## Why shouldn't I use transformers?
+-
+-- This library is not a modular toolbox of building blocks for neural nets. The code in the model files is not refactored with additional abstractions on purpose, so that researchers can quickly iterate on each of the models without diving into additional abstractions/files.
+-- The training API is not intended to work on any model but is optimized to work with the models provided by the library. For generic machine learning loops, you should use another library (possibly, [Accelerate](https://huggingface.co/docs/accelerate)).
+-- While we strive to present as many use cases as possible, the scripts in our [examples folder](https://github.com/huggingface/transformers/tree/main/examples) are just that: examples. It is expected that they won't work out-of-the-box on your specific problem and that you will be required to change a few lines of code to adapt them to your needs.
+-
+-## Installation
+-
+-### With pip
+-
+-This repository is tested on Python 3.8+, Flax 0.4.1+, PyTorch 1.11+, and TensorFlow 2.6+.
+-
+-You should install 🤗 Transformers in a [virtual environment](https://docs.python.org/3/library/venv.html). If you're unfamiliar with Python virtual environments, check out the [user guide](https://packaging.python.org/guides/installing-using-pip-and-virtual-environments/).
+-
+-First, create a virtual environment with the version of Python you're going to use and activate it.
+-
+-Then, you will need to install at least one of Flax, PyTorch, or TensorFlow.
+-Please refer to [TensorFlow installation page](https://www.tensorflow.org/install/), [PyTorch installation page](https://pytorch.org/get-started/locally/#start-locally) and/or [Flax](https://github.com/google/flax#quick-install) and [Jax](https://github.com/google/jax#installation) installation pages regarding the specific installation command for your platform.
+-
+-When one of those backends has been installed, 🤗 Transformers can be installed using pip as follows:
+-
+-```bash
+-pip install transformers
+-```
+-
+-If you'd like to play with the examples or need the bleeding edge of the code and can't wait for a new release, you must [install the library from source](https://huggingface.co/docs/transformers/installation#installing-from-source).
+-
+-### With conda
+-
+-🤗 Transformers can be installed using conda as follows:
+-
+-```shell script
+-conda install conda-forge::transformers
+-```
+-
+-> **_NOTE:_** Installing `transformers` from the `huggingface` channel is deprecated.
+-
+-Follow the installation pages of Flax, PyTorch or TensorFlow to see how to install them with conda.
+-
+-> **_NOTE:_**  On Windows, you may be prompted to activate Developer Mode in order to benefit from caching. If this is not an option for you, please let us know in [this issue](https://github.com/huggingface/huggingface_hub/issues/1062).
+-
+-## Model architectures
+-
+-**[All the model checkpoints](https://huggingface.co/models)** provided by 🤗 Transformers are seamlessly integrated from the huggingface.co [model hub](https://huggingface.co/models), where they are uploaded directly by [users](https://huggingface.co/users) and [organizations](https://huggingface.co/organizations).
+-
+-Current number of checkpoints: ![](https://img.shields.io/endpoint?url=https://huggingface.co/api/shields/models&color=brightgreen)
+-
+-🤗 Transformers currently provides the following architectures: see [here](https://huggingface.co/docs/transformers/model_summary) for a high-level summary of each them.
+-
+-To check if each model has an implementation in Flax, PyTorch or TensorFlow, or has an associated tokenizer backed by the 🤗 Tokenizers library, refer to [this table](https://huggingface.co/docs/transformers/index#supported-frameworks).
+-
+-These implementations have been tested on several datasets (see the example scripts) and should match the performance of the original implementations. You can find more details on performance in the Examples section of the [documentation](https://github.com/huggingface/transformers/tree/main/examples).
+-
+-
+-## Learn more
+-
+-| Section | Description |
+-|-|-|
+-| [Documentation](https://huggingface.co/docs/transformers/) | Full API documentation and tutorials |
+-| [Task summary](https://huggingface.co/docs/transformers/task_summary) | Tasks supported by 🤗 Transformers |
+-| [Preprocessing tutorial](https://huggingface.co/docs/transformers/preprocessing) | Using the `Tokenizer` class to prepare data for the models |
+-| [Training and fine-tuning](https://huggingface.co/docs/transformers/training) | Using the models provided by 🤗 Transformers in a PyTorch/TensorFlow training loop and the `Trainer` API |
+-| [Quick tour: Fine-tuning/usage scripts](https://github.com/huggingface/transformers/tree/main/examples) | Example scripts for fine-tuning models on a wide range of tasks |
+-| [Model sharing and uploading](https://huggingface.co/docs/transformers/model_sharing) | Upload and share your fine-tuned models with the community |
+-
+-## Citation
+-
+-We now have a [paper](https://www.aclweb.org/anthology/2020.emnlp-demos.6/) you can cite for the 🤗 Transformers library:
+-```bibtex
+-@inproceedings{wolf-etal-2020-transformers,
+-    title = "Transformers: State-of-the-Art Natural Language Processing",
+-    author = "Thomas Wolf and Lysandre Debut and Victor Sanh and Julien Chaumond and Clement Delangue and Anthony Moi and Pierric Cistac and Tim Rault and Rémi Louf and Morgan Funtowicz and Joe Davison and Sam Shleifer and Patrick von Platen and Clara Ma and Yacine Jernite and Julien Plu and Canwen Xu and Teven Le Scao and Sylvain Gugger and Mariama Drame and Quentin Lhoest and Alexander M. Rush",
+-    booktitle = "Proceedings of the 2020 Conference on Empirical Methods in Natural Language Processing: System Demonstrations",
+-    month = oct,
+-    year = "2020",
+-    address = "Online",
+-    publisher = "Association for Computational Linguistics",
+-    url = "https://www.aclweb.org/anthology/2020.emnlp-demos.6",
+-    pages = "38--45"
+-}
++Note: In setup.py dependencies installation from pypi.org was disabled.
++
++Or just copy `src/transformers` to `~/.local/lib/python3.12/site-packages/transformers`.
++# Changes
++[CHANGES.md](CHANGES.md "CHANGES.md")
++
++<patch.patch>
++
++```text
++ README.md                                          |  349 +-------------
++ setup.py                                           |    2
++ src/transformers/configuration_utils.py            |   28 +
++ src/transformers/dependency_versions_check.py      |    8
++ src/transformers/dynamic_module_utils.py           |   20 -
++ src/transformers/feature_extraction_utils.py       |   16 -
++ src/transformers/file_utils.py                     |   40 +-
++ src/transformers/generation/configuration_utils.py |   12
++ src/transformers/modeling_utils.py                 |   46 +-
++ src/transformers/models/__init__.py                |  516 ++++++++++----------
++ src/transformers/models/auto/auto_factory.py       |    8
++ src/transformers/models/auto/configuration_auto.py |    8
++ src/transformers/models/auto/tokenization_auto.py  |   10
++ src/transformers/safetensors_conversion.py         |   54 +-
++ src/transformers/tokenization_utils_base.py        |   35 +
++ src/transformers/utils/__init__.py                 |   50 +-
++ src/transformers/utils/hub.py                      |  231 ++++++++-
++ src/transformers/utils/logging.py                  |    5
++ src/transformers/utils/peft_utils.py               |   39 +-
++ 19 files changed, 685 insertions(+), 792 deletions(-)
+ ```
+diff --git a/setup.py b/setup.py
+index 26cb0fa..fd63490 100644
+--- a/setup.py
++++ b/setup.py
+@@ -447,7 +447,7 @@ setup(
+     extras_require=extras,
+     entry_points={"console_scripts": ["transformers-cli=transformers.commands.transformers_cli:main"]},
+     python_requires=">=3.8.0",
+-    install_requires=list(install_requires),
++    # install_requires=list(install_requires), # we disabled instllation from pypi.org
+     classifiers=[
+         "Development Status :: 5 - Production/Stable",
+         "Intended Audience :: Developers",
+diff --git a/src/transformers/configuration_utils.py b/src/transformers/configuration_utils.py
+index c6e3d90..231a33e 100755
+--- a/src/transformers/configuration_utils.py
++++ b/src/transformers/configuration_utils.py
+@@ -26,15 +26,15 @@ from packaging import version
+ 
+ from . import __version__
+ from .dynamic_module_utils import custom_object_save
+-from .modeling_gguf_pytorch_utils import load_gguf_checkpoint
++# from .modeling_gguf_pytorch_utils import load_gguf_checkpoint
+ from .utils import (
+     CONFIG_NAME,
+-    PushToHubMixin,
++    # PushToHubMixin,
+     add_model_info_to_auto_map,
+     add_model_info_to_custom_pipelines,
+     cached_file,
+     copy_func,
+-    download_url,
++    # download_url,
+     extract_commit_hash,
+     is_remote_url,
+     is_torch_available,
+@@ -47,7 +47,7 @@ logger = logging.get_logger(__name__)
+ _re_configuration_file = re.compile(r"config\.(.*)\.json")
+ 
+ 
+-class PretrainedConfig(PushToHubMixin):
++class PretrainedConfig(): # PushToHubMixin
+     # no-format
+     r"""
+     Base class for all configuration classes. Handles a few parameters common to all models' configurations as well as
+@@ -650,11 +650,11 @@ class PretrainedConfig(PushToHubMixin):
+                 )
+ 
+         try:
+-            if gguf_file:
+-                config_dict = load_gguf_checkpoint(resolved_config_file, return_tensors=False)["config"]
+-            else:
+-                # Load config dict
+-                config_dict = cls._dict_from_json_file(resolved_config_file)
++            # if gguf_file:
++            #     config_dict = load_gguf_checkpoint(resolved_config_file, return_tensors=False)["config"]
++            # else:
++            # Load config dict
++            config_dict = cls._dict_from_json_file(resolved_config_file)
+ 
+             config_dict["_commit_hash"] = commit_hash
+         except (json.JSONDecodeError, UnicodeDecodeError):
+@@ -1107,8 +1107,8 @@ def recursive_diff_dict(dict_a, dict_b, config_obj=None):
+     return diff
+ 
+ 
+-PretrainedConfig.push_to_hub = copy_func(PretrainedConfig.push_to_hub)
+-if PretrainedConfig.push_to_hub.__doc__ is not None:
+-    PretrainedConfig.push_to_hub.__doc__ = PretrainedConfig.push_to_hub.__doc__.format(
+-        object="config", object_class="AutoConfig", object_files="configuration file"
+-    )
++# PretrainedConfig.push_to_hub = copy_func(PretrainedConfig.push_to_hub)
++# if PretrainedConfig.push_to_hub.__doc__ is not None:
++#     PretrainedConfig.push_to_hub.__doc__ = PretrainedConfig.push_to_hub.__doc__.format(
++#         object="config", object_class="AutoConfig", object_files="configuration file"
++#     )
+diff --git a/src/transformers/dependency_versions_check.py b/src/transformers/dependency_versions_check.py
+index 82d0785..e5d79f7 100644
+--- a/src/transformers/dependency_versions_check.py
++++ b/src/transformers/dependency_versions_check.py
+@@ -30,11 +30,11 @@ pkgs_to_check_at_runtime = [
+     "packaging",
+     "filelock",
+     "numpy",
+-    "tokenizers",
+-    "huggingface-hub",
++    # "tokenizers",
++    # "huggingface-hub",
+     "safetensors",
+-    "accelerate",
+-    "pyyaml",
++    # "accelerate",
++    # "pyyaml",
+ ]
+ 
+ for pkg in pkgs_to_check_at_runtime:
+diff --git a/src/transformers/dynamic_module_utils.py b/src/transformers/dynamic_module_utils.py
+index 08b6701..1daf3e9 100644
+--- a/src/transformers/dynamic_module_utils.py
++++ b/src/transformers/dynamic_module_utils.py
+@@ -27,11 +27,11 @@ import warnings
+ from pathlib import Path
+ from typing import Any, Dict, List, Optional, Union
+ 
+-from huggingface_hub import try_to_load_from_cache
++# from huggingface_hub import try_to_load_from_cache
+ 
+ from .utils import (
+-    HF_MODULES_CACHE,
+-    TRANSFORMERS_DYNAMIC_MODULE_NAME,
++    # HF_MODULES_CACHE,
++    # TRANSFORMERS_DYNAMIC_MODULE_NAME,
+     cached_file,
+     extract_commit_hash,
+     is_offline_mode,
+@@ -296,13 +296,13 @@ def get_cached_module_file(
+     # Download and cache module_file from the repo `pretrained_model_name_or_path` of grab it if it's a local file.
+     pretrained_model_name_or_path = str(pretrained_model_name_or_path)
+     is_local = os.path.isdir(pretrained_model_name_or_path)
+-    if is_local:
+-        submodule = os.path.basename(pretrained_model_name_or_path)
+-    else:
+-        submodule = pretrained_model_name_or_path.replace("/", os.path.sep)
+-        cached_module = try_to_load_from_cache(
+-            pretrained_model_name_or_path, module_file, cache_dir=cache_dir, revision=_commit_hash, repo_type=repo_type
+-        )
++    assert is_local
++    submodule = os.path.basename(pretrained_model_name_or_path)
++    # else:
++    #     submodule = pretrained_model_name_or_path.replace("/", os.path.sep)
++    #     cached_module = try_to_load_from_cache(
++    #         pretrained_model_name_or_path, module_file, cache_dir=cache_dir, revision=_commit_hash, repo_type=repo_type
++    #     )
+ 
+     new_files = []
+     try:
+diff --git a/src/transformers/feature_extraction_utils.py b/src/transformers/feature_extraction_utils.py
+index cda7808..2ea2e45 100644
+--- a/src/transformers/feature_extraction_utils.py
++++ b/src/transformers/feature_extraction_utils.py
+@@ -28,13 +28,13 @@ import numpy as np
+ from .dynamic_module_utils import custom_object_save
+ from .utils import (
+     FEATURE_EXTRACTOR_NAME,
+-    PushToHubMixin,
++    # PushToHubMixin,
+     TensorType,
+     add_model_info_to_auto_map,
+     add_model_info_to_custom_pipelines,
+     cached_file,
+     copy_func,
+-    download_url,
++    # download_url,
+     is_flax_available,
+     is_jax_tensor,
+     is_numpy_array,
+@@ -245,7 +245,7 @@ class BatchFeature(UserDict):
+         return self
+ 
+ 
+-class FeatureExtractionMixin(PushToHubMixin):
++class FeatureExtractionMixin(): # PushToHubMixin
+     """
+     This is a feature extraction mixin used to provide saving/loading functionality for sequential and image feature
+     extractors.
+@@ -690,8 +690,8 @@ class FeatureExtractionMixin(PushToHubMixin):
+         cls._auto_class = auto_class
+ 
+ 
+-FeatureExtractionMixin.push_to_hub = copy_func(FeatureExtractionMixin.push_to_hub)
+-if FeatureExtractionMixin.push_to_hub.__doc__ is not None:
+-    FeatureExtractionMixin.push_to_hub.__doc__ = FeatureExtractionMixin.push_to_hub.__doc__.format(
+-        object="feature extractor", object_class="AutoFeatureExtractor", object_files="feature extractor file"
+-    )
++# FeatureExtractionMixin.push_to_hub = copy_func(FeatureExtractionMixin.push_to_hub)
++# if FeatureExtractionMixin.push_to_hub.__doc__ is not None:
++#     FeatureExtractionMixin.push_to_hub.__doc__ = FeatureExtractionMixin.push_to_hub.__doc__.format(
++#         object="feature extractor", object_class="AutoFeatureExtractor", object_files="feature extractor file"
++#     )
+diff --git a/src/transformers/file_utils.py b/src/transformers/file_utils.py
+index 2d94777..f4397df 100644
+--- a/src/transformers/file_utils.py
++++ b/src/transformers/file_utils.py
+@@ -17,14 +17,14 @@ File utilities: utilities related to download and cache models
+ This module should not be update anymore and is only left for backward compatibility.
+ """
+ 
+-from huggingface_hub import get_full_repo_name  # for backward compatibility
+-from huggingface_hub.constants import HF_HUB_DISABLE_TELEMETRY as DISABLE_TELEMETRY  # for backward compatibility
++# from huggingface_hub import get_full_repo_name  # for backward compatibility
++# from huggingface_hub.constants import HF_HUB_DISABLE_TELEMETRY as DISABLE_TELEMETRY  # for backward compatibility
+ 
+ from . import __version__
+ 
+ # Backward compatibility imports, to make sure all those objects can be found in file_utils
+ from .utils import (
+-    CLOUDFRONT_DISTRIB_PREFIX,
++    # CLOUDFRONT_DISTRIB_PREFIX,
+     CONFIG_NAME,
+     DUMMY_INPUTS,
+     DUMMY_MASK,
+@@ -32,21 +32,21 @@ from .utils import (
+     ENV_VARS_TRUE_VALUES,
+     FEATURE_EXTRACTOR_NAME,
+     FLAX_WEIGHTS_NAME,
+-    HF_MODULES_CACHE,
+-    HUGGINGFACE_CO_PREFIX,
+-    HUGGINGFACE_CO_RESOLVE_ENDPOINT,
++    # HF_MODULES_CACHE,
++    # HUGGINGFACE_CO_PREFIX,
++    # HUGGINGFACE_CO_RESOLVE_ENDPOINT,
+     MODEL_CARD_NAME,
+     MULTIPLE_CHOICE_DUMMY_INPUTS,
+-    PYTORCH_PRETRAINED_BERT_CACHE,
+-    PYTORCH_TRANSFORMERS_CACHE,
+-    S3_BUCKET_PREFIX,
++    # PYTORCH_PRETRAINED_BERT_CACHE,
++    # PYTORCH_TRANSFORMERS_CACHE,
++    # S3_BUCKET_PREFIX,
+     SENTENCEPIECE_UNDERLINE,
+     SPIECE_UNDERLINE,
+     TF2_WEIGHTS_NAME,
+     TF_WEIGHTS_NAME,
+     TORCH_FX_REQUIRED_VERSION,
+-    TRANSFORMERS_CACHE,
+-    TRANSFORMERS_DYNAMIC_MODULE_NAME,
++    # TRANSFORMERS_CACHE,
++    # TRANSFORMERS_DYNAMIC_MODULE_NAME,
+     USE_JAX,
+     USE_TF,
+     USE_TORCH,
+@@ -54,13 +54,13 @@ from .utils import (
+     WEIGHTS_NAME,
+     ContextManagers,
+     DummyObject,
+-    EntryNotFoundError,
++    # EntryNotFoundError,
+     ExplicitEnum,
+     ModelOutput,
+     PaddingStrategy,
+-    PushToHubMixin,
+-    RepositoryNotFoundError,
+-    RevisionNotFoundError,
++    # PushToHubMixin,
++    # RepositoryNotFoundError,
++    # RevisionNotFoundError,
+     TensorType,
+     _LazyModule,
+     add_code_sample_docstrings,
+@@ -70,12 +70,12 @@ from .utils import (
+     cached_property,
+     copy_func,
+     default_cache_path,
+-    define_sagemaker_information,
+-    get_cached_models,
+-    get_file_from_repo,
++    # define_sagemaker_information,
++    # get_cached_models,
++    # get_file_from_repo,
+     get_torch_version,
+-    has_file,
+-    http_user_agent,
++    # has_file,
++    # http_user_agent,
+     is_apex_available,
+     is_bs4_available,
+     is_coloredlogs_available,
+diff --git a/src/transformers/generation/configuration_utils.py b/src/transformers/generation/configuration_utils.py
+index 160a8a7..e5f3642 100644
+--- a/src/transformers/generation/configuration_utils.py
++++ b/src/transformers/generation/configuration_utils.py
+@@ -26,11 +26,11 @@ from ..configuration_utils import PretrainedConfig
+ from ..utils import (
+     GENERATION_CONFIG_NAME,
+     ExplicitEnum,
+-    PushToHubMixin,
+-    cached_file,
+-    download_url,
+-    extract_commit_hash,
+-    is_remote_url,
++    # PushToHubMixin,
++    # cached_file,
++    # download_url,
++    # extract_commit_hash,
++    # is_remote_url,
+     is_torch_available,
+     logging,
+ )
+@@ -68,7 +68,7 @@ class GenerationMode(ExplicitEnum):
+     GROUP_BEAM_SEARCH = "group_beam_search"
+ 
+ 
+-class GenerationConfig(PushToHubMixin):
++class GenerationConfig(): # PushToHubMixin
+     # no-format
+     r"""
+     Class that holds a configuration for a generation task. A `generate` call supports the following generation methods
+diff --git a/src/transformers/modeling_utils.py b/src/transformers/modeling_utils.py
+index b943b5e..0df0624 100755
+--- a/src/transformers/modeling_utils.py
++++ b/src/transformers/modeling_utils.py
+@@ -34,7 +34,7 @@ from typing import Any, Callable, Dict, List, Optional, Set, Tuple, Union
+ from zipfile import is_zipfile
+ 
+ import torch
+-from huggingface_hub import split_torch_state_dict_into_shards
++# from huggingface_hub import split_torch_state_dict_into_shards
+ from packaging import version
+ from torch import Tensor, nn
+ from torch.nn import CrossEntropyLoss, Identity
+@@ -42,7 +42,7 @@ from torch.utils.checkpoint import checkpoint
+ 
+ from .activations import get_activation
+ from .configuration_utils import PretrainedConfig
+-from .dynamic_module_utils import custom_object_save
++# from .dynamic_module_utils import custom_object_save
+ from .generation import GenerationConfig, GenerationMixin
+ from .integrations import PeftAdapterMixin, deepspeed_config, is_deepspeed_zero3_enabled
+ from .pytorch_utils import (  # noqa: F401
+@@ -73,12 +73,12 @@ from .utils import (
+     WEIGHTS_NAME,
+     ContextManagers,
+     ModelOutput,
+-    PushToHubMixin,
++    # PushToHubMixin,
+     cached_file,
+     copy_func,
+-    download_url,
++    # download_url,
+     extract_commit_hash,
+-    has_file,
++    # has_file,
+     is_accelerate_available,
+     is_bitsandbytes_available,
+     is_flash_attn_2_available,
+@@ -1295,7 +1295,7 @@ class ModuleUtilsMixin:
+         return 6 * self.estimate_tokens(input_dict) * self.num_parameters(exclude_embeddings=exclude_embeddings)
+ 
+ 
+-class PreTrainedModel(nn.Module, ModuleUtilsMixin, GenerationMixin, PushToHubMixin, PeftAdapterMixin):
++class PreTrainedModel(nn.Module, ModuleUtilsMixin, GenerationMixin, PeftAdapterMixin): # PushToHubMixin
+     r"""
+     Base class for all models.
+ 
+@@ -2823,21 +2823,21 @@ class PreTrainedModel(nn.Module, ModuleUtilsMixin, GenerationMixin, PushToHubMix
+                 token=token,
+             )
+ 
+-    @wraps(PushToHubMixin.push_to_hub)
+-    def push_to_hub(self, *args, **kwargs):
+-        tags = self.model_tags if self.model_tags is not None else []
++    # @wraps(PushToHubMixin.push_to_hub)
++    # def push_to_hub(self, *args, **kwargs):
++    #     tags = self.model_tags if self.model_tags is not None else []
+ 
+-        tags_kwargs = kwargs.get("tags", [])
+-        if isinstance(tags_kwargs, str):
+-            tags_kwargs = [tags_kwargs]
++    #     tags_kwargs = kwargs.get("tags", [])
++    #     if isinstance(tags_kwargs, str):
++    #         tags_kwargs = [tags_kwargs]
+ 
+-        for tag in tags_kwargs:
+-            if tag not in tags:
+-                tags.append(tag)
++    #     for tag in tags_kwargs:
++    #         if tag not in tags:
++    #             tags.append(tag)
+ 
+-        if tags:
+-            kwargs["tags"] = tags
+-        return super().push_to_hub(*args, **kwargs)
++    #     if tags:
++    #         kwargs["tags"] = tags
++    #     return super().push_to_hub(*args, **kwargs)
+ 
+     def get_memory_footprint(self, return_buffers=True):
+         r"""
+@@ -4717,11 +4717,11 @@ class PreTrainedModel(nn.Module, ModuleUtilsMixin, GenerationMixin, PushToHubMix
+         return self.hf_quantizer.is_trainable
+ 
+ 
+-PreTrainedModel.push_to_hub = copy_func(PreTrainedModel.push_to_hub)
+-if PreTrainedModel.push_to_hub.__doc__ is not None:
+-    PreTrainedModel.push_to_hub.__doc__ = PreTrainedModel.push_to_hub.__doc__.format(
+-        object="model", object_class="AutoModel", object_files="model file"
+-    )
++# PreTrainedModel.push_to_hub = copy_func(PreTrainedModel.push_to_hub)
++# if PreTrainedModel.push_to_hub.__doc__ is not None:
++#     PreTrainedModel.push_to_hub.__doc__ = PreTrainedModel.push_to_hub.__doc__.format(
++#         object="model", object_class="AutoModel", object_files="model file"
++#     )
+ 
+ 
+ class PoolerStartLogits(nn.Module):
+diff --git a/src/transformers/models/auto/auto_factory.py b/src/transformers/models/auto/auto_factory.py
+index 6b572b2..314404a 100644
+--- a/src/transformers/models/auto/auto_factory.py
++++ b/src/transformers/models/auto/auto_factory.py
+@@ -22,7 +22,7 @@ import warnings
+ from collections import OrderedDict
+ 
+ from ...configuration_utils import PretrainedConfig
+-from ...dynamic_module_utils import get_class_from_dynamic_module, resolve_trust_remote_code
++# from ...dynamic_module_utils import get_class_from_dynamic_module, resolve_trust_remote_code
+ from ...utils import (
+     CONFIG_NAME,
+     cached_file,
+@@ -539,9 +539,9 @@ class _BaseAutoModelClass:
+ 
+         has_remote_code = hasattr(config, "auto_map") and cls.__name__ in config.auto_map
+         has_local_code = type(config) in cls._model_mapping.keys()
+-        trust_remote_code = resolve_trust_remote_code(
+-            trust_remote_code, pretrained_model_name_or_path, has_local_code, has_remote_code
+-        )
++        # trust_remote_code = resolve_trust_remote_code(
++        #     trust_remote_code, pretrained_model_name_or_path, has_local_code, has_remote_code
++        # )
+ 
+         # Set the adapter kwargs
+         kwargs["adapter_kwargs"] = adapter_kwargs
+diff --git a/src/transformers/models/auto/configuration_auto.py b/src/transformers/models/auto/configuration_auto.py
+index ed6aa19..e310251 100644
+--- a/src/transformers/models/auto/configuration_auto.py
++++ b/src/transformers/models/auto/configuration_auto.py
+@@ -22,7 +22,7 @@ from collections import OrderedDict
+ from typing import List, Union
+ 
+ from ...configuration_utils import PretrainedConfig
+-from ...dynamic_module_utils import get_class_from_dynamic_module, resolve_trust_remote_code
++# from ...dynamic_module_utils import get_class_from_dynamic_module, resolve_trust_remote_code
+ from ...utils import CONFIG_NAME, logging
+ 
+ 
+@@ -987,9 +987,9 @@ class AutoConfig:
+         config_dict, unused_kwargs = PretrainedConfig.get_config_dict(pretrained_model_name_or_path, **kwargs)
+         has_remote_code = "auto_map" in config_dict and "AutoConfig" in config_dict["auto_map"]
+         has_local_code = "model_type" in config_dict and config_dict["model_type"] in CONFIG_MAPPING
+-        trust_remote_code = resolve_trust_remote_code(
+-            trust_remote_code, pretrained_model_name_or_path, has_local_code, has_remote_code
+-        )
++        # trust_remote_code = resolve_trust_remote_code(
++        #     trust_remote_code, pretrained_model_name_or_path, has_local_code, has_remote_code
++        # )
+ 
+         if has_remote_code and trust_remote_code:
+             class_ref = config_dict["auto_map"]["AutoConfig"]
+diff --git a/src/transformers/models/auto/tokenization_auto.py b/src/transformers/models/auto/tokenization_auto.py
+index b094f50..0549cc8 100644
+--- a/src/transformers/models/auto/tokenization_auto.py
++++ b/src/transformers/models/auto/tokenization_auto.py
+@@ -22,8 +22,8 @@ from collections import OrderedDict
+ from typing import TYPE_CHECKING, Dict, Optional, Tuple, Union
+ 
+ from ...configuration_utils import PretrainedConfig
+-from ...dynamic_module_utils import get_class_from_dynamic_module, resolve_trust_remote_code
+-from ...modeling_gguf_pytorch_utils import load_gguf_checkpoint
++# from ...dynamic_module_utils import get_class_from_dynamic_module, resolve_trust_remote_code
++# from ...modeling_gguf_pytorch_utils import load_gguf_checkpoint
+ from ...tokenization_utils import PreTrainedTokenizer
+ from ...tokenization_utils_base import TOKENIZER_CONFIG_FILE
+ from ...utils import (
+@@ -868,9 +868,9 @@ class AutoTokenizer:
+                 or tokenizer_class_from_name(config_tokenizer_class + "Fast") is not None
+             )
+         )
+-        trust_remote_code = resolve_trust_remote_code(
+-            trust_remote_code, pretrained_model_name_or_path, has_local_code, has_remote_code
+-        )
++        # trust_remote_code = resolve_trust_remote_code(
++        #     trust_remote_code, pretrained_model_name_or_path, has_local_code, has_remote_code
++        # )
+ 
+         if has_remote_code and trust_remote_code:
+             if use_fast and tokenizer_auto_map[1] is not None:
+diff --git a/src/transformers/safetensors_conversion.py b/src/transformers/safetensors_conversion.py
+index a80927d..2cebb92 100644
+--- a/src/transformers/safetensors_conversion.py
++++ b/src/transformers/safetensors_conversion.py
+@@ -3,23 +3,25 @@ import uuid
+ from typing import Optional
+ 
+ import requests
+-from huggingface_hub import Discussion, HfApi, get_repo_discussions
++# from huggingface_hub import Discussion, HfApi, get_repo_discussions
+ 
+-from .utils import cached_file, http_user_agent, logging
++from .utils import cached_file
++# http_user_agent,
++from .utils import logging
+ 
+ 
+ logger = logging.get_logger(__name__)
+ 
+ 
+-def previous_pr(api: HfApi, model_id: str, pr_title: str, token: str) -> Optional["Discussion"]:
+-    main_commit = api.list_repo_commits(model_id, token=token)[0].commit_id
+-    for discussion in get_repo_discussions(repo_id=model_id, token=token):
+-        if discussion.title == pr_title and discussion.status == "open" and discussion.is_pull_request:
+-            commits = api.list_repo_commits(model_id, revision=discussion.git_reference, token=token)
++# def previous_pr(api: HfApi, model_id: str, pr_title: str, token: str) -> Optional["Discussion"]:
++#     main_commit = api.list_repo_commits(model_id, token=token)[0].commit_id
++#     for discussion in get_repo_discussions(repo_id=model_id, token=token):
++#         if discussion.title == pr_title and discussion.status == "open" and discussion.is_pull_request:
++#             commits = api.list_repo_commits(model_id, revision=discussion.git_reference, token=token)
+ 
+-            if main_commit == commits[1].commit_id:
+-                return discussion
+-    return None
++#             if main_commit == commits[1].commit_id:
++#                 return discussion
++#     return None
+ 
+ 
+ def spawn_conversion(token: str, private: bool, model_id: str):
+@@ -61,27 +63,27 @@ def spawn_conversion(token: str, private: bool, model_id: str):
+             logger.warning(f"Error during conversion: {repr(e)}")
+ 
+ 
+-def get_conversion_pr_reference(api: HfApi, model_id: str, **kwargs):
+-    private = api.model_info(model_id).private
++# def get_conversion_pr_reference(api: HfApi, model_id: str, **kwargs):
++#     private = api.model_info(model_id).private
+ 
+-    logger.info("Attempting to create safetensors variant")
+-    pr_title = "Adding `safetensors` variant of this model"
+-    token = kwargs.get("token")
++#     logger.info("Attempting to create safetensors variant")
++#     pr_title = "Adding `safetensors` variant of this model"
++#     token = kwargs.get("token")
+ 
+-    # This looks into the current repo's open PRs to see if a PR for safetensors was already open. If so, it
+-    # returns it. It checks that the PR was opened by the bot and not by another user so as to prevent
+-    # security breaches.
+-    pr = previous_pr(api, model_id, pr_title, token=token)
++#     # This looks into the current repo's open PRs to see if a PR for safetensors was already open. If so, it
++#     # returns it. It checks that the PR was opened by the bot and not by another user so as to prevent
++#     # security breaches.
++#     pr = previous_pr(api, model_id, pr_title, token=token)
+ 
+-    if pr is None or (not private and pr.author != "SFConvertBot"):
+-        spawn_conversion(token, private, model_id)
+-        pr = previous_pr(api, model_id, pr_title, token=token)
+-    else:
+-        logger.info("Safetensors PR exists")
++#     if pr is None or (not private and pr.author != "SFConvertBot"):
++#         spawn_conversion(token, private, model_id)
++#         pr = previous_pr(api, model_id, pr_title, token=token)
++#     else:
++#         logger.info("Safetensors PR exists")
+ 
+-    sha = f"refs/pr/{pr.num}"
++#     sha = f"refs/pr/{pr.num}"
+ 
+-    return sha
++#     return sha
+ 
+ 
+ def auto_conversion(pretrained_model_name_or_path: str, ignore_errors_during_conversion=False, **cached_file_kwargs):
+diff --git a/src/transformers/tokenization_utils_base.py b/src/transformers/tokenization_utils_base.py
+index ca61fcf..1afbafc 100644
+--- a/src/transformers/tokenization_utils_base.py
++++ b/src/transformers/tokenization_utils_base.py
+@@ -34,18 +34,18 @@ import numpy as np
+ from packaging import version
+ 
+ from . import __version__
+-from .dynamic_module_utils import custom_object_save
++# from .dynamic_module_utils import custom_object_save
+ from .utils import (
+     ExplicitEnum,
+     PaddingStrategy,
+-    PushToHubMixin,
++    # PushToHubMixin,
+     TensorType,
+     add_end_docstrings,
+     add_model_info_to_auto_map,
+     add_model_info_to_custom_pipelines,
+     cached_file,
+     copy_func,
+-    download_url,
++    # download_url,
+     extract_commit_hash,
+     get_json_schema,
+     is_flax_available,
+@@ -105,6 +105,17 @@ else:
+ 
+         def __str__(self):
+             return self.content
++        def __setstate__(self, state):
++            self.__dict__.update(state)
++        def __hash__(self):
++            return hash((self.content, self.single_word, self.lstrip, self.rstrip, self.special, self.normalized))
++
++        def __eq__(self, other):
++            if not isinstance(other, AddedToken):
++                return False
++            return (self.content, self.single_word, self.lstrip, self.rstrip, self.special, self.normalized) == (
++                other.content, other.single_word, other.lstrip, other.rstrip, other.special, other.normalized
++            )
+ 
+     @dataclass
+     class EncodingFast:
+@@ -1548,7 +1559,7 @@ INIT_TOKENIZER_DOCSTRING = r"""
+ 
+ 
+ @add_end_docstrings(INIT_TOKENIZER_DOCSTRING)
+-class PreTrainedTokenizerBase(SpecialTokensMixin, PushToHubMixin):
++class PreTrainedTokenizerBase(SpecialTokensMixin): # PushToHubMixin
+     """
+     Base class for [`PreTrainedTokenizer`] and [`PreTrainedTokenizerFast`].
+ 
+@@ -2116,7 +2127,7 @@ class PreTrainedTokenizerBase(SpecialTokensMixin, PushToHubMixin):
+                         _raise_exceptions_for_connection_errors=False,
+                         _commit_hash=commit_hash,
+                     )
+-                    commit_hash = extract_commit_hash(resolved_config_file, commit_hash)
++                    # commit_hash = extract_commit_hash(resolved_config_file, commit_hash)
+                     if resolved_config_file is not None:
+                         with open(resolved_config_file, encoding="utf-8") as reader:
+                             tokenizer_config = json.load(reader)
+@@ -2579,8 +2590,8 @@ class PreTrainedTokenizerBase(SpecialTokensMixin, PushToHubMixin):
+ 
+         # If we have a custom model, we copy the file defining it in the folder and set the attributes so it can be
+         # loaded from the Hub.
+-        if self._auto_class is not None:
+-            custom_object_save(self, save_directory, config=tokenizer_config)
++        # if self._auto_class is not None:
++        #     custom_object_save(self, save_directory, config=tokenizer_config)
+ 
+         # remove private information
+         if "name_or_path" in tokenizer_config:
+@@ -4227,8 +4238,8 @@ def get_fast_tokenizer_file(tokenization_files: List[str]) -> str:
+ 
+ 
+ # To update the docstring, we need to copy the method, otherwise we change the original docstring.
+-PreTrainedTokenizerBase.push_to_hub = copy_func(PreTrainedTokenizerBase.push_to_hub)
+-if PreTrainedTokenizerBase.push_to_hub.__doc__ is not None:
+-    PreTrainedTokenizerBase.push_to_hub.__doc__ = PreTrainedTokenizerBase.push_to_hub.__doc__.format(
+-        object="tokenizer", object_class="AutoTokenizer", object_files="tokenizer files"
+-    )
++# PreTrainedTokenizerBase.push_to_hub = copy_func(PreTrainedTokenizerBase.push_to_hub)
++# if PreTrainedTokenizerBase.push_to_hub.__doc__ is not None:
++#     PreTrainedTokenizerBase.push_to_hub.__doc__ = PreTrainedTokenizerBase.push_to_hub.__doc__.format(
++#         object="tokenizer", object_class="AutoTokenizer", object_files="tokenizer files"
++#     )
+diff --git a/src/transformers/utils/__init__.py b/src/transformers/utils/__init__.py
+index b1a1bb5..9bf4644 100755
+--- a/src/transformers/utils/__init__.py
++++ b/src/transformers/utils/__init__.py
+@@ -15,8 +15,8 @@
+ # See the License for the specific language governing permissions and
+ # limitations under the License.
+ 
+-from huggingface_hub import get_full_repo_name  # for backward compatibility
+-from huggingface_hub.constants import HF_HUB_DISABLE_TELEMETRY as DISABLE_TELEMETRY  # for backward compatibility
++# from huggingface_hub import get_full_repo_name  # for backward compatibility
++# from huggingface_hub.constants import HF_HUB_DISABLE_TELEMETRY as DISABLE_TELEMETRY  # for backward compatibility
+ from packaging import version
+ 
+ from .. import __version__
+@@ -66,34 +66,34 @@ from .generic import (
+     working_or_temp_dir,
+ )
+ from .hub import (
+-    CLOUDFRONT_DISTRIB_PREFIX,
+-    HF_MODULES_CACHE,
+-    HUGGINGFACE_CO_PREFIX,
+-    HUGGINGFACE_CO_RESOLVE_ENDPOINT,
+-    PYTORCH_PRETRAINED_BERT_CACHE,
+-    PYTORCH_TRANSFORMERS_CACHE,
+-    S3_BUCKET_PREFIX,
+-    TRANSFORMERS_CACHE,
+-    TRANSFORMERS_DYNAMIC_MODULE_NAME,
+-    EntryNotFoundError,
+-    PushInProgress,
+-    PushToHubMixin,
+-    RepositoryNotFoundError,
+-    RevisionNotFoundError,
++#     CLOUDFRONT_DISTRIB_PREFIX,
++#     HF_MODULES_CACHE,
++#     HUGGINGFACE_CO_PREFIX,
++#     HUGGINGFACE_CO_RESOLVE_ENDPOINT,
++#     PYTORCH_PRETRAINED_BERT_CACHE,
++#     PYTORCH_TRANSFORMERS_CACHE,
++#     S3_BUCKET_PREFIX,
++#     TRANSFORMERS_CACHE,
++#     TRANSFORMERS_DYNAMIC_MODULE_NAME,
++#     EntryNotFoundError,
++#     PushInProgress,
++#     PushToHubMixin,
++#     RepositoryNotFoundError,
++#     RevisionNotFoundError,
+     cached_file,
+     default_cache_path,
+-    define_sagemaker_information,
+-    download_url,
++#     define_sagemaker_information,
++#     download_url,
+     extract_commit_hash,
+-    get_cached_models,
+-    get_file_from_repo,
+-    has_file,
+-    http_user_agent,
++#     get_cached_models,
++#     get_file_from_repo,
++#     has_file,
++#     http_user_agent,
+     is_offline_mode,
+     is_remote_url,
+-    move_cache,
+-    send_example_telemetry,
+-    try_to_load_from_cache,
++#     move_cache,
++#     send_example_telemetry,
++#     try_to_load_from_cache,
+ )
+ from .import_utils import (
+     ACCELERATE_MIN_VERSION,
+diff --git a/src/transformers/utils/hub.py b/src/transformers/utils/hub.py
+index 8a75e4c..b1bcce0 100644
+--- a/src/transformers/utils/hub.py
++++ b/src/transformers/utils/hub.py
+@@ -29,38 +29,38 @@ from typing import Dict, List, Optional, Tuple, Union
+ from urllib.parse import urlparse
+ from uuid import uuid4
+ 
+-import huggingface_hub
+-import requests
+-from huggingface_hub import (
+-    _CACHED_NO_EXIST,
+-    CommitOperationAdd,
+-    ModelCard,
+-    ModelCardData,
+-    constants,
+-    create_branch,
+-    create_commit,
+-    create_repo,
+-    get_hf_file_metadata,
+-    hf_hub_download,
+-    hf_hub_url,
+-    try_to_load_from_cache,
+-)
+-from huggingface_hub.file_download import REGEX_COMMIT_HASH, http_get
+-from huggingface_hub.utils import (
+-    EntryNotFoundError,
+-    GatedRepoError,
+-    HfHubHTTPError,
+-    HFValidationError,
+-    LocalEntryNotFoundError,
+-    OfflineModeIsEnabled,
+-    RepositoryNotFoundError,
+-    RevisionNotFoundError,
+-    build_hf_headers,
+-    get_session,
+-    hf_raise_for_status,
+-    send_telemetry,
+-)
+-from huggingface_hub.utils._deprecation import _deprecate_method
++# import huggingface_hub
++# import requests
++# from huggingface_hub import (
++#     _CACHED_NO_EXIST,
++#     CommitOperationAdd,
++#     ModelCard,
++#     ModelCardData,
++#     constants,
++#     create_branch,
++#     create_commit,
++#     create_repo,
++#     get_hf_file_metadata,
++#     hf_hub_download,
++#     hf_hub_url,
++#     try_to_load_from_cache,
++# )
++# from huggingface_hub.file_download import REGEX_COMMIT_HASH, http_get
++# from huggingface_hub.utils import (
++#     EntryNotFoundError,
++#     GatedRepoError,
++#     HfHubHTTPError,
++#     HFValidationError,
++#     LocalEntryNotFoundError,
++#     OfflineModeIsEnabled,
++#     RepositoryNotFoundError,
++#     RevisionNotFoundError,
++#     build_hf_headers,
++#     get_session,
++#     hf_raise_for_status,
++#     send_telemetry,
++# )
++# from huggingface_hub.utils._deprecation import _deprecate_method
+ from requests.exceptions import HTTPError
+ 
+ from . import __version__, logging
+@@ -78,7 +78,170 @@ from .logging import tqdm
+ 
+ logger = logging.get_logger(__name__)  # pylint: disable=invalid-name
+ 
+-_is_offline_mode = huggingface_hub.constants.HF_HUB_OFFLINE
++# replacement for huggingface_hub.constants
++import re
++
++class huggingface_hub:
++    class constants:
++        HF_HOME = os.path.expanduser(
++            os.getenv(
++                "HF_HOME",
++                os.path.join(os.path.expanduser("~"), ".cache", "huggingface"),
++            )
++        )
++        HF_HUB_OFFLINE=True
++        default_cache_path = os.path.join(HF_HOME, "hub")
++        HF_HUB_CACHE = default_cache_path
++        HF_HUB_DISABLE_TELEMETRY=False
++        REGEX_COMMIT_HASH=re.compile(r"^[0-9a-f]{40}$")
++constants = huggingface_hub.constants
++
++class GatedRepoError(Exception):
++    pass
++
++# Return value when trying to load a file from cache but the file does not exist in the distant repo.
++from typing import Any
++
++_CACHED_NO_EXIST = object()
++_CACHED_NO_EXIST_T = Any
++
++REPO_TYPE_DATASET = "dataset"
++REPO_TYPE_SPACE = "space"
++REPO_TYPE_MODEL = "model"
++REPO_TYPES = [None, REPO_TYPE_MODEL, REPO_TYPE_DATASET, REPO_TYPE_SPACE]
++
++from typing import Any
++
++def try_to_load_from_cache(
++    repo_id: str,
++    filename: str,
++    cache_dir: Union[str, Path, None] = None,
++    revision: Optional[str] = None,
++    repo_type: Optional[str] = None,
++) -> Union[str, _CACHED_NO_EXIST_T, None]:
++    """
++    Explores the cache to return the latest cached file for a given revision if\
++ found.
++
++    Args:
++        cache_dir (`str` or `os.PathLike`):
++            The folder where the cached files lie.
++        repo_id (`str`):
++            The ID of the repo on huggingface.co.
++        filename (`str`):
++            The filename to look for inside `repo_id`.
++        revision (`str`, *optional*):
++            The specific model version to use. Will default to `"main"` if it's not provided and no `commit_hash` is
++            provided either.
++        repo_type (`str`, *optional*):
++            The type of the repository. Will default to `"model"`.
++
++    Returns:
++        `Optional[str]` or `_CACHED_NO_EXIST`:
++            Will return `None` if the file was not cached. Otherwise:
++            - The exact path to the cached file if it's found in the cache
++            - A special value `_CACHED_NO_EXIST` if the file does not exist at the given commit hash and this fact was
++              cached.
++
++    Example:
++
++    ```python
++    from huggingface_hub import try_to_load_from_cache, _CACHED_NO_EXIST
++
++    filepath = try_to_load_from_cache()
++    if isinstance(filepath, str):
++        # file exists and is cached
++        ...
++    elif filepath is _CACHED_NO_EXIST:
++        # non-existence of file is cached
++        ...
++    else:
++        # file is not cached
++        ...
++    ```
++    """
++    if revision is None:
++        revision = "main"
++    if repo_type is None:
++        repo_type = "model"
++    if repo_type not in REPO_TYPES:
++        raise ValueError(f"Invalid repo type: {repo_type}. Accepted repo types are: {str(REPO_TYPES)}")
++    if cache_dir is None:
++        cache_dir = HF_HUB_CACHE
++
++    object_id = repo_id.replace("/", "--")
++    repo_cache = os.path.join(cache_dir, f"{repo_type}s--{object_id}")
++    if not os.path.isdir(repo_cache):
++        # No cache for this model
++        return None
++
++    refs_dir = os.path.join(repo_cache, "refs")
++    snapshots_dir = os.path.join(repo_cache, "snapshots")
++    no_exist_dir = os.path.join(repo_cache, ".no_exist")
++
++    # Resolve refs (for instance to convert main to the associated commit sha)
++    if os.path.isdir(refs_dir):
++        revision_file = os.path.join(refs_dir, revision)
++        if os.path.isfile(revision_file):
++            with open(revision_file) as f:
++                revision = f.read()
++
++    # Check if file is cached as "no_exist"
++    if os.path.isfile(os.path.join(no_exist_dir, revision, filename)):
++        return _CACHED_NO_EXIST
++
++    # Check if revision folder exists
++    if not os.path.exists(snapshots_dir):
++        return None
++    cached_shas = os.listdir(snapshots_dir)
++    if revision not in cached_shas:
++        # No cache for this revision and we won't try to return a random revision
++        return None
++
++    # Check if file exists in cache
++    cached_file = os.path.join(snapshots_dir, revision, filename)
++    return cached_file if os.path.isfile(cached_file) else None
++
++
++DEFAULT_ETAG_TIMEOUT = 10
++from typing import Literal
++
++def hf_hub_download(
++        repo_id: str,
++        filename: str,
++        *,
++        subfolder: Optional[str] = None,
++        repo_type: Optional[str] = None,
++        revision: Optional[str] = None,
++        library_name: Optional[str] = None,
++        library_version: Optional[str] = None,
++        cache_dir: Union[str, Path, None] = None,
++        local_dir: Union[str, Path, None] = None,
++        user_agent: Union[Dict, str, None] = None,
++        force_download: bool = False,
++        proxies: Optional[Dict] = None,
++        etag_timeout: float = DEFAULT_ETAG_TIMEOUT,
++        token: Union[bool, str, None] = None,
++        local_files_only: bool = False,
++        headers: Optional[Dict[str, str]] = None,
++        endpoint: Optional[str] = None,
++        # Deprecated args
++        legacy_cache_layout: bool = False,
++        resume_download: Optional[bool] = None,
++        force_filename: Optional[str] = None,
++        local_dir_use_symlinks: Union[bool, Literal["auto"]] = "auto"):
++    if subfolder is not None or subfolder == "":
++        filename = os.path.join(subfolder, filename)
++    if repo_id is None:
++        repo_id = ""
++    if os.path.isdir(repo_id):
++        return os.path.join(repo_id, filename)
++    else:
++        return os.path.join(default_cache_path, filename)
++
++
++# ---- continue normal file
++_is_offline_mode =  huggingface_hub.constants.HF_HUB_OFFLINE
+ 
+ 
+ def is_offline_mode():
+@@ -168,7 +331,7 @@ def is_remote_url(url_or_filename):
+ # TODO: remove this once fully deprecated
+ # TODO? remove from './examples/research_projects/lxmert/utils.py' as well
+ # TODO? remove from './examples/research_projects/visual_bert/utils.py' as well
+-@_deprecate_method(version="4.39.0", message="This method is outdated and does not support the new cache system.")
++# @_deprecate_method(version="4.39.0", message="This method is outdated and does not support the new cache system.")
+ def get_cached_models(cache_dir: Union[str, Path] = None) -> List[Tuple]:
+     """
+     Returns a list of tuples representing model binaries that are cached locally. Each tuple has shape `(model_url,
+diff --git a/src/transformers/utils/logging.py b/src/transformers/utils/logging.py
+index a304e9d..2b58a1a 100644
+--- a/src/transformers/utils/logging.py
++++ b/src/transformers/utils/logging.py
+@@ -32,7 +32,7 @@ from logging import (
+ from logging import captureWarnings as _captureWarnings
+ from typing import Optional
+ 
+-import huggingface_hub.utils as hf_hub_utils
++# import huggingface_hub.utils as hf_hub_utils
+ from tqdm import auto as tqdm_lib
+ 
+ 
+@@ -50,7 +50,8 @@ log_levels = {
+ 
+ _default_log_level = logging.WARNING
+ 
+-_tqdm_active = not hf_hub_utils.are_progress_bars_disabled()
++# _tqdm_active = not hf_hub_utils.are_progress_bars_disabled()
++_tqdm_active = True
+ 
+ 
+ def _get_default_logging_level():
+diff --git a/src/transformers/utils/peft_utils.py b/src/transformers/utils/peft_utils.py
+index 7efa80e..cb00e59 100644
+--- a/src/transformers/utils/peft_utils.py
++++ b/src/transformers/utils/peft_utils.py
+@@ -17,7 +17,7 @@ from typing import Dict, Optional, Union
+ 
+ from packaging import version
+ 
+-from .hub import cached_file
++# from .hub import cached_file
+ from .import_utils import is_peft_available
+ 
+ 
+@@ -80,27 +80,28 @@ def find_adapter_config_file(
+     adapter_cached_filename = None
+     if model_id is None:
+         return None
+-    elif os.path.isdir(model_id):
++    else:
++        assert os.path.isdir(model_id)
+         list_remote_files = os.listdir(model_id)
+         if ADAPTER_CONFIG_NAME in list_remote_files:
+             adapter_cached_filename = os.path.join(model_id, ADAPTER_CONFIG_NAME)
+-    else:
+-        adapter_cached_filename = cached_file(
+-            model_id,
+-            ADAPTER_CONFIG_NAME,
+-            cache_dir=cache_dir,
+-            force_download=force_download,
+-            resume_download=resume_download,
+-            proxies=proxies,
+-            token=token,
+-            revision=revision,
+-            local_files_only=local_files_only,
+-            subfolder=subfolder,
+-            _commit_hash=_commit_hash,
+-            _raise_exceptions_for_gated_repo=False,
+-            _raise_exceptions_for_missing_entries=False,
+-            _raise_exceptions_for_connection_errors=False,
+-        )
++    # else:
++    #     adapter_cached_filename = cached_file(
++    #         model_id,
++    #         ADAPTER_CONFIG_NAME,
++    #         cache_dir=cache_dir,
++    #         force_download=force_download,
++    #         resume_download=resume_download,
++    #         proxies=proxies,
++    #         token=token,
++    #         revision=revision,
++    #         local_files_only=local_files_only,
++    #         subfolder=subfolder,
++    #         _commit_hash=_commit_hash,
++    #         _raise_exceptions_for_gated_repo=False,
++    #         _raise_exceptions_for_missing_entries=False,
++    #         _raise_exceptions_for_connection_errors=False,
++    #     )
+ 
+     return adapter_cached_filename
+ 
