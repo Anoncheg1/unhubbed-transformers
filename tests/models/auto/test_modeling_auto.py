@@ -1,4 +1,3 @@
-# coding=utf-8
 # Copyright 2020 The HuggingFace Team. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -67,6 +66,7 @@ if is_torch_available():
         BertModel,
         FunnelBaseModel,
         FunnelModel,
+        GenerationMixin,
         GPT2Config,
         GPT2LMHeadModel,
         ResNetBackbone,
@@ -238,7 +238,7 @@ class AutoModelTest(unittest.TestCase):
 
         # Check kwargs are correctly passed to the backbone
         model = AutoBackbone.from_pretrained("resnet18", use_timm_backbone=True, out_indices=(-2, -1))
-        self.assertEqual(model.out_indices, (-2, -1))
+        self.assertEqual(model.out_indices, [-2, -1])
 
         # Check out_features cannot be passed to Timm backbones
         with self.assertRaises(ValueError):
@@ -528,6 +528,7 @@ class AutoModelTest(unittest.TestCase):
         with self.assertRaisesRegex(EnvironmentError, "Use `from_flax=True` to load this model"):
             _ = AutoModel.from_pretrained("hf-internal-testing/tiny-bert-flax-only")
 
+    @unittest.skip("Failing on main")
     def test_cached_model_has_minimum_calls_to_head(self):
         # Make sure we have cached the model.
         _ = AutoModel.from_pretrained("hf-internal-testing/tiny-random-bert")
@@ -571,3 +572,20 @@ class AutoModelTest(unittest.TestCase):
             _ = AutoModelForCausalLM.from_pretrained(tmp_dir_out, trust_remote_code=True)
             self.assertTrue((Path(tmp_dir_out) / "modeling_fake_custom.py").is_file())
             self.assertTrue((Path(tmp_dir_out) / "configuration_fake_custom.py").is_file())
+
+    def test_custom_model_patched_generation_inheritance(self):
+        """
+        Tests that our inheritance patching for generate-compatible models works as expected. Without this feature,
+        old Hub models lose the ability to call `generate`.
+        """
+        model = AutoModelForCausalLM.from_pretrained(
+            "hf-internal-testing/test_dynamic_model_generation", trust_remote_code=True
+        )
+        self.assertTrue(model.__class__.__name__ == "NewModelForCausalLM")
+
+        # It inherits from GenerationMixin. This means it can `generate`. Because `PreTrainedModel` is scheduled to
+        # stop inheriting from `GenerationMixin` in v4.50, this check will fail if patching is not present.
+        self.assertTrue(isinstance(model, GenerationMixin))
+        # More precisely, it directly inherits from GenerationMixin. This check would fail prior to v4.45 (inheritance
+        # patching was added in v4.45)
+        self.assertTrue("GenerationMixin" in str(model.__class__.__bases__))

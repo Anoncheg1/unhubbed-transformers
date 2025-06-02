@@ -20,7 +20,6 @@ from transformers import (
     AutoTokenizer,
     TableQuestionAnsweringPipeline,
     TFAutoModelForTableQuestionAnswering,
-    is_torch_available,
     pipeline,
 )
 from transformers.testing_utils import (
@@ -31,12 +30,6 @@ from transformers.testing_utils import (
     require_torch,
     slow,
 )
-
-
-if is_torch_available():
-    from transformers.pytorch_utils import is_torch_greater_or_equal_than_1_12
-else:
-    is_torch_greater_or_equal_than_1_12 = False
 
 
 @is_pipeline_test
@@ -56,7 +49,7 @@ class TQAPipelineTests(unittest.TestCase):
         self.assertIsInstance(model.config.aggregation_labels, dict)
         self.assertIsInstance(model.config.no_aggregation_label_index, int)
 
-        table_querier = TableQuestionAnsweringPipeline(model=model, tokenizer=tokenizer)
+        table_querier = TableQuestionAnsweringPipeline(model=model, tokenizer=tokenizer, max_new_tokens=20)
         outputs = table_querier(
             table={
                 "actors": ["brad pitt", "leonardo di caprio", "george clooney"],
@@ -150,7 +143,6 @@ class TQAPipelineTests(unittest.TestCase):
                 },
             )
 
-    @unittest.skipIf(not is_torch_greater_or_equal_than_1_12, reason="Tapas is only available in torch v1.12+")
     @require_torch
     def test_small_model_pt(self, torch_dtype="float32"):
         model_id = "lysandre/tiny-tapas-random-wtq"
@@ -159,7 +151,7 @@ class TQAPipelineTests(unittest.TestCase):
         self.assertIsInstance(model.config.aggregation_labels, dict)
         self.assertIsInstance(model.config.no_aggregation_label_index, int)
 
-        table_querier = TableQuestionAnsweringPipeline(model=model, tokenizer=tokenizer)
+        table_querier = TableQuestionAnsweringPipeline(model=model, tokenizer=tokenizer, max_new_tokens=20)
         outputs = table_querier(
             table={
                 "actors": ["brad pitt", "leonardo di caprio", "george clooney"],
@@ -253,18 +245,16 @@ class TQAPipelineTests(unittest.TestCase):
                 },
             )
 
-    @unittest.skipIf(not is_torch_greater_or_equal_than_1_12, reason="Tapas is only available in torch v1.12+")
     @require_torch
     def test_small_model_pt_fp16(self):
         self.test_small_model_pt(torch_dtype="float16")
 
-    @unittest.skipIf(not is_torch_greater_or_equal_than_1_12, reason="Tapas is only available in torch v1.12+")
     @require_torch
     def test_slow_tokenizer_sqa_pt(self, torch_dtype="float32"):
         model_id = "lysandre/tiny-tapas-random-sqa"
         model = AutoModelForTableQuestionAnswering.from_pretrained(model_id, torch_dtype=torch_dtype)
         tokenizer = AutoTokenizer.from_pretrained(model_id)
-        table_querier = TableQuestionAnsweringPipeline(model=model, tokenizer=tokenizer)
+        table_querier = TableQuestionAnsweringPipeline(model=model, tokenizer=tokenizer, max_new_tokens=20)
 
         inputs = {
             "table": {
@@ -284,7 +274,7 @@ class TQAPipelineTests(unittest.TestCase):
         self.assertNotEqual(sequential_outputs[1], batch_outputs[1])
         # self.assertNotEqual(sequential_outputs[2], batch_outputs[2])
 
-        table_querier = TableQuestionAnsweringPipeline(model=model, tokenizer=tokenizer)
+        table_querier = TableQuestionAnsweringPipeline(model=model, tokenizer=tokenizer, max_new_tokens=20)
         outputs = table_querier(
             table={
                 "actors": ["brad pitt", "leonardo di caprio", "george clooney"],
@@ -378,7 +368,6 @@ class TQAPipelineTests(unittest.TestCase):
                 },
             )
 
-    @unittest.skipIf(not is_torch_greater_or_equal_than_1_12, reason="Tapas is only available in torch v1.12+")
     @require_torch
     def test_slow_tokenizer_sqa_pt_fp16(self):
         self.test_slow_tokenizer_sqa_pt(torch_dtype="float16")
@@ -391,7 +380,7 @@ class TQAPipelineTests(unittest.TestCase):
         model_id = "lysandre/tiny-tapas-random-sqa"
         model = TFAutoModelForTableQuestionAnswering.from_pretrained(model_id, from_pt=True)
         tokenizer = AutoTokenizer.from_pretrained(model_id)
-        table_querier = TableQuestionAnsweringPipeline(model=model, tokenizer=tokenizer)
+        table_querier = TableQuestionAnsweringPipeline(model=model, tokenizer=tokenizer, max_new_tokens=20)
 
         inputs = {
             "table": {
@@ -411,7 +400,7 @@ class TQAPipelineTests(unittest.TestCase):
         self.assertNotEqual(sequential_outputs[1], batch_outputs[1])
         # self.assertNotEqual(sequential_outputs[2], batch_outputs[2])
 
-        table_querier = TableQuestionAnsweringPipeline(model=model, tokenizer=tokenizer)
+        table_querier = TableQuestionAnsweringPipeline(model=model, tokenizer=tokenizer, max_new_tokens=20)
         outputs = table_querier(
             table={
                 "actors": ["brad pitt", "leonardo di caprio", "george clooney"],
@@ -505,7 +494,6 @@ class TQAPipelineTests(unittest.TestCase):
                 },
             )
 
-    @unittest.skipIf(not is_torch_greater_or_equal_than_1_12, reason="Tapas is only available in torch v1.12+")
     @slow
     @require_torch
     def test_integration_wtq_pt(self, torch_dtype="float32"):
@@ -551,7 +539,6 @@ class TQAPipelineTests(unittest.TestCase):
         ]
         self.assertListEqual(results, expected_results)
 
-    @unittest.skipIf(not is_torch_greater_or_equal_than_1_12, reason="Tapas is only available in torch v1.12+")
     @slow
     @require_torch
     def test_integration_wtq_pt_fp16(self):
@@ -606,7 +593,6 @@ class TQAPipelineTests(unittest.TestCase):
         ]
         self.assertListEqual(results, expected_results)
 
-    @unittest.skipIf(not is_torch_greater_or_equal_than_1_12, reason="Tapas is only available in torch v1.12+")
     @slow
     @require_torch
     def test_integration_sqa_pt(self, torch_dtype="float32"):
@@ -632,7 +618,6 @@ class TQAPipelineTests(unittest.TestCase):
         ]
         self.assertListEqual(results, expected_results)
 
-    @unittest.skipIf(not is_torch_greater_or_equal_than_1_12, reason="Tapas is only available in torch v1.12+")
     @slow
     @require_torch
     def test_integration_sqa_pt_fp16(self):

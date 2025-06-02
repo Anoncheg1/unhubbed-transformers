@@ -17,23 +17,20 @@ Processor class for LLaVa-Onevision.
 """
 
 import math
-import sys
 from typing import Iterable, List, Union
 
-
-if sys.version_info >= (3, 11):
-    from typing import Unpack
-else:
-    from typing_extensions import Unpack
+import numpy as np
 
 from ...feature_extraction_utils import BatchFeature
 from ...image_processing_utils import select_best_resolution
-from ...image_utils import ImageInput, VideoInput, get_image_size, to_numpy_array
-from ...processing_utils import (
-    ProcessingKwargs,
-    ProcessorMixin,
-)
+from ...image_utils import ImageInput, get_image_size, to_numpy_array
+from ...processing_utils import ProcessingKwargs, ProcessorMixin, Unpack
 from ...tokenization_utils_base import PreTokenizedInput, TextInput
+from ...utils import logging
+from ...video_utils import VideoInput
+
+
+logger = logging.get_logger(__name__)
 
 
 class LlavaOnevisionProcessorKwargs(ProcessingKwargs, total=False):
@@ -43,7 +40,7 @@ class LlavaOnevisionProcessorKwargs(ProcessingKwargs, total=False):
             "padding": False,
         },
         "image_kwargs": {},
-        "video_kwargs": {},
+        "videos_kwargs": {},
     }
 
 
@@ -51,11 +48,11 @@ class LlavaOnevisionProcessor(ProcessorMixin):
     r"""
     Constructs a LLaVa-Onevision processor which wraps a LLaVa-Onevision video processor, LLaVa-NeXT image processor and a LLaMa tokenizer into a single processor.
 
-    [`LlavaNextProcessor`] offers all the functionalities of [`LlavaOnevisionVideoProcessor`], [`LlavaNextImageProcessor`] and [`LlamaTokenizerFast`]. See the
+    [`LlavaNextProcessor`] offers all the functionalities of [`LlavaOnevisionVideoProcessor`], [`LlavaOnevisionImageProcessor`] and [`LlamaTokenizerFast`]. See the
     [`~LlavaOnevisionVideoProcessor.__call__`], [`~LlavaNextProcessor.__call__`] and [`~LlavaNextProcessor.decode`] for more information.
 
     Args:
-        image_processor ([`LlavaNextImageProcessor`], *optional*):
+        image_processor ([`LlavaOnevisionImageProcessor`], *optional*):
             The image processor is a required input.
         tokenizer ([`LlamaTokenizerFast`], *optional*):
             The tokenizer is a required input.
@@ -65,13 +62,15 @@ class LlavaOnevisionProcessor(ProcessorMixin):
             Number of image tokens for one imagethat will be returned by vision tower.
         vision_feature_select_strategy (`str`, *optional*):
             The feature selection strategy used to select the vision feature from the vision backbone.
-            Shoudl be same as in model's config
+            Should be same as in model's config
         chat_template (`str`, *optional*): A Jinja template which will be used to convert lists of messages
             in a chat into a tokenizable string.
         image_token (`str`, *optional*, defaults to `"<image>"`):
             Special token used to denote image location.
         video_token (`str`, *optional*, defaults to `"<video>"`):
             Special token used to denote video location.
+        vision_aspect_ratio (`str`, *optional*, defaults to `"anyres_max_9"`):
+            Aspect ratio used when processong image features. The default value is "anyres_max_9".
     """
 
     attributes = ["image_processor", "tokenizer", "video_processor"]
@@ -81,10 +80,11 @@ class LlavaOnevisionProcessor(ProcessorMixin):
         "vision_feature_select_strategy",
         "image_token",
         "video_token",
+        "vision_aspect_ratio",
     ]
     image_processor_class = "AutoImageProcessor"
     tokenizer_class = "AutoTokenizer"
-    video_processor_class = "LlavaOnevisionVideoProcessor"
+    video_processor_class = "AutoVideoProcessor"
 
     def __init__(
         self,
@@ -96,26 +96,39 @@ class LlavaOnevisionProcessor(ProcessorMixin):
         chat_template=None,
         image_token="<image>",
         video_token="<video>",
-        **kwargs: Unpack[LlavaOnevisionProcessorKwargs],
+        vision_aspect_ratio="anyres_max_9",
+        **kwargs,
     ):
         self.num_image_tokens = num_image_tokens
         self.vision_feature_select_strategy = vision_feature_select_strategy
-        self.image_token = image_token
-        self.video_token = video_token
+        self.image_token = tokenizer.image_token if hasattr(tokenizer, "image_token") else image_token
+        self.video_token = tokenizer.video_token if hasattr(tokenizer, "video_token") else video_token
+        self.image_token_id = (
+            tokenizer.image_token_id
+            if getattr(tokenizer, "image_token_id", None)
+            else tokenizer.convert_tokens_to_ids(self.image_token)
+        )
+        self.video_token_id = (
+            tokenizer.video_token_id
+            if getattr(tokenizer, "video_token_id", None)
+            else tokenizer.convert_tokens_to_ids(self.video_token)
+        )
+        self.vision_aspect_ratio = vision_aspect_ratio
         super().__init__(image_processor, tokenizer, video_processor, chat_template=chat_template)
 
     def __call__(
         self,
         images: ImageInput = None,
         text: Union[TextInput, PreTokenizedInput, List[TextInput], List[PreTokenizedInput]] = None,
+        audio=None,
         videos: VideoInput = None,
-        **kwargs,
+        **kwargs: Unpack[LlavaOnevisionProcessorKwargs],
     ) -> BatchFeature:
         """
         Main method to prepare for the model one or several sequences(s) and image(s). This method forwards the `text`
         and `kwargs` arguments to LlamaTokenizerFast's [`~LlamaTokenizerFast.__call__`] if `text` is not `None` to encode
         the text. To prepare the image(s), this method forwards the `images` and `kwrags` arguments to
-        LlavaNextImageProcessor's [`~LlavaNextImageProcessor.__call__`] if `images` is not `None`. Please refer to the doctsring
+        LlavaNextImageProcessor's [`~LlavaNextImageProcessor.__call__`] if `images` is not `None`. Please refer to the docstring
         of the above two methods for more information.
 
         Args:
@@ -162,12 +175,16 @@ class LlavaOnevisionProcessor(ProcessorMixin):
                 to_numpy_array(image_inputs["pixel_values"][0][0]),
                 channel_dim=output_kwargs["images_kwargs"].get("data_format"),
             )
-            text = self._expand_image_tokens(text, image_sizes, height, width, self.image_token)
+            text, num_image_tokens = self._expand_image_tokens(text, image_sizes, height, width, self.image_token)
 
         if videos is not None:
             video_inputs = self.video_processor(videos, **output_kwargs["videos_kwargs"])
 
-            one_video = to_numpy_array(video_inputs["pixel_values_videos"][0])
+            one_video = video_inputs.get("pixel_values_videos")[0]
+            if isinstance(video_inputs.get("pixel_values_videos")[0], (list, tuple)):
+                one_video = np.array(one_video)
+            else:
+                one_video = to_numpy_array(one_video)
             height, width = get_image_size(one_video[0], channel_dim=output_kwargs["images_kwargs"].get("data_format"))
             num_frames = one_video.shape[0]  # frame dim is always after batch dim
             patches_height_width = int(math.sqrt(self.num_image_tokens))
@@ -175,10 +192,11 @@ class LlavaOnevisionProcessor(ProcessorMixin):
             num_video_tokens = (num_frames * pooled_height_width * pooled_height_width) + 1  # +1 for newline token
             text = [sample.replace(self.video_token, self.video_token * num_video_tokens) for sample in text]
 
-        # Padding side can be in TextKwargs but is not accepted by the tokenizer
-        _ = output_kwargs["text_kwargs"].pop("padding_side", None)
+        return_tensors = output_kwargs["text_kwargs"].pop("return_tensors", None)
         text_inputs = self.tokenizer(text, **output_kwargs["text_kwargs"])
-        return BatchFeature(data={**text_inputs, **image_inputs, **video_inputs})
+        self._check_special_mm_tokens(text, text_inputs, modalities=["image"])
+
+        return BatchFeature(data={**text_inputs, **image_inputs, **video_inputs}, tensor_type=return_tensors)
 
     def _expand_image_tokens(
         self,
@@ -190,17 +208,23 @@ class LlavaOnevisionProcessor(ProcessorMixin):
         num_frames: int = 1,
     ):
         prompt_strings = []
+        max_num_vision_tokens = 0
         for sample in text:
             while special_token in sample:
                 image_size_list = next(image_sizes)
-                orig_height, orig_width = image_size_list[0] if num_frames != 1 else image_size_list
+                original_size = image_size_list[0] if num_frames != 1 else image_size_list
+                if not isinstance(original_size, (list, tuple)):
+                    # cast to list to avoid numerical precision errors when calculating unpadding
+                    original_size = original_size.tolist()
+                orig_height, orig_width = original_size
                 num_image_tokens = self._get_number_of_features(orig_height, orig_width, height, width)
+                max_num_vision_tokens = max(max_num_vision_tokens, num_image_tokens)
                 if self.vision_feature_select_strategy == "default":
                     num_image_tokens -= 1
                 sample = sample.replace(special_token, "<placeholder>" * num_image_tokens * num_frames, 1)
             prompt_strings.append(sample)
         text = [sample.replace("<placeholder>", special_token) for sample in prompt_strings]
-        return text
+        return text, max_num_vision_tokens
 
     def _get_number_of_features(self, orig_height: int, orig_width: int, height: int, width: int) -> int:
         image_grid_pinpoints = self.image_processor.image_grid_pinpoints
@@ -220,6 +244,7 @@ class LlavaOnevisionProcessor(ProcessorMixin):
         num_image_tokens = unpadded_features + newline_features + base_features
         return num_image_tokens
 
+    # Adapted from transformers.models.llava_next.processing_llava_next.LlavaNextProcessor._get_unpadded_features
     def _get_unpadded_features(self, height, width, patches_height, patches_width, scale_height, scale_width):
         """
         Get number of features for a given image with height/width. LLaVA-NeXT is different from LLaVA
@@ -232,18 +257,19 @@ class LlavaOnevisionProcessor(ProcessorMixin):
         original_aspect_ratio = width / height
         current_aspect_ratio = current_width / current_height
         if original_aspect_ratio > current_aspect_ratio:
-            new_height = int(height * (current_width / width))
+            new_height = int(round(height * (current_width / width), 7))
             padding = (current_height - new_height) // 2
             current_height -= padding * 2
         else:
-            new_width = int(width * (current_height / height))
+            new_width = int(round(width * (current_height / height), 7))
             padding = (current_width - new_width) // 2
             current_width -= padding * 2
 
         unpadded_features = current_height * current_width
         newline_features = current_height
 
-        ratio = math.sqrt(current_height * current_width / (9 * patches_height**2))
+        max_num_patches = int(self.vision_aspect_ratio.strip("anyres_max_"))
+        ratio = math.sqrt(current_height * current_width / (max_num_patches * patches_height**2))
         if ratio > 1.1:
             unpadded_features = int(current_height // ratio) * int(current_width // ratio)
             newline_features = int(current_height // ratio)
@@ -272,3 +298,6 @@ class LlavaOnevisionProcessor(ProcessorMixin):
         tokenizer_input_names = self.tokenizer.model_input_names
         image_processor_input_names = self.image_processor.model_input_names
         return list(dict.fromkeys(tokenizer_input_names + image_processor_input_names))
+
+
+__all__ = ["LlavaOnevisionProcessor"]

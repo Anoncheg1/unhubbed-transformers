@@ -14,8 +14,6 @@
 # limitations under the License.
 """Fuyu model configuration"""
 
-import warnings
-
 from ...configuration_utils import PretrainedConfig
 from ...utils import logging
 from ..auto import CONFIG_MAPPING
@@ -197,7 +195,7 @@ class FuyuConfig(PretrainedConfig):
 
         if not isinstance(self.rope_scaling, dict) or len(self.rope_scaling) != 2:
             raise ValueError(
-                "`rope_scaling` must be a dictionary with two fields, `type` and `factor`, " f"got {self.rope_scaling}"
+                f"`rope_scaling` must be a dictionary with two fields, `type` and `factor`, got {self.rope_scaling}"
             )
         rope_scaling_type = self.rope_scaling.get("type", None)
         rope_scaling_factor = self.rope_scaling.get("factor", None)
@@ -208,19 +206,5 @@ class FuyuConfig(PretrainedConfig):
         if rope_scaling_factor is None or not isinstance(rope_scaling_factor, float) or rope_scaling_factor <= 1.0:
             raise ValueError(f"`rope_scaling`'s factor field must be a float > 1, got {rope_scaling_factor}")
 
-    @property
-    def vocab_size(self):
-        warnings.warn(
-            "The `vocab_size` attribute is deprecated and will be removed in v4.44, Please use `text_config.vocab_size` instead.",
-            FutureWarning,
-        )
-        return self._vocab_size
 
-    @vocab_size.setter
-    def vocab_size(self, value):
-        self._vocab_size = value
-
-    def to_dict(self):
-        output = super().to_dict()
-        output.pop("_vocab_size", None)
-        return output
+__all__ = ["FuyuConfig"]

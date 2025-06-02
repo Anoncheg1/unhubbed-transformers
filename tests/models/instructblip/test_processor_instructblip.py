@@ -15,18 +15,15 @@ import shutil
 import tempfile
 import unittest
 
-import numpy as np
 import pytest
 
-from transformers.testing_utils import require_torch, require_vision
+from transformers.testing_utils import require_vision
 from transformers.utils import is_vision_available
 
 from ...test_processing_common import ProcessorTesterMixin
 
 
 if is_vision_available():
-    from PIL import Image
-
     from transformers import (
         AutoProcessor,
         BertTokenizerFast,
@@ -41,8 +38,9 @@ if is_vision_available():
 class InstructBlipProcessorTest(ProcessorTesterMixin, unittest.TestCase):
     processor_class = InstructBlipProcessor
 
-    def setUp(self):
-        self.tmpdirname = tempfile.mkdtemp()
+    @classmethod
+    def setUpClass(cls):
+        cls.tmpdirname = tempfile.mkdtemp()
 
         image_processor = BlipImageProcessor()
         tokenizer = GPT2Tokenizer.from_pretrained("hf-internal-testing/tiny-random-GPT2Model")
@@ -50,7 +48,7 @@ class InstructBlipProcessorTest(ProcessorTesterMixin, unittest.TestCase):
 
         processor = InstructBlipProcessor(image_processor, tokenizer, qformer_tokenizer)
 
-        processor.save_pretrained(self.tmpdirname)
+        processor.save_pretrained(cls.tmpdirname)
 
     def get_tokenizer(self, **kwargs):
         return AutoProcessor.from_pretrained(self.tmpdirname, **kwargs).tokenizer
@@ -61,19 +59,9 @@ class InstructBlipProcessorTest(ProcessorTesterMixin, unittest.TestCase):
     def get_qformer_tokenizer(self, **kwargs):
         return AutoProcessor.from_pretrained(self.tmpdirname, **kwargs).qformer_tokenizer
 
-    def tearDown(self):
-        shutil.rmtree(self.tmpdirname)
-
-    def prepare_image_inputs(self):
-        """This function prepares a list of PIL images, or a list of numpy arrays if one specifies numpify=True,
-        or a list of PyTorch tensors if one specifies torchify=True.
-        """
-
-        image_inputs = [np.random.randint(255, size=(3, 30, 400), dtype=np.uint8)]
-
-        image_inputs = [Image.fromarray(np.moveaxis(x, 0, -1)) for x in image_inputs]
-
-        return image_inputs
+    @classmethod
+    def tearDownClass(cls):
+        shutil.rmtree(cls.tmpdirname, ignore_errors=True)
 
     def test_save_load_pretrained_additional_features(self):
         processor = InstructBlipProcessor(
@@ -81,14 +69,15 @@ class InstructBlipProcessorTest(ProcessorTesterMixin, unittest.TestCase):
             image_processor=self.get_image_processor(),
             qformer_tokenizer=self.get_qformer_tokenizer(),
         )
-        processor.save_pretrained(self.tmpdirname)
+        with tempfile.TemporaryDirectory() as tmpdir:
+            processor.save_pretrained(tmpdir)
 
-        tokenizer_add_kwargs = self.get_tokenizer(bos_token="(BOS)", eos_token="(EOS)")
-        image_processor_add_kwargs = self.get_image_processor(do_normalize=False, padding_value=1.0)
+            tokenizer_add_kwargs = self.get_tokenizer(bos_token="(BOS)", eos_token="(EOS)")
+            image_processor_add_kwargs = self.get_image_processor(do_normalize=False, padding_value=1.0)
 
-        processor = InstructBlipProcessor.from_pretrained(
-            self.tmpdirname, bos_token="(BOS)", eos_token="(EOS)", do_normalize=False, padding_value=1.0
-        )
+            processor = InstructBlipProcessor.from_pretrained(
+                tmpdir, bos_token="(BOS)", eos_token="(EOS)", do_normalize=False, padding_value=1.0
+            )
 
         self.assertEqual(processor.tokenizer.get_vocab(), tokenizer_add_kwargs.get_vocab())
         self.assertIsInstance(processor.tokenizer, PreTrainedTokenizerFast)
@@ -193,233 +182,3 @@ class InstructBlipProcessorTest(ProcessorTesterMixin, unittest.TestCase):
             list(inputs.keys()),
             ["input_ids", "attention_mask", "qformer_input_ids", "qformer_attention_mask", "pixel_values"],
         )
-
-    # Override as InstructBlipProcessor has qformer_tokenizer
-    @require_vision
-    @require_torch
-    def test_tokenizer_defaults_preserved_by_kwargs(self):
-        if "image_processor" not in self.processor_class.attributes:
-            self.skipTest(f"image_processor attribute not present in {self.processor_class}")
-        image_processor = self.get_component("image_processor")
-        tokenizer = self.get_component("tokenizer", max_length=117, padding="max_length")
-        qformer_tokenizer = self.get_component("qformer_tokenizer", max_length=117, padding="max_length")
-
-        processor = self.processor_class(
-            tokenizer=tokenizer, image_processor=image_processor, qformer_tokenizer=qformer_tokenizer
-        )
-        self.skip_processor_without_typed_kwargs(processor)
-        input_str = "lower newer"
-        image_input = self.prepare_image_inputs()
-
-        inputs = processor(text=input_str, images=image_input, return_tensors="pt")
-        self.assertEqual(len(inputs["input_ids"][0]), 117)
-
-    # Override as InstructBlipProcessor has qformer_tokenizer
-    @require_torch
-    @require_vision
-    def test_image_processor_defaults_preserved_by_image_kwargs(self):
-        if "image_processor" not in self.processor_class.attributes:
-            self.skipTest(f"image_processor attribute not present in {self.processor_class}")
-        image_processor = self.get_component("image_processor", size=(234, 234))
-        tokenizer = self.get_component("tokenizer", max_length=117, padding="max_length")
-        qformer_tokenizer = self.get_component("qformer_tokenizer", max_length=117, padding="max_length")
-
-        processor = self.processor_class(
-            tokenizer=tokenizer, image_processor=image_processor, qformer_tokenizer=qformer_tokenizer
-        )
-        self.skip_processor_without_typed_kwargs(processor)
-
-        input_str = "lower newer"
-        image_input = self.prepare_image_inputs()
-
-        inputs = processor(text=input_str, images=image_input)
-        self.assertEqual(len(inputs["pixel_values"][0][0]), 234)
-
-    # Override as InstructBlipProcessor has qformer_tokenizer
-    @require_vision
-    @require_torch
-    def test_kwargs_overrides_default_tokenizer_kwargs(self):
-        if "image_processor" not in self.processor_class.attributes:
-            self.skipTest(f"image_processor attribute not present in {self.processor_class}")
-        image_processor = self.get_component("image_processor")
-        tokenizer = self.get_component("tokenizer", padding="longest")
-        qformer_tokenizer = self.get_component("qformer_tokenizer", padding="longest")
-
-        processor = self.processor_class(
-            tokenizer=tokenizer, image_processor=image_processor, qformer_tokenizer=qformer_tokenizer
-        )
-        self.skip_processor_without_typed_kwargs(processor)
-        input_str = "lower newer"
-        image_input = self.prepare_image_inputs()
-
-        inputs = processor(
-            text=input_str, images=image_input, return_tensors="pt", max_length=112, padding="max_length"
-        )
-        self.assertEqual(len(inputs["input_ids"][0]), 112)
-
-    # Override as InstructBlipProcessor has qformer_tokenizer
-    @require_torch
-    @require_vision
-    def test_kwargs_overrides_default_image_processor_kwargs(self):
-        if "image_processor" not in self.processor_class.attributes:
-            self.skipTest(f"image_processor attribute not present in {self.processor_class}")
-        image_processor = self.get_component("image_processor", size=(234, 234))
-        tokenizer = self.get_component("tokenizer", max_length=117, padding="max_length")
-        qformer_tokenizer = self.get_component("qformer_tokenizer", max_length=117, padding="max_length")
-
-        processor = self.processor_class(
-            tokenizer=tokenizer, image_processor=image_processor, qformer_tokenizer=qformer_tokenizer
-        )
-        self.skip_processor_without_typed_kwargs(processor)
-
-        input_str = "lower newer"
-        image_input = self.prepare_image_inputs()
-
-        inputs = processor(text=input_str, images=image_input, size=[224, 224])
-        self.assertEqual(len(inputs["pixel_values"][0][0]), 224)
-
-    # Override as InstructBlipProcessor has qformer_tokenizer
-    @require_torch
-    @require_vision
-    def test_unstructured_kwargs(self):
-        if "image_processor" not in self.processor_class.attributes:
-            self.skipTest(f"image_processor attribute not present in {self.processor_class}")
-        image_processor = self.get_component("image_processor")
-        tokenizer = self.get_component("tokenizer")
-        qformer_tokenizer = self.get_component("qformer_tokenizer")
-
-        processor = self.processor_class(
-            tokenizer=tokenizer, image_processor=image_processor, qformer_tokenizer=qformer_tokenizer
-        )
-        self.skip_processor_without_typed_kwargs(processor)
-
-        input_str = "lower newer"
-        image_input = self.prepare_image_inputs()
-        inputs = processor(
-            text=input_str,
-            images=image_input,
-            return_tensors="pt",
-            size={"height": 214, "width": 214},
-            padding="max_length",
-            max_length=76,
-        )
-
-        self.assertEqual(inputs["pixel_values"].shape[2], 214)
-        self.assertEqual(len(inputs["input_ids"][0]), 76)
-
-    # Override as InstructBlipProcessor has qformer_tokenizer
-    @require_torch
-    @require_vision
-    def test_unstructured_kwargs_batched(self):
-        if "image_processor" not in self.processor_class.attributes:
-            self.skipTest(f"image_processor attribute not present in {self.processor_class}")
-        image_processor = self.get_component("image_processor")
-        tokenizer = self.get_component("tokenizer")
-        qformer_tokenizer = self.get_component("qformer_tokenizer")
-
-        processor = self.processor_class(
-            tokenizer=tokenizer, image_processor=image_processor, qformer_tokenizer=qformer_tokenizer
-        )
-        self.skip_processor_without_typed_kwargs(processor)
-
-        input_str = ["lower newer", "upper older longer string"]
-        image_input = self.prepare_image_inputs() * 2
-        inputs = processor(
-            text=input_str,
-            images=image_input,
-            return_tensors="pt",
-            size={"height": 214, "width": 214},
-            padding="longest",
-            max_length=76,
-        )
-
-        self.assertEqual(inputs["pixel_values"].shape[2], 214)
-
-        self.assertEqual(len(inputs["input_ids"][0]), 6)
-
-    # Override as InstructBlipProcessor has qformer_tokenizer
-    @require_torch
-    @require_vision
-    def test_doubly_passed_kwargs(self):
-        if "image_processor" not in self.processor_class.attributes:
-            self.skipTest(f"image_processor attribute not present in {self.processor_class}")
-        image_processor = self.get_component("image_processor")
-        tokenizer = self.get_component("tokenizer")
-        qformer_tokenizer = self.get_component("qformer_tokenizer")
-
-        processor = self.processor_class(
-            tokenizer=tokenizer, image_processor=image_processor, qformer_tokenizer=qformer_tokenizer
-        )
-        self.skip_processor_without_typed_kwargs(processor)
-
-        input_str = ["lower newer"]
-        image_input = self.prepare_image_inputs()
-        with self.assertRaises(ValueError):
-            _ = processor(
-                text=input_str,
-                images=image_input,
-                images_kwargs={"size": {"height": 222, "width": 222}},
-                size={"height": 214, "width": 214},
-            )
-
-    # Override as InstructBlipProcessor has qformer_tokenizer
-    @require_torch
-    @require_vision
-    def test_structured_kwargs_nested(self):
-        if "image_processor" not in self.processor_class.attributes:
-            self.skipTest(f"image_processor attribute not present in {self.processor_class}")
-        image_processor = self.get_component("image_processor")
-        tokenizer = self.get_component("tokenizer")
-        qformer_tokenizer = self.get_component("qformer_tokenizer")
-
-        processor = self.processor_class(
-            tokenizer=tokenizer, image_processor=image_processor, qformer_tokenizer=qformer_tokenizer
-        )
-        self.skip_processor_without_typed_kwargs(processor)
-
-        input_str = "lower newer"
-        image_input = self.prepare_image_inputs()
-
-        # Define the kwargs for each modality
-        all_kwargs = {
-            "common_kwargs": {"return_tensors": "pt"},
-            "images_kwargs": {"size": {"height": 214, "width": 214}},
-            "text_kwargs": {"padding": "max_length", "max_length": 76},
-        }
-
-        inputs = processor(text=input_str, images=image_input, **all_kwargs)
-        self.skip_processor_without_typed_kwargs(processor)
-
-        self.assertEqual(inputs["pixel_values"].shape[2], 214)
-
-        self.assertEqual(len(inputs["input_ids"][0]), 76)
-
-    # Override as InstructBlipProcessor has qformer_tokenizer
-    @require_torch
-    @require_vision
-    def test_structured_kwargs_nested_from_dict(self):
-        if "image_processor" not in self.processor_class.attributes:
-            self.skipTest(f"image_processor attribute not present in {self.processor_class}")
-
-        image_processor = self.get_component("image_processor")
-        tokenizer = self.get_component("tokenizer")
-        qformer_tokenizer = self.get_component("qformer_tokenizer")
-
-        processor = self.processor_class(
-            tokenizer=tokenizer, image_processor=image_processor, qformer_tokenizer=qformer_tokenizer
-        )
-        self.skip_processor_without_typed_kwargs(processor)
-        input_str = "lower newer"
-        image_input = self.prepare_image_inputs()
-
-        # Define the kwargs for each modality
-        all_kwargs = {
-            "common_kwargs": {"return_tensors": "pt"},
-            "images_kwargs": {"size": {"height": 214, "width": 214}},
-            "text_kwargs": {"padding": "max_length", "max_length": 76},
-        }
-
-        inputs = processor(text=input_str, images=image_input, **all_kwargs)
-        self.assertEqual(inputs["pixel_values"].shape[2], 214)
-
-        self.assertEqual(len(inputs["input_ids"][0]), 76)

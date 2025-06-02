@@ -17,6 +17,7 @@ from typing import List, Optional, Tuple, Union
 
 import numpy as np
 
+from ..generation import GenerationConfig
 from ..utils import (
     ExplicitEnum,
     add_end_docstrings,
@@ -106,6 +107,10 @@ class DocumentQuestionAnsweringPipeline(ChunkPipeline):
     similar to the (extractive) question answering pipeline; however, the pipeline takes an image (and optional OCR'd
     words/boxes) as input instead of text context.
 
+    Unless the model you're using explicitly sets these generation parameters in its configuration files
+    (`generation_config.json`), the following default values will be used:
+    - max_new_tokens: 256
+
     Example:
 
     ```python
@@ -128,6 +133,12 @@ class DocumentQuestionAnsweringPipeline(ChunkPipeline):
     See the up-to-date list of available models on
     [huggingface.co/models](https://huggingface.co/models?filter=document-question-answering).
     """
+
+    _pipeline_calls_generate = True
+    # Make sure the docstring is updated when the default generation config is changed
+    _default_generation_config = GenerationConfig(
+        max_new_tokens=256,
+    )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -189,13 +200,20 @@ class DocumentQuestionAnsweringPipeline(ChunkPipeline):
         if handle_impossible_answer is not None:
             postprocess_params["handle_impossible_answer"] = handle_impossible_answer
 
-        return preprocess_params, {}, postprocess_params
+        forward_params = {}
+        if getattr(self, "assistant_model", None) is not None:
+            forward_params["assistant_model"] = self.assistant_model
+        if getattr(self, "assistant_tokenizer", None) is not None:
+            forward_params["tokenizer"] = self.tokenizer
+            forward_params["assistant_tokenizer"] = self.assistant_tokenizer
+
+        return preprocess_params, forward_params, postprocess_params
 
     def __call__(
         self,
         image: Union["Image.Image", str],
         question: Optional[str] = None,
-        word_boxes: Tuple[str, List[float]] = None,
+        word_boxes: Optional[Tuple[str, List[float]]] = None,
         **kwargs,
     ):
         """
@@ -276,7 +294,7 @@ class DocumentQuestionAnsweringPipeline(ChunkPipeline):
         padding="do_not_pad",
         doc_stride=None,
         max_seq_len=None,
-        word_boxes: Tuple[str, List[float]] = None,
+        word_boxes: Optional[Tuple[str, List[float]]] = None,
         lang=None,
         tesseract_config="",
         timeout=None,
@@ -332,7 +350,7 @@ class DocumentQuestionAnsweringPipeline(ChunkPipeline):
             )
 
         if self.model_type == ModelType.VisionEncoderDecoder:
-            task_prompt = f'<s_docvqa><s_question>{input["question"]}</s_question><s_answer>'
+            task_prompt = f"<s_docvqa><s_question>{input['question']}</s_question><s_answer>"
             # Adapted from https://huggingface.co/spaces/nielsr/donut-docvqa/blob/main/app.py
             encoding = {
                 "inputs": image_features["pixel_values"],
@@ -378,7 +396,7 @@ class DocumentQuestionAnsweringPipeline(ChunkPipeline):
             # p_mask: mask with 1 for token than cannot be in the answer (0 for token which can be in an answer)
             # We put 0 on the tokens from the context and 1 everywhere else (question and special tokens)
             # This logic mirrors the logic in the question_answering pipeline
-            p_mask = np.array([[tok != 1 for tok in encoding.sequence_ids(span_id)] for span_id in range(num_spans)])
+            p_mask = [[tok != 1 for tok in encoding.sequence_ids(span_id)] for span_id in range(num_spans)]
             for span_idx in range(num_spans):
                 if self.framework == "pt":
                     span_encoding = {k: torch.tensor(v[span_idx : span_idx + 1]) for (k, v) in encoding.items()}
@@ -429,6 +447,10 @@ class DocumentQuestionAnsweringPipeline(ChunkPipeline):
         is_last = model_inputs.pop("is_last", False)
 
         if self.model_type == ModelType.VisionEncoderDecoder:
+            # User-defined `generation_config` passed to the pipeline call take precedence
+            if "generation_config" not in generate_kwargs:
+                generate_kwargs["generation_config"] = self.generation_config
+
             model_outputs = self.model.generate(**model_inputs, **generate_kwargs)
         else:
             model_outputs = self.model(**model_inputs)
@@ -473,6 +495,11 @@ class DocumentQuestionAnsweringPipeline(ChunkPipeline):
         answers = []
         for output in model_outputs:
             words = output["words"]
+
+            if self.framework == "pt" and output["start_logits"].dtype in (torch.bfloat16, torch.float16):
+                output["start_logits"] = output["start_logits"].float()
+            if self.framework == "pt" and output["end_logits"].dtype in (torch.bfloat16, torch.float16):
+                output["end_logits"] = output["end_logits"].float()
 
             starts, ends, scores, min_null_score = select_starts_ends(
                 start=output["start_logits"],

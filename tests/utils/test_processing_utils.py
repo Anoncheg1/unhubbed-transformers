@@ -1,4 +1,3 @@
-# coding=utf-8
 # Copyright 2024 HuggingFace Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -78,6 +77,18 @@ class ProcessingUtilTester(unittest.TestCase):
         # test incorrect text and images order
         valid_images, valid_text = _validate_images_text_input_order(images=text, text=images)
         self.assertTrue(np.array_equal(valid_images[0], images[0]))
+        self.assertEqual(valid_text, text)
+
+        # list of strings and list of url images inputs
+        images = ["https://url1", "https://url2"]
+        text = ["text1", "text2"]
+        # test correct text and images order
+        valid_images, valid_text = _validate_images_text_input_order(images=images, text=text)
+        self.assertEqual(valid_images, images)
+        self.assertEqual(valid_text, text)
+        # test incorrect text and images order
+        valid_images, valid_text = _validate_images_text_input_order(images=text, text=images)
+        self.assertEqual(valid_images, images)
         self.assertEqual(valid_text, text)
 
         # list of strings and nested list of numpy images inputs

@@ -207,7 +207,7 @@ def compute_segments(
     mask_threshold: float = 0.5,
     overlap_mask_area_threshold: float = 0.8,
     label_ids_to_fuse: Optional[Set[int]] = None,
-    target_size: Tuple[int, int] = None,
+    target_size: Optional[Tuple[int, int]] = None,
 ):
     height = mask_probs.shape[1] if target_size is None else target_size[0]
     width = mask_probs.shape[2] if target_size is None else target_size[1]
@@ -404,14 +404,14 @@ class Mask2FormerImageProcessor(BaseImageProcessor):
     def __init__(
         self,
         do_resize: bool = True,
-        size: Dict[str, int] = None,
+        size: Optional[Dict[str, int]] = None,
         size_divisor: int = 32,
         resample: PILImageResampling = PILImageResampling.BILINEAR,
         do_rescale: bool = True,
         rescale_factor: float = 1 / 255,
         do_normalize: bool = True,
-        image_mean: Union[float, List[float]] = None,
-        image_std: Union[float, List[float]] = None,
+        image_mean: Optional[Union[float, List[float]]] = None,
+        image_std: Optional[Union[float, List[float]]] = None,
         ignore_index: Optional[int] = None,
         do_reduce_labels: bool = False,
         num_labels: Optional[int] = None,
@@ -575,13 +575,13 @@ class Mask2FormerImageProcessor(BaseImageProcessor):
     def _preprocess(
         self,
         image: ImageInput,
-        do_resize: bool = None,
-        size: Dict[str, int] = None,
-        size_divisor: int = None,
+        do_resize: Optional[bool] = None,
+        size: Optional[Dict[str, int]] = None,
+        size_divisor: Optional[int] = None,
         resample: PILImageResampling = None,
-        do_rescale: bool = None,
-        rescale_factor: float = None,
-        do_normalize: bool = None,
+        do_rescale: Optional[bool] = None,
+        rescale_factor: Optional[float] = None,
+        do_normalize: Optional[bool] = None,
         image_mean: Optional[Union[float, List[float]]] = None,
         image_std: Optional[Union[float, List[float]]] = None,
         input_data_format: Optional[Union[str, ChannelDimension]] = None,
@@ -599,13 +599,13 @@ class Mask2FormerImageProcessor(BaseImageProcessor):
     def _preprocess_image(
         self,
         image: ImageInput,
-        do_resize: bool = None,
-        size: Dict[str, int] = None,
-        size_divisor: int = None,
+        do_resize: Optional[bool] = None,
+        size: Optional[Dict[str, int]] = None,
+        size_divisor: Optional[int] = None,
         resample: PILImageResampling = None,
-        do_rescale: bool = None,
-        rescale_factor: float = None,
-        do_normalize: bool = None,
+        do_rescale: Optional[bool] = None,
+        rescale_factor: Optional[float] = None,
+        do_normalize: Optional[bool] = None,
         image_mean: Optional[Union[float, List[float]]] = None,
         image_std: Optional[Union[float, List[float]]] = None,
         data_format: Optional[Union[str, ChannelDimension]] = None,
@@ -614,7 +614,7 @@ class Mask2FormerImageProcessor(BaseImageProcessor):
         """Preprocesses a single image."""
         # All transformations expect numpy arrays.
         image = to_numpy_array(image)
-        if is_scaled_image(image) and do_rescale:
+        if do_rescale and is_scaled_image(image):
             logger.warning_once(
                 "It looks like you are trying to rescale already rescaled images. If the input"
                 " images have pixel values between 0 and 1, set `do_rescale=False` to avoid rescaling them again."
@@ -641,8 +641,8 @@ class Mask2FormerImageProcessor(BaseImageProcessor):
     def _preprocess_mask(
         self,
         segmentation_map: ImageInput,
-        do_resize: bool = None,
-        size: Dict[str, int] = None,
+        do_resize: Optional[bool] = None,
+        size: Optional[Dict[str, int]] = None,
         size_divisor: int = 0,
         input_data_format: Optional[Union[str, ChannelDimension]] = None,
     ) -> np.ndarray:
@@ -935,7 +935,7 @@ class Mask2FormerImageProcessor(BaseImageProcessor):
         if segmentation_maps is not None:
             mask_labels = []
             class_labels = []
-            pad_size = get_max_height_width(pixel_values_list)
+            pad_size = get_max_height_width(pixel_values_list, input_data_format=input_data_format)
             # Convert to list of binary masks and labels
             for idx, segmentation_map in enumerate(segmentation_maps):
                 segmentation_map = to_numpy_array(segmentation_map)
@@ -1034,7 +1034,8 @@ class Mask2FormerImageProcessor(BaseImageProcessor):
     ) -> List[Dict]:
         """
         Converts the output of [`Mask2FormerForUniversalSegmentationOutput`] into instance segmentation predictions.
-        Only supports PyTorch.
+        Only supports PyTorch. If instances could overlap, set either return_coco_annotation or return_binary_maps
+        to `True` to get the correct segmentation result.
 
         Args:
             outputs ([`Mask2FormerForUniversalSegmentation`]):
@@ -1056,9 +1057,10 @@ class Mask2FormerImageProcessor(BaseImageProcessor):
                 (one per detected instance).
         Returns:
             `List[Dict]`: A list of dictionaries, one per image, each dictionary containing two keys:
-            - **segmentation** -- A tensor of shape `(height, width)` where each pixel represents a `segment_id` or
+            - **segmentation** -- A tensor of shape `(height, width)` where each pixel represents a `segment_id`, or
               `List[List]` run-length encoding (RLE) of the segmentation map if return_coco_annotation is set to
-              `True`. Set to `None` if no mask if found above `threshold`.
+              `True`, or a tensor of shape `(num_instances, height, width)` if return_binary_maps is set to `True`.
+              Set to `None` if no mask if found above `threshold`.
             - **segments_info** -- A dictionary that contains additional information on each segment.
                 - **id** -- An integer representing the `segment_id`.
                 - **label_id** -- An integer representing the label / semantic class id corresponding to `segment_id`.
@@ -1235,3 +1237,6 @@ class Mask2FormerImageProcessor(BaseImageProcessor):
 
             results.append({"segmentation": segmentation, "segments_info": segments})
         return results
+
+
+__all__ = ["Mask2FormerImageProcessor"]

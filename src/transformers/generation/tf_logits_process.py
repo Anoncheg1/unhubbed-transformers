@@ -343,7 +343,7 @@ class TFNoBadWordsLogitsProcessor(TFLogitsProcessor):
                 )
 
             def _match_found():
-                # Finaly, runs the actual comparison. Can only be called if the previous comparisons do not yield
+                # Finally, runs the actual comparison. Can only be called if the previous comparisons do not yield
                 # an answer (otherwise we get indexing exceptions)
                 compare_len = self.bad_word_seqs_len[bad_word_seq_number] - 1
                 return tf.cond(
@@ -512,7 +512,7 @@ class TFSuppressTokensAtBeginLogitsProcessor(TFLogitsProcessor):
     r"""
     [`TFSuppressTokensAtBeginLogitsProcessor`] suppresses a list of tokens as soon as the `generate` function starts
     generating using `begin_index` tokens. This should ensure that the tokens defined by `begin_suppress_tokens` at not
-    sampled at the begining of the generation.
+    sampled at the beginning of the generation.
     """
 
     def __init__(self, begin_suppress_tokens, begin_index):
