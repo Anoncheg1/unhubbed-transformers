@@ -1,0 +1,1826 @@
+diff --git a/setup.py b/setup.py
+index fcfca56..f8c41fd 100644
+--- a/setup.py
++++ b/setup.py
+@@ -450,7 +450,7 @@ install_requires = [
+ ]
+ 
+ setup(
+-    name="transformers",
++    name="unhubbed-transformers",
+     version="4.52.4",  # expected format is one of x.y.z.dev0, or x.y.z.rc1 or x.y.z (no to dashes, yes to dots)
+     author="The Hugging Face team (past and future) with the help of all our contributors (https://github.com/huggingface/transformers/graphs/contributors)",
+     author_email="transformers@huggingface.co",
+@@ -473,7 +473,7 @@ setup(
+         ]
+     },
+     python_requires=">=3.9.0",
+-    install_requires=list(install_requires),
++    # install_requires=list(install_requires),
+     classifiers=[
+         "Development Status :: 5 - Production/Stable",
+         "Intended Audience :: Developers",
+diff --git a/src/transformers/__init__.py b/src/transformers/__init__.py
+index d3b9dd3..6e20781 100644
+--- a/src/transformers/__init__.py
++++ b/src/transformers/__init__.py
+@@ -24,7 +24,7 @@ from pathlib import Path
+ from typing import TYPE_CHECKING
+ 
+ # Check the dependencies satisfy the minimal versions required.
+-from . import dependency_versions_check
++# from . import dependency_versions_check
+ from .utils import (
+     OptionalDependencyNotAvailable,
+     _LazyModule,
+@@ -98,7 +98,7 @@ _import_structure = {
+     "data.metrics": [],
+     "data.processors": [],
+     "debug_utils": [],
+-    "dependency_versions_check": [],
++    # "dependency_versions_check": [],
+     "dependency_versions_table": [],
+     "dynamic_module_utils": [],
+     "feature_extraction_sequence_utils": ["SequenceFeatureExtractor"],
+diff --git a/src/transformers/audio_utils.py b/src/transformers/audio_utils.py
+index e980d4c..04c6967 100644
+--- a/src/transformers/audio_utils.py
++++ b/src/transformers/audio_utils.py
+@@ -22,7 +22,7 @@ from io import BytesIO
+ from typing import List, Optional, Tuple, Union
+ 
+ import numpy as np
+-import requests
++# import requests
+ 
+ from .utils import (
+     is_librosa_available,
+diff --git a/src/transformers/commands/env.py b/src/transformers/commands/env.py
+index 4721f1c..dc18f17 100644
+--- a/src/transformers/commands/env.py
++++ b/src/transformers/commands/env.py
+@@ -20,7 +20,7 @@ import os
+ import platform
+ from argparse import ArgumentParser
+ 
+-import huggingface_hub
++# import huggingface_hub
+ 
+ from .. import __version__ as version
+ from ..integrations.deepspeed import is_deepspeed_available
+diff --git a/src/transformers/configuration_utils.py b/src/transformers/configuration_utils.py
+index 18cc0ff..78223a4 100755
+--- a/src/transformers/configuration_utils.py
++++ b/src/transformers/configuration_utils.py
+@@ -27,12 +27,12 @@ from .dynamic_module_utils import custom_object_save
+ from .modeling_gguf_pytorch_utils import load_gguf_checkpoint
+ from .utils import (
+     CONFIG_NAME,
+-    PushToHubMixin,
++    # PushToHubMixin,
+     add_model_info_to_auto_map,
+     add_model_info_to_custom_pipelines,
+     cached_file,
+     copy_func,
+-    download_url,
++    # download_url,
+     extract_commit_hash,
+     is_remote_url,
+     is_torch_available,
+@@ -44,7 +44,7 @@ from .utils.generic import is_timm_config_dict
+ logger = logging.get_logger(__name__)
+ 
+ 
+-class PretrainedConfig(PushToHubMixin):
++class PretrainedConfig(): # PushToHubMixin
+     # no-format
+     r"""
+     Base class for all configuration classes. Handles a few parameters common to all models' configurations as well as
+@@ -645,7 +645,7 @@ class PretrainedConfig(PushToHubMixin):
+             is_local = True
+         elif is_remote_url(pretrained_model_name_or_path):
+             configuration_file = pretrained_model_name_or_path if gguf_file is None else gguf_file
+-            resolved_config_file = download_url(pretrained_model_name_or_path)
++            # resolved_config_file = download_url(pretrained_model_name_or_path)
+         else:
+             configuration_file = kwargs.pop("_configuration_file", CONFIG_NAME) if gguf_file is None else gguf_file
+ 
+@@ -1204,8 +1204,8 @@ def recursive_diff_dict(dict_a, dict_b, config_obj=None):
+     return diff
+ 
+ 
+-PretrainedConfig.push_to_hub = copy_func(PretrainedConfig.push_to_hub)
+-if PretrainedConfig.push_to_hub.__doc__ is not None:
+-    PretrainedConfig.push_to_hub.__doc__ = PretrainedConfig.push_to_hub.__doc__.format(
+-        object="config", object_class="AutoConfig", object_files="configuration file"
+-    )
++# PretrainedConfig.push_to_hub = copy_func(PretrainedConfig.push_to_hub)
++# if PretrainedConfig.push_to_hub.__doc__ is not None:
++#     PretrainedConfig.push_to_hub.__doc__ = PretrainedConfig.push_to_hub.__doc__.format(
++#         object="config", object_class="AutoConfig", object_files="configuration file"
++#     )
+diff --git a/src/transformers/dynamic_module_utils.py b/src/transformers/dynamic_module_utils.py
+index eec0174..d2da7c3 100644
+--- a/src/transformers/dynamic_module_utils.py
++++ b/src/transformers/dynamic_module_utils.py
+@@ -30,12 +30,12 @@ from pathlib import Path
+ from types import ModuleType
+ from typing import Any, Optional, Union
+ 
+-from huggingface_hub import try_to_load_from_cache
++# from huggingface_hub import try_to_load_from_cache
+ from packaging import version
+ 
+ from .utils import (
+-    HF_MODULES_CACHE,
+-    TRANSFORMERS_DYNAMIC_MODULE_NAME,
++    # HF_MODULES_CACHE,
++    # TRANSFORMERS_DYNAMIC_MODULE_NAME,
+     cached_file,
+     extract_commit_hash,
+     is_offline_mode,
+diff --git a/src/transformers/feature_extraction_utils.py b/src/transformers/feature_extraction_utils.py
+index ca2a3b5..03ce37d 100644
+--- a/src/transformers/feature_extraction_utils.py
++++ b/src/transformers/feature_extraction_utils.py
+@@ -27,13 +27,13 @@ import numpy as np
+ from .dynamic_module_utils import custom_object_save
+ from .utils import (
+     FEATURE_EXTRACTOR_NAME,
+-    PushToHubMixin,
++    # PushToHubMixin,
+     TensorType,
+     add_model_info_to_auto_map,
+     add_model_info_to_custom_pipelines,
+     cached_file,
+     copy_func,
+-    download_url,
++    # download_url,
+     is_flax_available,
+     is_jax_tensor,
+     is_numpy_array,
+@@ -249,7 +249,7 @@ class BatchFeature(UserDict):
+         return self
+ 
+ 
+-class FeatureExtractionMixin(PushToHubMixin):
++class FeatureExtractionMixin(): # PushToHubMixin
+     """
+     This is a feature extraction mixin used to provide saving/loading functionality for sequential and image feature
+     extractors.
+@@ -502,7 +502,7 @@ class FeatureExtractionMixin(PushToHubMixin):
+             is_local = True
+         elif is_remote_url(pretrained_model_name_or_path):
+             feature_extractor_file = pretrained_model_name_or_path
+-            resolved_feature_extractor_file = download_url(pretrained_model_name_or_path)
++            # resolved_feature_extractor_file = download_url(pretrained_model_name_or_path)
+         else:
+             feature_extractor_file = FEATURE_EXTRACTOR_NAME
+             try:
+@@ -694,8 +694,8 @@ class FeatureExtractionMixin(PushToHubMixin):
+         cls._auto_class = auto_class
+ 
+ 
+-FeatureExtractionMixin.push_to_hub = copy_func(FeatureExtractionMixin.push_to_hub)
+-if FeatureExtractionMixin.push_to_hub.__doc__ is not None:
+-    FeatureExtractionMixin.push_to_hub.__doc__ = FeatureExtractionMixin.push_to_hub.__doc__.format(
+-        object="feature extractor", object_class="AutoFeatureExtractor", object_files="feature extractor file"
+-    )
++# FeatureExtractionMixin.push_to_hub = copy_func(FeatureExtractionMixin.push_to_hub)
++# if FeatureExtractionMixin.push_to_hub.__doc__ is not None:
++#     FeatureExtractionMixin.push_to_hub.__doc__ = FeatureExtractionMixin.push_to_hub.__doc__.format(
++#         object="feature extractor", object_class="AutoFeatureExtractor", object_files="feature extractor file"
++#     )
+diff --git a/src/transformers/file_utils.py b/src/transformers/file_utils.py
+index ac6b36d..d348abb 100644
+--- a/src/transformers/file_utils.py
++++ b/src/transformers/file_utils.py
+@@ -17,14 +17,14 @@ File utilities: utilities related to download and cache models
+ This module should not be update anymore and is only left for backward compatibility.
+ """
+ 
+-from huggingface_hub import get_full_repo_name  # for backward compatibility
+-from huggingface_hub.constants import HF_HUB_DISABLE_TELEMETRY as DISABLE_TELEMETRY  # for backward compatibility
++# from huggingface_hub import get_full_repo_name  # for backward compatibility
++# from huggingface_hub.constants import HF_HUB_DISABLE_TELEMETRY as DISABLE_TELEMETRY  # for backward compatibility
+ 
+ from . import __version__
+ 
+ # Backward compatibility imports, to make sure all those objects can be found in file_utils
+ from .utils import (
+-    CLOUDFRONT_DISTRIB_PREFIX,
++    # CLOUDFRONT_DISTRIB_PREFIX,
+     CONFIG_NAME,
+     DUMMY_INPUTS,
+     DUMMY_MASK,
+@@ -32,14 +32,14 @@ from .utils import (
+     ENV_VARS_TRUE_VALUES,
+     FEATURE_EXTRACTOR_NAME,
+     FLAX_WEIGHTS_NAME,
+-    HF_MODULES_CACHE,
+-    HUGGINGFACE_CO_PREFIX,
+-    HUGGINGFACE_CO_RESOLVE_ENDPOINT,
++    # HF_MODULES_CACHE,
++    # HUGGINGFACE_CO_PREFIX,
++    # HUGGINGFACE_CO_RESOLVE_ENDPOINT,
+     MODEL_CARD_NAME,
+     MULTIPLE_CHOICE_DUMMY_INPUTS,
+     PYTORCH_PRETRAINED_BERT_CACHE,
+     PYTORCH_TRANSFORMERS_CACHE,
+-    S3_BUCKET_PREFIX,
++    # S3_BUCKET_PREFIX,
+     SENTENCEPIECE_UNDERLINE,
+     SPIECE_UNDERLINE,
+     TF2_WEIGHTS_NAME,
+@@ -54,13 +54,13 @@ from .utils import (
+     WEIGHTS_NAME,
+     ContextManagers,
+     DummyObject,
+-    EntryNotFoundError,
++    # EntryNotFoundError,
+     ExplicitEnum,
+     ModelOutput,
+     PaddingStrategy,
+-    PushToHubMixin,
+-    RepositoryNotFoundError,
+-    RevisionNotFoundError,
++    # PushToHubMixin,
++    # RepositoryNotFoundError,
++    # RevisionNotFoundError,
+     TensorType,
+     _LazyModule,
+     add_code_sample_docstrings,
+@@ -70,10 +70,10 @@ from .utils import (
+     cached_property,
+     copy_func,
+     default_cache_path,
+-    define_sagemaker_information,
++    # define_sagemaker_information,
+     get_torch_version,
+     has_file,
+-    http_user_agent,
++    # http_user_agent,
+     is_apex_available,
+     is_bs4_available,
+     is_coloredlogs_available,
+diff --git a/src/transformers/generation/configuration_utils.py b/src/transformers/generation/configuration_utils.py
+index 353dae2..947002a 100644
+--- a/src/transformers/generation/configuration_utils.py
++++ b/src/transformers/generation/configuration_utils.py
+@@ -27,9 +27,9 @@ from ..configuration_utils import PretrainedConfig
+ from ..utils import (
+     GENERATION_CONFIG_NAME,
+     ExplicitEnum,
+-    PushToHubMixin,
++    # PushToHubMixin,
+     cached_file,
+-    download_url,
++    # download_url,
+     extract_commit_hash,
+     is_remote_url,
+     is_torch_available,
+@@ -101,7 +101,7 @@ class GenerationMode(ExplicitEnum):
+     GROUP_BEAM_SEARCH = "group_beam_search"
+ 
+ 
+-class GenerationConfig(PushToHubMixin):
++class GenerationConfig(): # PushToHubMixin
+     # no-format
+     """
+     Class that holds a configuration for a generation task. A `generate` call supports the following generation methods
+@@ -1042,7 +1042,7 @@ class GenerationConfig(PushToHubMixin):
+             is_local = True
+         elif is_remote_url(config_path):
+             configuration_file = config_path
+-            resolved_config_file = download_url(config_path)
++            # resolved_config_file = download_url(config_path)
+         else:
+             configuration_file = config_file_name
+             try:
+diff --git a/src/transformers/generation/utils.py b/src/transformers/generation/utils.py
+index 02513e0..f5451b6 100644
+--- a/src/transformers/generation/utils.py
++++ b/src/transformers/generation/utils.py
+@@ -23,7 +23,7 @@ from typing import TYPE_CHECKING, Any, Callable, Dict, List, Optional, Tuple, Un
+ import numpy as np
+ import torch
+ import torch.distributed as dist
+-from huggingface_hub import file_exists
++# from huggingface_hub import file_exists
+ from packaging import version
+ from torch import nn
+ from torch.nn import functional as F
+diff --git a/src/transformers/image_processing_base.py b/src/transformers/image_processing_base.py
+index 4446aaa..eb3716f 100644
+--- a/src/transformers/image_processing_base.py
++++ b/src/transformers/image_processing_base.py
+@@ -21,18 +21,18 @@ from io import BytesIO
+ from typing import Any, Optional, TypeVar, Union
+ 
+ import numpy as np
+-import requests
++# import requests
+ 
+ from .dynamic_module_utils import custom_object_save
+ from .feature_extraction_utils import BatchFeature as BaseBatchFeature
+ from .utils import (
+     IMAGE_PROCESSOR_NAME,
+-    PushToHubMixin,
++    # PushToHubMixin,
+     add_model_info_to_auto_map,
+     add_model_info_to_custom_pipelines,
+     cached_file,
+     copy_func,
+-    download_url,
++    # download_url,
+     is_offline_mode,
+     is_remote_url,
+     is_vision_available,
+@@ -68,7 +68,7 @@ class BatchFeature(BaseBatchFeature):
+ 
+ 
+ # TODO: (Amy) - factor out the common parts of this and the feature extractor
+-class ImageProcessingMixin(PushToHubMixin):
++class ImageProcessingMixin(): # PushToHubMixin
+     """
+     This is an image processor mixin used to provide saving/loading functionality for sequential and image feature
+     extractors.
+@@ -332,7 +332,7 @@ class ImageProcessingMixin(PushToHubMixin):
+             is_local = True
+         elif is_remote_url(pretrained_model_name_or_path):
+             image_processor_file = pretrained_model_name_or_path
+-            resolved_image_processor_file = download_url(pretrained_model_name_or_path)
++            # resolved_image_processor_file = download_url(pretrained_model_name_or_path)
+         else:
+             image_processor_file = image_processor_filename
+             try:
+@@ -551,8 +551,8 @@ class ImageProcessingMixin(PushToHubMixin):
+             raise TypeError(f"only a single or a list of entries is supported but got type={type(image_url_or_urls)}")
+ 
+ 
+-ImageProcessingMixin.push_to_hub = copy_func(ImageProcessingMixin.push_to_hub)
+-if ImageProcessingMixin.push_to_hub.__doc__ is not None:
+-    ImageProcessingMixin.push_to_hub.__doc__ = ImageProcessingMixin.push_to_hub.__doc__.format(
+-        object="image processor", object_class="AutoImageProcessor", object_files="image processor file"
+-    )
++# ImageProcessingMixin.push_to_hub = copy_func(ImageProcessingMixin.push_to_hub)
++# if ImageProcessingMixin.push_to_hub.__doc__ is not None:
++#     ImageProcessingMixin.push_to_hub.__doc__ = ImageProcessingMixin.push_to_hub.__doc__.format(
++#         object="image processor", object_class="AutoImageProcessor", object_files="image processor file"
++#     )
+diff --git a/src/transformers/image_utils.py b/src/transformers/image_utils.py
+index c8c6ab7..8dc46e2 100644
+--- a/src/transformers/image_utils.py
++++ b/src/transformers/image_utils.py
+@@ -20,7 +20,7 @@ from io import BytesIO
+ from typing import Optional, Union
+ 
+ import numpy as np
+-import requests
++# import requests
+ from packaging import version
+ 
+ from .utils import (
+diff --git a/src/transformers/integrations/deepspeed.py b/src/transformers/integrations/deepspeed.py
+index 1700301..b82326a 100644
+--- a/src/transformers/integrations/deepspeed.py
++++ b/src/transformers/integrations/deepspeed.py
+@@ -21,7 +21,7 @@ import importlib.util
+ import weakref
+ from functools import partialmethod
+ 
+-from ..dependency_versions_check import dep_version_check
++# from ..dependency_versions_check import dep_version_check
+ from ..utils import is_accelerate_available, is_torch_available, logging
+ 
+ 
+@@ -74,8 +74,8 @@ class HfDeepSpeedConfig(DeepSpeedConfig):
+     def __init__(self, config_file_or_dict):
+         # set global weakref object
+         set_hf_deepspeed_config(self)
+-        dep_version_check("accelerate")
+-        dep_version_check("deepspeed")
++        # dep_version_check("accelerate")
++        # dep_version_check("deepspeed")
+         super().__init__(config_file_or_dict)
+ 
+ 
+diff --git a/src/transformers/keras_callbacks.py b/src/transformers/keras_callbacks.py
+index 57e72ae..9f8ded7 100644
+--- a/src/transformers/keras_callbacks.py
++++ b/src/transformers/keras_callbacks.py
+@@ -6,7 +6,7 @@ from typing import Callable, Optional, Union
+ 
+ import numpy as np
+ import tensorflow as tf
+-from huggingface_hub import Repository, create_repo
++# from huggingface_hub import Repository, create_repo
+ from packaging.version import parse
+ 
+ from . import IntervalStrategy, PreTrainedTokenizerBase
+diff --git a/src/transformers/modelcard.py b/src/transformers/modelcard.py
+index da5c407..697f508 100644
+--- a/src/transformers/modelcard.py
++++ b/src/transformers/modelcard.py
+@@ -21,10 +21,10 @@ from dataclasses import dataclass
+ from pathlib import Path
+ from typing import Any, Optional, Union
+ 
+-import requests
++# import requests
+ import yaml
+-from huggingface_hub import model_info
+-from huggingface_hub.utils import HFValidationError
++# from huggingface_hub import model_info
++# from huggingface_hub.utils import HFValidationError
+ 
+ from . import __version__
+ from .models.auto.modeling_auto import (
+diff --git a/src/transformers/modeling_flax_utils.py b/src/transformers/modeling_flax_utils.py
+index ac7a47e..e8e9c3d 100644
+--- a/src/transformers/modeling_flax_utils.py
++++ b/src/transformers/modeling_flax_utils.py
+@@ -42,12 +42,12 @@ from .utils import (
+     SAFE_WEIGHTS_NAME,
+     WEIGHTS_INDEX_NAME,
+     WEIGHTS_NAME,
+-    PushToHubMixin,
++    # PushToHubMixin,
+     add_code_sample_docstrings,
+     add_start_docstrings_to_model_forward,
+     cached_file,
+     copy_func,
+-    download_url,
++    # download_url,
+     has_file,
+     is_offline_mode,
+     is_remote_url,
+@@ -147,7 +147,7 @@ def flax_shard_checkpoint(params, max_shard_size="10GB"):
+     return shards, index
+ 
+ 
+-class FlaxPreTrainedModel(PushToHubMixin, FlaxGenerationMixin):
++class FlaxPreTrainedModel(FlaxGenerationMixin): # PushToHubMixin,
+     r"""
+     Base class for all models.
+ 
+@@ -753,7 +753,7 @@ class FlaxPreTrainedModel(PushToHubMixin, FlaxGenerationMixin):
+                 is_local = True
+             elif is_remote_url(pretrained_model_name_or_path):
+                 filename = pretrained_model_name_or_path
+-                resolved_archive_file = download_url(pretrained_model_name_or_path)
++                # resolved_archive_file = download_url(pretrained_model_name_or_path)
+             else:
+                 if from_pt:
+                     filename = WEIGHTS_NAME
+@@ -1239,12 +1239,12 @@ class FlaxPreTrainedModel(PushToHubMixin, FlaxGenerationMixin):
+         cls._auto_class = auto_class
+ 
+ 
+-# To update the docstring, we need to copy the method, otherwise we change the original docstring.
+-FlaxPreTrainedModel.push_to_hub = copy_func(FlaxPreTrainedModel.push_to_hub)
+-if FlaxPreTrainedModel.push_to_hub.__doc__ is not None:
+-    FlaxPreTrainedModel.push_to_hub.__doc__ = FlaxPreTrainedModel.push_to_hub.__doc__.format(
+-        object="model", object_class="FlaxAutoModel", object_files="model checkpoint"
+-    )
++# # To update the docstring, we need to copy the method, otherwise we change the original docstring.
++# FlaxPreTrainedModel.push_to_hub = copy_func(FlaxPreTrainedModel.push_to_hub)
++# if FlaxPreTrainedModel.push_to_hub.__doc__ is not None:
++#     FlaxPreTrainedModel.push_to_hub.__doc__ = FlaxPreTrainedModel.push_to_hub.__doc__.format(
++#         object="model", object_class="FlaxAutoModel", object_files="model checkpoint"
++#     )
+ 
+ 
+ def overwrite_call_docstring(model_class, docstring):
+diff --git a/src/transformers/modeling_tf_utils.py b/src/transformers/modeling_tf_utils.py
+index 67aed15..05d6f50 100644
+--- a/src/transformers/modeling_tf_utils.py
++++ b/src/transformers/modeling_tf_utils.py
+@@ -55,9 +55,9 @@ from .utils import (
+     WEIGHTS_INDEX_NAME,
+     WEIGHTS_NAME,
+     ModelOutput,
+-    PushToHubMixin,
++    # PushToHubMixin,
+     cached_file,
+-    download_url,
++    # download_url,
+     find_labels,
+     has_file,
+     is_offline_mode,
+@@ -1106,7 +1106,7 @@ def init_copy_embeddings(old_embeddings, new_num_tokens):
+     return mask, current_weights
+ 
+ 
+-class TFPreTrainedModel(keras.Model, TFModelUtilsMixin, TFGenerationMixin, PushToHubMixin):
++class TFPreTrainedModel(keras.Model, TFModelUtilsMixin, TFGenerationMixin): # , PushToHubMixin
+     r"""
+     Base class for all TF models.
+ 
+@@ -2786,7 +2786,7 @@ class TFPreTrainedModel(keras.Model, TFModelUtilsMixin, TFGenerationMixin, PushT
+                 is_local = True
+             elif is_remote_url(pretrained_model_name_or_path):
+                 filename = pretrained_model_name_or_path
+-                resolved_archive_file = download_url(pretrained_model_name_or_path)
++                # resolved_archive_file = download_url(pretrained_model_name_or_path)
+             else:
+                 # set correct filename
+                 if from_pt:
+diff --git a/src/transformers/modeling_utils.py b/src/transformers/modeling_utils.py
+index 0f3a770..5ab5e75 100644
+--- a/src/transformers/modeling_utils.py
++++ b/src/transformers/modeling_utils.py
+@@ -37,8 +37,8 @@ from typing import Any, Callable, Dict, List, Optional, Set, Tuple, Type, TypeVa
+ from zipfile import is_zipfile
+ 
+ import torch
+-import torch.distributed.tensor
+-from huggingface_hub import split_torch_state_dict_into_shards
++# import torch.distributed.tensor
++# from huggingface_hub import split_torch_state_dict_into_shards
+ from packaging import version
+ from torch import Tensor, nn
+ from torch.distributions import constraints
+@@ -97,11 +97,11 @@ from .utils import (
+     WEIGHTS_NAME,
+     ContextManagers,
+     ModelOutput,
+-    PushToHubMixin,
++    # PushToHubMixin,
+     cached_file,
+     check_torch_load_is_safe,
+     copy_func,
+-    download_url,
++    # download_url,
+     extract_commit_hash,
+     has_file,
+     is_accelerate_available,
+@@ -124,7 +124,7 @@ from .utils import (
+     replace_return_docstrings,
+     strtobool,
+ )
+-from .utils.hub import create_and_tag_model_card, get_checkpoint_shard_files
++from .utils.hub import get_checkpoint_shard_files # create_and_tag_model_card,
+ from .utils.import_utils import (
+     ENV_VARS_TRUE_VALUES,
+     is_huggingface_hub_greater_or_equal,
+@@ -991,7 +991,7 @@ def _get_resolved_checkpoint_files(
+             is_local = True
+         elif is_remote_url(pretrained_model_name_or_path):
+             filename = pretrained_model_name_or_path
+-            resolved_archive_file = download_url(pretrained_model_name_or_path)
++            # resolved_archive_file = download_url(pretrained_model_name_or_path)
+         else:
+             # set correct filename
+             if transformers_explicit_filename is not None:
+@@ -1782,7 +1782,7 @@ class ModuleUtilsMixin:
+         return 6 * self.estimate_tokens(input_dict) * self.num_parameters(exclude_embeddings=exclude_embeddings)
+ 
+ 
+-class PreTrainedModel(nn.Module, ModuleUtilsMixin, PushToHubMixin, PeftAdapterMixin):
++class PreTrainedModel(nn.Module, ModuleUtilsMixin, PeftAdapterMixin): # PushToHubMixin,
+     r"""
+     Base class for all models.
+ 
+@@ -3753,21 +3753,21 @@ class PreTrainedModel(nn.Module, ModuleUtilsMixin, PushToHubMixin, PeftAdapterMi
+                 token=token,
+             )
+ 
+-    @wraps(PushToHubMixin.push_to_hub)
+-    def push_to_hub(self, *args, **kwargs):
+-        tags = self.model_tags if self.model_tags is not None else []
++    # @wraps(PushToHubMixin.push_to_hub)
++    # def push_to_hub(self, *args, **kwargs):
++    #     tags = self.model_tags if self.model_tags is not None else []
+ 
+-        tags_kwargs = kwargs.get("tags", [])
+-        if isinstance(tags_kwargs, str):
+-            tags_kwargs = [tags_kwargs]
++    #     tags_kwargs = kwargs.get("tags", [])
++    #     if isinstance(tags_kwargs, str):
++    #         tags_kwargs = [tags_kwargs]
+ 
+-        for tag in tags_kwargs:
+-            if tag not in tags:
+-                tags.append(tag)
++    #     for tag in tags_kwargs:
++    #         if tag not in tags:
++    #             tags.append(tag)
+ 
+-        if tags:
+-            kwargs["tags"] = tags
+-        return super().push_to_hub(*args, **kwargs)
++    #     if tags:
++    #         kwargs["tags"] = tags
++    #     return super().push_to_hub(*args, **kwargs)
+ 
+     def get_memory_footprint(self, return_buffers=True):
+         r"""
+@@ -5493,11 +5493,11 @@ class PreTrainedModel(nn.Module, ModuleUtilsMixin, PushToHubMixin, PeftAdapterMi
+         raise AttributeError(f"`{target}` is neither a parameter nor a buffer.")
+ 
+ 
+-PreTrainedModel.push_to_hub = copy_func(PreTrainedModel.push_to_hub)
+-if PreTrainedModel.push_to_hub.__doc__ is not None:
+-    PreTrainedModel.push_to_hub.__doc__ = PreTrainedModel.push_to_hub.__doc__.format(
+-        object="model", object_class="AutoModel", object_files="model file"
+-    )
++# PreTrainedModel.push_to_hub = copy_func(PreTrainedModel.push_to_hub)
++# if PreTrainedModel.push_to_hub.__doc__ is not None:
++#     PreTrainedModel.push_to_hub.__doc__ = PreTrainedModel.push_to_hub.__doc__.format(
++#         object="model", object_class="AutoModel", object_files="model file"
++#     )
+ 
+ 
+ class PoolerStartLogits(nn.Module):
+diff --git a/src/transformers/models/deprecated/realm/retrieval_realm.py b/src/transformers/models/deprecated/realm/retrieval_realm.py
+index b5e47ab..a6419ad 100644
+--- a/src/transformers/models/deprecated/realm/retrieval_realm.py
++++ b/src/transformers/models/deprecated/realm/retrieval_realm.py
+@@ -18,7 +18,7 @@ import os
+ from typing import Optional, Union
+ 
+ import numpy as np
+-from huggingface_hub import hf_hub_download
++# from huggingface_hub import hf_hub_download
+ 
+ from transformers import AutoTokenizer
+ 
+diff --git a/src/transformers/models/megatron_gpt2/checkpoint_reshaping_and_interoperability.py b/src/transformers/models/megatron_gpt2/checkpoint_reshaping_and_interoperability.py
+index 2e50a3b..f8b7b40 100644
+--- a/src/transformers/models/megatron_gpt2/checkpoint_reshaping_and_interoperability.py
++++ b/src/transformers/models/megatron_gpt2/checkpoint_reshaping_and_interoperability.py
+@@ -21,7 +21,7 @@ import sys
+ import types
+ 
+ import torch
+-from huggingface_hub import split_torch_state_dict_into_shards
++# from huggingface_hub import split_torch_state_dict_into_shards
+ from packaging import version
+ 
+ from transformers import AutoTokenizer, GPT2Config
+diff --git a/src/transformers/models/oneformer/image_processing_oneformer.py b/src/transformers/models/oneformer/image_processing_oneformer.py
+index 068d6af..70f538f 100644
+--- a/src/transformers/models/oneformer/image_processing_oneformer.py
++++ b/src/transformers/models/oneformer/image_processing_oneformer.py
+@@ -19,8 +19,8 @@ import os
+ from typing import Any, Dict, Iterable, List, Optional, Set, Tuple, Union
+ 
+ import numpy as np
+-from huggingface_hub import hf_hub_download
+-from huggingface_hub.utils import RepositoryNotFoundError
++# from huggingface_hub import hf_hub_download
++# from huggingface_hub.utils import RepositoryNotFoundError
+ 
+ from ...image_processing_utils import INIT_SERVICE_KWARGS, BaseImageProcessor, BatchFeature, get_size_dict
+ from ...image_transforms import (
+diff --git a/src/transformers/models/pix2struct/image_processing_pix2struct.py b/src/transformers/models/pix2struct/image_processing_pix2struct.py
+index f052521..fc46927 100644
+--- a/src/transformers/models/pix2struct/image_processing_pix2struct.py
++++ b/src/transformers/models/pix2struct/image_processing_pix2struct.py
+@@ -19,7 +19,7 @@ import math
+ from typing import Dict, Optional, Union
+ 
+ import numpy as np
+-from huggingface_hub import hf_hub_download
++# from huggingface_hub import hf_hub_download
+ 
+ from ...image_processing_utils import BaseImageProcessor, BatchFeature
+ from ...image_transforms import convert_to_rgb, normalize, to_channel_dimension_format, to_pil_image
+diff --git a/src/transformers/pipelines/__init__.py b/src/transformers/pipelines/__init__.py
+index a62b3c3..2dec052 100755
+--- a/src/transformers/pipelines/__init__.py
++++ b/src/transformers/pipelines/__init__.py
+@@ -18,7 +18,7 @@ import warnings
+ from pathlib import Path
+ from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, Union
+ 
+-from huggingface_hub import model_info
++# from huggingface_hub import model_info
+ 
+ from ..configuration_utils import PretrainedConfig
+ from ..dynamic_module_utils import get_class_from_dynamic_module
+diff --git a/src/transformers/pipelines/audio_classification.py b/src/transformers/pipelines/audio_classification.py
+index 86dfe72..07d0630 100644
+--- a/src/transformers/pipelines/audio_classification.py
++++ b/src/transformers/pipelines/audio_classification.py
+@@ -15,7 +15,7 @@ import subprocess
+ from typing import Union
+ 
+ import numpy as np
+-import requests
++# import requests
+ 
+ from ..utils import add_end_docstrings, is_torch_available, is_torchaudio_available, logging
+ from .base import Pipeline, build_pipeline_init_args
+diff --git a/src/transformers/pipelines/automatic_speech_recognition.py b/src/transformers/pipelines/automatic_speech_recognition.py
+index 8f2faea..2d53412 100644
+--- a/src/transformers/pipelines/automatic_speech_recognition.py
++++ b/src/transformers/pipelines/automatic_speech_recognition.py
+@@ -15,7 +15,7 @@ from collections import defaultdict
+ from typing import TYPE_CHECKING, Dict, Optional, Union
+ 
+ import numpy as np
+-import requests
++# import requests
+ 
+ from ..generation import GenerationConfig
+ from ..tokenization_utils import PreTrainedTokenizer
+diff --git a/src/transformers/pipelines/base.py b/src/transformers/pipelines/base.py
+index 9ca0566..97949dd 100644
+--- a/src/transformers/pipelines/base.py
++++ b/src/transformers/pipelines/base.py
+@@ -39,7 +39,7 @@ from ..processing_utils import ProcessorMixin
+ from ..tokenization_utils import PreTrainedTokenizer
+ from ..utils import (
+     ModelOutput,
+-    PushToHubMixin,
++    # PushToHubMixin,
+     add_end_docstrings,
+     copy_func,
+     infer_framework,
+@@ -881,7 +881,7 @@ if is_torch_available():
+         has_tokenizer=True, has_feature_extractor=True, has_image_processor=True, has_processor=True
+     )
+ )
+-class Pipeline(_ScikitCompat, PushToHubMixin):
++class Pipeline(_ScikitCompat): # , PushToHubMixin
+     """
+     The Pipeline class is the class from which all pipelines inherit. Refer to this class for methods shared across
+     different pipelines.
+@@ -1446,11 +1446,11 @@ class Pipeline(_ScikitCompat, PushToHubMixin):
+             yield self.run_single(input_, preprocess_params, forward_params, postprocess_params)
+ 
+ 
+-Pipeline.push_to_hub = copy_func(Pipeline.push_to_hub)
+-if Pipeline.push_to_hub.__doc__ is not None:
+-    Pipeline.push_to_hub.__doc__ = Pipeline.push_to_hub.__doc__.format(
+-        object="pipe", object_class="pipeline", object_files="pipeline file"
+-    ).replace(".from_pretrained", "")
++# Pipeline.push_to_hub = copy_func(Pipeline.push_to_hub)
++# if Pipeline.push_to_hub.__doc__ is not None:
++#     Pipeline.push_to_hub.__doc__ = Pipeline.push_to_hub.__doc__.format(
++#         object="pipe", object_class="pipeline", object_files="pipeline file"
++#     ).replace(".from_pretrained", "")
+ 
+ 
+ class ChunkPipeline(Pipeline):
+diff --git a/src/transformers/pipelines/video_classification.py b/src/transformers/pipelines/video_classification.py
+index 940dea1..1ab3fc1 100644
+--- a/src/transformers/pipelines/video_classification.py
++++ b/src/transformers/pipelines/video_classification.py
+@@ -15,7 +15,7 @@ import warnings
+ from io import BytesIO
+ from typing import List, Optional, Union
+ 
+-import requests
++# import requests
+ 
+ from ..utils import (
+     add_end_docstrings,
+diff --git a/src/transformers/pipelines/zero_shot_audio_classification.py b/src/transformers/pipelines/zero_shot_audio_classification.py
+index 8ed339a..bdc247b 100644
+--- a/src/transformers/pipelines/zero_shot_audio_classification.py
++++ b/src/transformers/pipelines/zero_shot_audio_classification.py
+@@ -16,7 +16,7 @@ from collections import UserDict
+ from typing import Union
+ 
+ import numpy as np
+-import requests
++# import requests
+ 
+ from ..utils import (
+     add_end_docstrings,
+diff --git a/src/transformers/processing_utils.py b/src/transformers/processing_utils.py
+index 8dbc210..064429e 100644
+--- a/src/transformers/processing_utils.py
++++ b/src/transformers/processing_utils.py
+@@ -27,7 +27,7 @@ from typing import Any, Dict, List, Optional, TypedDict, Union
+ 
+ import numpy as np
+ import typing_extensions
+-from huggingface_hub.errors import EntryNotFoundError
++# from huggingface_hub.errors import EntryNotFoundError
+ 
+ from .audio_utils import load_audio
+ from .dynamic_module_utils import custom_object_save
+@@ -48,21 +48,21 @@ from .tokenization_utils_base import (
+     TruncationStrategy,
+ )
+ from .utils import (
+-    CHAT_TEMPLATE_DIR,
+-    CHAT_TEMPLATE_FILE,
+-    LEGACY_PROCESSOR_CHAT_TEMPLATE_FILE,
++    # CHAT_TEMPLATE_DIR,
++    # CHAT_TEMPLATE_FILE,
++    # LEGACY_PROCESSOR_CHAT_TEMPLATE_FILE,
+     PROCESSOR_NAME,
+-    PushToHubMixin,
++    # PushToHubMixin,
+     TensorType,
+     add_model_info_to_auto_map,
+     add_model_info_to_custom_pipelines,
+     cached_file,
+     copy_func,
+     direct_transformers_import,
+-    download_url,
++    # download_url,
+     is_offline_mode,
+     is_remote_url,
+-    list_repo_templates,
++    # list_repo_templates,
+     logging,
+ )
+ 
+@@ -457,7 +457,7 @@ class AllKwargsForChatTemplate(
+     }
+ 
+ 
+-class ProcessorMixin(PushToHubMixin):
++class ProcessorMixin(): # PushToHubMixin
+     """
+     This is a mixin used to provide saving/loading functionality for all processor classes.
+     """
+@@ -774,28 +774,28 @@ class ProcessorMixin(PushToHubMixin):
+             is_local = True
+         elif is_remote_url(pretrained_model_name_or_path):
+             processor_file = pretrained_model_name_or_path
+-            resolved_processor_file = download_url(pretrained_model_name_or_path)
++            # resolved_processor_file = download_url(pretrained_model_name_or_path)
+             # can't load chat-template when given a file url as pretrained_model_name_or_path
+             resolved_chat_template_file = None
+             resolved_raw_chat_template_file = None
+         else:
+-            if is_local:
+-                template_dir = Path(pretrained_model_name_or_path, CHAT_TEMPLATE_DIR)
+-                if template_dir.is_dir():
+-                    for template_file in template_dir.glob("*.jinja"):
+-                        template_name = template_file.stem
+-                        additional_chat_template_files[template_name] = f"{CHAT_TEMPLATE_DIR}/{template_file.name}"
+-            else:
+-                try:
+-                    for template in list_repo_templates(
+-                        pretrained_model_name_or_path,
+-                        local_files_only=local_files_only,
+-                        revision=revision,
+-                        cache_dir=cache_dir,
+-                    ):
+-                        additional_chat_template_files[template] = f"{CHAT_TEMPLATE_DIR}/{template}.jinja"
+-                except EntryNotFoundError:
+-                    pass  # No template dir means no template files
++            # if is_local:
++            template_dir = Path(pretrained_model_name_or_path, CHAT_TEMPLATE_DIR)
++            if template_dir.is_dir():
++                for template_file in template_dir.glob("*.jinja"):
++                    template_name = template_file.stem
++                    additional_chat_template_files[template_name] = f"{CHAT_TEMPLATE_DIR}/{template_file.name}"
++            # else:
++            #     try:
++            #         for template in list_repo_templates(
++            #             pretrained_model_name_or_path,
++            #             local_files_only=local_files_only,
++            #             revision=revision,
++            #             cache_dir=cache_dir,
++            #         ):
++            #             additional_chat_template_files[template] = f"{CHAT_TEMPLATE_DIR}/{template}.jinja"
++            #     except EntryNotFoundError:
++            #         pass  # No template dir means no template files
+             processor_file = PROCESSOR_NAME
+ 
+             try:
+@@ -1726,8 +1726,8 @@ def _validate_images_text_input_order(images, text):
+     raise ValueError("Invalid input type. Check that `images` and/or `text` are valid inputs.")
+ 
+ 
+-ProcessorMixin.push_to_hub = copy_func(ProcessorMixin.push_to_hub)
+-if ProcessorMixin.push_to_hub.__doc__ is not None:
+-    ProcessorMixin.push_to_hub.__doc__ = ProcessorMixin.push_to_hub.__doc__.format(
+-        object="processor", object_class="AutoProcessor", object_files="processor files"
+-    )
++# ProcessorMixin.push_to_hub = copy_func(ProcessorMixin.push_to_hub)
++# if ProcessorMixin.push_to_hub.__doc__ is not None:
++#     ProcessorMixin.push_to_hub.__doc__ = ProcessorMixin.push_to_hub.__doc__.format(
++#         object="processor", object_class="AutoProcessor", object_files="processor files"
++#     )
+diff --git a/src/transformers/safetensors_conversion.py b/src/transformers/safetensors_conversion.py
+index f1612d3..bb0c218 100644
+--- a/src/transformers/safetensors_conversion.py
++++ b/src/transformers/safetensors_conversion.py
+@@ -1,23 +1,25 @@
+ from typing import Optional
+ 
+-import requests
+-from huggingface_hub import Discussion, HfApi, get_repo_discussions
++# import requests
++# from huggingface_hub import Discussion, HfApi, get_repo_discussions
++
++from .utils import cached_file, logging
++# http_user_agent,
+ 
+-from .utils import cached_file, http_user_agent, logging
+ 
+ 
+ logger = logging.get_logger(__name__)
+ 
+ 
+-def previous_pr(api: HfApi, model_id: str, pr_title: str, token: str) -> Optional["Discussion"]:
+-    main_commit = api.list_repo_commits(model_id, token=token)[0].commit_id
+-    for discussion in get_repo_discussions(repo_id=model_id, token=token):
+-        if discussion.title == pr_title and discussion.status == "open" and discussion.is_pull_request:
+-            commits = api.list_repo_commits(model_id, revision=discussion.git_reference, token=token)
++# def previous_pr(api: HfApi, model_id: str, pr_title: str, token: str) -> Optional["Discussion"]:
++#     main_commit = api.list_repo_commits(model_id, token=token)[0].commit_id
++#     for discussion in get_repo_discussions(repo_id=model_id, token=token):
++#         if discussion.title == pr_title and discussion.status == "open" and discussion.is_pull_request:
++#             commits = api.list_repo_commits(model_id, revision=discussion.git_reference, token=token)
+ 
+-            if main_commit == commits[1].commit_id:
+-                return discussion
+-    return None
++#             if main_commit == commits[1].commit_id:
++#                 return discussion
++#     return None
+ 
+ 
+ def spawn_conversion(token: str, private: bool, model_id: str):
+@@ -55,7 +57,7 @@ def spawn_conversion(token: str, private: bool, model_id: str):
+             logger.warning(f"Error during conversion: {repr(e)}")
+ 
+ 
+-def get_conversion_pr_reference(api: HfApi, model_id: str, **kwargs):
++def get_conversion_pr_reference(api, model_id: str, **kwargs):
+     private = api.model_info(model_id).private
+ 
+     logger.info("Attempting to create safetensors variant")
+@@ -65,13 +67,13 @@ def get_conversion_pr_reference(api: HfApi, model_id: str, **kwargs):
+     # This looks into the current repo's open PRs to see if a PR for safetensors was already open. If so, it
+     # returns it. It checks that the PR was opened by the bot and not by another user so as to prevent
+     # security breaches.
+-    pr = previous_pr(api, model_id, pr_title, token=token)
++    # pr = previous_pr(api, model_id, pr_title, token=token)
+ 
+-    if pr is None or (not private and pr.author != "SFconvertbot"):
+-        spawn_conversion(token, private, model_id)
+-        pr = previous_pr(api, model_id, pr_title, token=token)
+-    else:
+-        logger.info("Safetensors PR exists")
++    # if pr is None or (not private and pr.author != "SFconvertbot"):
++    #     spawn_conversion(token, private, model_id)
++    #     pr = previous_pr(api, model_id, pr_title, token=token)
++    # else:
++    #     logger.info("Safetensors PR exists")
+ 
+     sha = f"refs/pr/{pr.num}"
+ 
+@@ -80,8 +82,9 @@ def get_conversion_pr_reference(api: HfApi, model_id: str, **kwargs):
+ 
+ def auto_conversion(pretrained_model_name_or_path: str, ignore_errors_during_conversion=False, **cached_file_kwargs):
+     try:
+-        api = HfApi(token=cached_file_kwargs.get("token"), headers={"user-agent": http_user_agent()})
+-        sha = get_conversion_pr_reference(api, pretrained_model_name_or_path, **cached_file_kwargs)
++        # api = HfApi(token=cached_file_kwargs.get("token"), headers={"user-agent": http_user_agent()})
++        # sha = get_conversion_pr_reference(api, pretrained_model_name_or_path, **cached_file_kwargs)
++        sha = None
+ 
+         if sha is None:
+             return None, None
+diff --git a/src/transformers/testing_utils.py b/src/transformers/testing_utils.py
+index 094bc4f..0f9b696 100644
+--- a/src/transformers/testing_utils.py
++++ b/src/transformers/testing_utils.py
+@@ -43,10 +43,10 @@ from typing import Any, Callable, Optional, Union
+ from unittest import mock
+ from unittest.mock import patch
+ 
+-import huggingface_hub.utils
+-import requests
++# import huggingface_hub.utils
++# import requests
+ import urllib3
+-from huggingface_hub import delete_repo
++# from huggingface_hub import delete_repo
+ from packaging import version
+ 
+ from transformers import Trainer
+diff --git a/src/transformers/tokenization_utils_base.py b/src/transformers/tokenization_utils_base.py
+index c0e6e8d..b59e2fa 100644
+--- a/src/transformers/tokenization_utils_base.py
++++ b/src/transformers/tokenization_utils_base.py
+@@ -35,19 +35,21 @@ from packaging import version
+ 
+ from . import __version__
+ from .dynamic_module_utils import custom_object_save
++CHAT_TEMPLATE_DIR = ""
++CHAT_TEMPLATE_FILE = "t.txt"
+ from .utils import (
+-    CHAT_TEMPLATE_DIR,
+-    CHAT_TEMPLATE_FILE,
++    # ,
++    # CHAT_TEMPLATE_FILE,
+     ExplicitEnum,
+     PaddingStrategy,
+-    PushToHubMixin,
++    # PushToHubMixin,
+     TensorType,
+     add_end_docstrings,
+     add_model_info_to_auto_map,
+     add_model_info_to_custom_pipelines,
+     cached_file,
+     copy_func,
+-    download_url,
++    # download_url,
+     extract_commit_hash,
+     is_flax_available,
+     is_jax_tensor,
+@@ -62,7 +64,7 @@ from .utils import (
+     is_torch_available,
+     is_torch_device,
+     is_torch_tensor,
+-    list_repo_templates,
++    # list_repo_templates,
+     logging,
+     requires_backends,
+     to_py_obj,
+@@ -1384,7 +1386,7 @@ INIT_TOKENIZER_DOCSTRING = r"""
+ 
+ 
+ @add_end_docstrings(INIT_TOKENIZER_DOCSTRING)
+-class PreTrainedTokenizerBase(SpecialTokensMixin, PushToHubMixin):
++class PreTrainedTokenizerBase(SpecialTokensMixin): #, PushToHubMixin
+     """
+     Base class for [`PreTrainedTokenizer`] and [`PreTrainedTokenizerFast`].
+ 
+@@ -1911,7 +1913,7 @@ class PreTrainedTokenizerBase(SpecialTokensMixin, PushToHubMixin):
+                     "tokenizer_config_file": TOKENIZER_CONFIG_FILE,
+                     # tokenizer_file used to initialize a slow from a fast. Properly copy the `addedTokens` instead of adding in random orders
+                     "tokenizer_file": FULL_TOKENIZER_FILE,
+-                    "chat_template_file": CHAT_TEMPLATE_FILE,
++                    # "chat_template_file": CHAT_TEMPLATE_FILE,
+                 }
+ 
+                 vocab_files = {**cls.vocab_files_names, **additional_files_names}
+@@ -1964,14 +1966,14 @@ class PreTrainedTokenizerBase(SpecialTokensMixin, PushToHubMixin):
+                                 vocab_files[f"chat_template_{template_name}"] = (
+                                     f"{CHAT_TEMPLATE_DIR}/{template_file.name}"
+                                 )
+-                    else:
+-                        for template in list_repo_templates(
+-                            pretrained_model_name_or_path,
+-                            local_files_only=local_files_only,
+-                            revision=revision,
+-                            cache_dir=cache_dir,
+-                        ):
+-                            vocab_files[f"chat_template_{template}"] = f"{CHAT_TEMPLATE_DIR}/{template}.jinja"
++                    # else:
++                    #     for template in list_repo_templates(
++                    #         pretrained_model_name_or_path,
++                    #         local_files_only=local_files_only,
++                    #         revision=revision,
++                    #         cache_dir=cache_dir,
++                    #     ):
++                    #         vocab_files[f"chat_template_{template}"] = f"{CHAT_TEMPLATE_DIR}/{template}.jinja"
+ 
+         # Get files from url, cache, or disk depending on the case
+         resolved_vocab_files = {}
+@@ -1981,8 +1983,8 @@ class PreTrainedTokenizerBase(SpecialTokensMixin, PushToHubMixin):
+             elif single_file_id == file_id:
+                 if os.path.isfile(file_path):
+                     resolved_vocab_files[file_id] = file_path
+-                elif is_remote_url(file_path):
+-                    resolved_vocab_files[file_id] = download_url(file_path, proxies=proxies)
++                # elif is_remote_url(file_path):
++                #     resolved_vocab_files[file_id] = download_url(file_path, proxies=proxies)
+             else:
+                 try:
+                     resolved_vocab_files[file_id] = cached_file(
+@@ -4147,9 +4149,9 @@ def get_fast_tokenizer_file(tokenization_files: List[str]) -> str:
+     return tokenizer_file
+ 
+ 
+-# To update the docstring, we need to copy the method, otherwise we change the original docstring.
+-PreTrainedTokenizerBase.push_to_hub = copy_func(PreTrainedTokenizerBase.push_to_hub)
+-if PreTrainedTokenizerBase.push_to_hub.__doc__ is not None:
+-    PreTrainedTokenizerBase.push_to_hub.__doc__ = PreTrainedTokenizerBase.push_to_hub.__doc__.format(
+-        object="tokenizer", object_class="AutoTokenizer", object_files="tokenizer files"
+-    )
++# # To update the docstring, we need to copy the method, otherwise we change the original docstring.
++# PreTrainedTokenizerBase.push_to_hub = copy_func(PreTrainedTokenizerBase.push_to_hub)
++# if PreTrainedTokenizerBase.push_to_hub.__doc__ is not None:
++#     PreTrainedTokenizerBase.push_to_hub.__doc__ = PreTrainedTokenizerBase.push_to_hub.__doc__.format(
++#         object="tokenizer", object_class="AutoTokenizer", object_files="tokenizer files"
++#     )
+diff --git a/src/transformers/trainer.py b/src/transformers/trainer.py
+index c2a44b6..74d88f2 100755
+--- a/src/transformers/trainer.py
++++ b/src/transformers/trainer.py
+@@ -45,11 +45,11 @@ from .integrations import (
+ 
+ # isort: on
+ 
+-import huggingface_hub.utils as hf_hub_utils
++# import huggingface_hub.utils as hf_hub_utils
+ import numpy as np
+ import torch
+ import torch.distributed as dist
+-from huggingface_hub import ModelCard, create_repo, upload_folder
++# from huggingface_hub import ModelCard, create_repo, upload_folder
+ from packaging import version
+ from torch import nn
+ from torch.utils.data import DataLoader, Dataset, IterableDataset, RandomSampler, SequentialSampler
+@@ -146,7 +146,7 @@ from .utils import (
+     WEIGHTS_NAME,
+     XLA_FSDPV2_MIN_VERSION,
+     PushInProgress,
+-    PushToHubMixin,
++    # PushToHubMixin,
+     can_return_loss,
+     check_torch_load_is_safe,
+     find_labels,
+@@ -2227,15 +2227,15 @@ class Trainer:
+         if args.push_to_hub:
+             try:
+                 # Disable progress bars when uploading models during checkpoints to avoid polluting stdout
+-                hf_hub_utils.disable_progress_bars()
++                # hf_hub_utils.disable_progress_bars()
+                 return inner_training_loop(
+                     args=args,
+                     resume_from_checkpoint=resume_from_checkpoint,
+                     trial=trial,
+                     ignore_keys_for_eval=ignore_keys_for_eval,
+                 )
+-            finally:
+-                hf_hub_utils.enable_progress_bars()
++            # finally:
++            #     hf_hub_utils.enable_progress_bars()
+         else:
+             return inner_training_loop(
+                 args=args,
+@@ -3927,7 +3927,8 @@ class Trainer:
+ 
+         # Save a trained model and configuration using `save_pretrained()`.
+         # They can then be reloaded using `from_pretrained()`
+-        supported_classes = (PushToHubMixin,)
++        # supported_classes = (PushToHubMixin,)
++        supported_classes = []
+         xm.rendezvous("saving_checkpoint")
+         if self.is_fsdp_xla_v1_enabled:
+             ckpt = {
+diff --git a/src/transformers/training_args.py b/src/transformers/training_args.py
+index 3b1b8c5..7ffd50a 100644
+--- a/src/transformers/training_args.py
++++ b/src/transformers/training_args.py
+@@ -23,7 +23,7 @@ from enum import Enum
+ from pathlib import Path
+ from typing import Any, Optional, Union
+ 
+-from huggingface_hub import get_full_repo_name
++# from huggingface_hub import get_full_repo_name
+ 
+ from .debug_utils import DebugOption
+ from .trainer_utils import (
+diff --git a/src/transformers/utils/__init__.py b/src/transformers/utils/__init__.py
+index 957662f..936f010 100644
+--- a/src/transformers/utils/__init__.py
++++ b/src/transformers/utils/__init__.py
+@@ -16,8 +16,8 @@
+ 
+ from functools import lru_cache
+ 
+-from huggingface_hub import get_full_repo_name  # for backward compatibility
+-from huggingface_hub.constants import HF_HUB_DISABLE_TELEMETRY as DISABLE_TELEMETRY  # for backward compatibility
++# from huggingface_hub import get_full_repo_name  # for backward compatibility
++# from huggingface_hub.constants import HF_HUB_DISABLE_TELEMETRY as DISABLE_TELEMETRY  # for backward compatibility
+ from packaging import version
+ 
+ from .. import __version__
+@@ -32,7 +32,6 @@ from .args_doc import (
+     set_min_indent,
+     source_args_doc,
+ )
+-from .backbone_utils import BackboneConfigMixin, BackboneMixin
+ from .chat_template_utils import DocstringParsingException, TypeHintParsingException, get_json_schema
+ from .constants import IMAGENET_DEFAULT_MEAN, IMAGENET_DEFAULT_STD, IMAGENET_STANDARD_MEAN, IMAGENET_STANDARD_STD
+ from .doc import (
+@@ -82,35 +81,35 @@ from .generic import (
+     working_or_temp_dir,
+ )
+ from .hub import (
+-    CHAT_TEMPLATE_DIR,
+-    CHAT_TEMPLATE_FILE,
+-    CLOUDFRONT_DISTRIB_PREFIX,
+-    HF_MODULES_CACHE,
+-    HUGGINGFACE_CO_PREFIX,
+-    HUGGINGFACE_CO_RESOLVE_ENDPOINT,
+-    LEGACY_PROCESSOR_CHAT_TEMPLATE_FILE,
++    # CHAT_TEMPLATE_DIR,
++    # CHAT_TEMPLATE_FILE,
++    # CLOUDFRONT_DISTRIB_PREFIX,
++    # HF_MODULES_CACHE,
++    # HUGGINGFACE_CO_PREFIX,
++    # HUGGINGFACE_CO_RESOLVE_ENDPOINT,
++    # LEGACY_PROCESSOR_CHAT_TEMPLATE_FILE,
+     PYTORCH_PRETRAINED_BERT_CACHE,
+     PYTORCH_TRANSFORMERS_CACHE,
+-    S3_BUCKET_PREFIX,
++    # S3_BUCKET_PREFIX,
+     TRANSFORMERS_CACHE,
+     TRANSFORMERS_DYNAMIC_MODULE_NAME,
+-    EntryNotFoundError,
+-    PushInProgress,
+-    PushToHubMixin,
+-    RepositoryNotFoundError,
+-    RevisionNotFoundError,
++    # EntryNotFoundError,
++    # PushInProgress,
++    # PushToHubMixin,
++    # RepositoryNotFoundError,
++    # RevisionNotFoundError,
+     cached_file,
+     default_cache_path,
+-    define_sagemaker_information,
+-    download_url,
++    # define_sagemaker_information,
++    # download_url,
+     extract_commit_hash,
+     has_file,
+-    http_user_agent,
++    # http_user_agent,
+     is_offline_mode,
+     is_remote_url,
+-    list_repo_templates,
+-    send_example_telemetry,
+-    try_to_load_from_cache,
++    # list_repo_templates,
++    # send_example_telemetry,
++    # try_to_load_from_cache,
+ )
+ from .import_utils import (
+     ACCELERATE_MIN_VERSION,
+@@ -266,6 +265,7 @@ from .import_utils import (
+     requires_backends,
+     torch_only_method,
+ )
++from .backbone_utils import BackboneConfigMixin, BackboneMixin
+ from .peft_utils import (
+     ADAPTER_CONFIG_NAME,
+     ADAPTER_SAFE_WEIGHTS_NAME,
+diff --git a/src/transformers/utils/attention_visualizer.py b/src/transformers/utils/attention_visualizer.py
+index ac52dd4..b2c8fc8 100644
+--- a/src/transformers/utils/attention_visualizer.py
++++ b/src/transformers/utils/attention_visualizer.py
+@@ -13,7 +13,7 @@
+ # limitations under the License.
+ 
+ 
+-import requests
++# import requests
+ from PIL import Image
+ 
+ from ..models.auto.auto_factory import _get_model_class
+diff --git a/src/transformers/utils/chat_template_utils.py b/src/transformers/utils/chat_template_utils.py
+index d91dcac..2c9c58f 100644
+--- a/src/transformers/utils/chat_template_utils.py
++++ b/src/transformers/utils/chat_template_utils.py
+@@ -30,12 +30,12 @@ from .import_utils import is_jinja_available, is_torch_available, is_vision_avai
+ 
+ logger = logging.get_logger(__name__)
+ 
+-if is_jinja_available():
+-    import jinja2
+-    from jinja2.ext import Extension
+-    from jinja2.sandbox import ImmutableSandboxedEnvironment
+-else:
+-    jinja2 = None
++# if is_jinja_available():
++#     import jinja2
++#     from jinja2.ext import Extension
++#     from jinja2.sandbox import ImmutableSandboxedEnvironment
++# else:
++#     jinja2 = None
+ 
+ if is_vision_available():
+     from PIL.Image import Image
+diff --git a/src/transformers/utils/constants.py b/src/transformers/utils/constants.py
+index fefd1b4..921fdb7 100644
+--- a/src/transformers/utils/constants.py
++++ b/src/transformers/utils/constants.py
+@@ -4,3 +4,17 @@ IMAGENET_STANDARD_MEAN = [0.5, 0.5, 0.5]
+ IMAGENET_STANDARD_STD = [0.5, 0.5, 0.5]
+ OPENAI_CLIP_MEAN = [0.48145466, 0.4578275, 0.40821073]
+ OPENAI_CLIP_STD = [0.26862954, 0.26130258, 0.27577711]
++# from huggingface_hub.constants
++import os
++import re
++HF_HOME = os.path.expanduser(
++    os.getenv(
++        "HF_HOME",
++        os.path.join(os.path.expanduser("~"), ".cache", "huggingface"),
++    )
++)
++HF_HUB_OFFLINE=True
++default_cache_path = os.path.join(HF_HOME, "hub")
++HF_HUB_CACHE = default_cache_path
++HF_HUB_DISABLE_TELEMETRY=True
++REGEX_COMMIT_HASH=re.compile(r"^[0-9a-f]{40}$")
+diff --git a/src/transformers/utils/hub.py b/src/transformers/utils/hub.py
+index ba880f7..a43f750 100644
+--- a/src/transformers/utils/hub.py
++++ b/src/transformers/utils/hub.py
+@@ -27,38 +27,39 @@ from typing import Optional, Union
+ from urllib.parse import urlparse
+ from uuid import uuid4
+ 
+-import huggingface_hub
+-import requests
+-from huggingface_hub import (
+-    _CACHED_NO_EXIST,
+-    CommitOperationAdd,
+-    ModelCard,
+-    ModelCardData,
+-    constants,
+-    create_branch,
+-    create_commit,
+-    create_repo,
+-    hf_hub_download,
+-    hf_hub_url,
+-    list_repo_tree,
+-    snapshot_download,
+-    try_to_load_from_cache,
+-)
+-from huggingface_hub.file_download import REGEX_COMMIT_HASH, http_get
+-from huggingface_hub.utils import (
+-    EntryNotFoundError,
+-    GatedRepoError,
+-    HfHubHTTPError,
+-    LocalEntryNotFoundError,
+-    OfflineModeIsEnabled,
+-    RepositoryNotFoundError,
+-    RevisionNotFoundError,
+-    build_hf_headers,
+-    get_session,
+-    hf_raise_for_status,
+-    send_telemetry,
+-)
+-from requests.exceptions import HTTPError
++# import huggingface_hub
++# import requests
++# from huggingface_hub import (
++#     _CACHED_NO_EXIST,
++#     CommitOperationAdd,
++#     ModelCard,
++#     ModelCardData,
++#     constants,
++#     create_branch,
++#     create_commit,
++#     create_repo,
++#     hf_hub_download,
++#     hf_hub_url,
++#     list_repo_tree,
++#     snapshot_download,
++#     try_to_load_from_cache,
++# )
++# from huggingface_hub.file_download import REGEX_COMMIT_HASH, http_get
++# from huggingface_hub.utils import (
++#     EntryNotFoundError,
++#     GatedRepoError,
++#     HfHubHTTPError,
++#     LocalEntryNotFoundError,
++#     OfflineModeIsEnabled,
++#     RepositoryNotFoundError,
++#     RevisionNotFoundError,
++#     build_hf_headers,
++#     get_session,
++#     hf_raise_for_status,
++#     send_telemetry,
++# )
++from . import constants
++# from requests.exceptions import HTTPError
+ 
+ from . import __version__, logging
+ from .generic import working_or_temp_dir
+@@ -79,7 +80,7 @@ CHAT_TEMPLATE_DIR = "additional_chat_templates"
+ 
+ logger = logging.get_logger(__name__)  # pylint: disable=invalid-name
+ 
+-_is_offline_mode = huggingface_hub.constants.HF_HUB_OFFLINE
++_is_offline_mode = constants.HF_HUB_OFFLINE
+ 
+ 
+ def is_offline_mode():
+@@ -146,7 +147,7 @@ def _get_cache_file_to_return(
+ def list_repo_templates(
+     repo_id: str,
+     *,
+-    local_files_only: bool,
++    local_files_only: bool = True,
+     revision: Optional[str] = None,
+     cache_dir: Optional[str] = None,
+ ) -> list[str]:
+@@ -156,19 +157,19 @@ def list_repo_templates(
+     If working in offline mode or if internet is down, the method will list jinja template from the local cache - if any.
+     """
+ 
+-    if not local_files_only:
+-        try:
+-            return [
+-                entry.path.removeprefix(f"{CHAT_TEMPLATE_DIR}/")
+-                for entry in list_repo_tree(
+-                    repo_id=repo_id, revision=revision, path_in_repo=CHAT_TEMPLATE_DIR, recursive=False
+-                )
+-                if entry.path.endswith(".jinja")
+-            ]
+-        except (GatedRepoError, RepositoryNotFoundError, RevisionNotFoundError):
+-            raise  # valid errors => do not catch
+-        except (ConnectionError, HTTPError):
+-            pass  # offline mode, internet down, etc. => try local files
++    # if not local_files_only:
++    #     try:
++    #         return [
++    #             entry.path.removeprefix(f"{CHAT_TEMPLATE_DIR}/")
++    #             for entry in list_repo_tree(
++    #                 repo_id=repo_id, revision=revision, path_in_repo=CHAT_TEMPLATE_DIR, recursive=False
++    #             )
++    #             if entry.path.endswith(".jinja")
++    #         ]
++    #     except (GatedRepoError, RepositoryNotFoundError, RevisionNotFoundError):
++    #         raise  # valid errors => do not catch
++    #     except (ConnectionError, HTTPError):
++    #         pass  # offline mode, internet down, etc. => try local files
+ 
+     # check local files
+     try:
+@@ -464,101 +465,101 @@ def cached_files(
+ 
+     user_agent = http_user_agent(user_agent)
+     # download the files if needed
+-    try:
+-        if len(full_filenames) == 1:
+-            # This is slightly better for only 1 file
+-            hf_hub_download(
+-                path_or_repo_id,
+-                filenames[0],
+-                subfolder=None if len(subfolder) == 0 else subfolder,
+-                repo_type=repo_type,
+-                revision=revision,
+-                cache_dir=cache_dir,
+-                user_agent=user_agent,
+-                force_download=force_download,
+-                proxies=proxies,
+-                resume_download=resume_download,
+-                token=token,
+-                local_files_only=local_files_only,
+-            )
+-        else:
+-            snapshot_download(
+-                path_or_repo_id,
+-                allow_patterns=full_filenames,
+-                repo_type=repo_type,
+-                revision=revision,
+-                cache_dir=cache_dir,
+-                user_agent=user_agent,
+-                force_download=force_download,
+-                proxies=proxies,
+-                resume_download=resume_download,
+-                token=token,
+-                local_files_only=local_files_only,
+-            )
+-
+-    except Exception as e:
+-        # We cannot recover from them
+-        if isinstance(e, RepositoryNotFoundError) and not isinstance(e, GatedRepoError):
+-            raise OSError(
+-                f"{path_or_repo_id} is not a local folder and is not a valid model identifier "
+-                "listed on 'https://huggingface.co/models'\nIf this is a private repository, make sure to pass a token "
+-                "having permission to this repo either by logging in with `huggingface-cli login` or by passing "
+-                "`token=<your_token>`"
+-            ) from e
+-        elif isinstance(e, RevisionNotFoundError):
+-            raise OSError(
+-                f"{revision} is not a valid git identifier (branch name, tag name or commit id) that exists "
+-                "for this model name. Check the model page at "
+-                f"'https://huggingface.co/{path_or_repo_id}' for available revisions."
+-            ) from e
+-        elif isinstance(e, PermissionError):
+-            raise OSError(
+-                f"PermissionError at {e.filename} when downloading {path_or_repo_id}. "
+-                "Check cache directory permissions. Common causes: 1) another user is downloading the same model (please wait); "
+-                "2) a previous download was canceled and the lock file needs manual removal."
+-            ) from e
+-
+-        # Now we try to recover if we can find all files correctly in the cache
+-        resolved_files = [
+-            _get_cache_file_to_return(path_or_repo_id, filename, cache_dir, revision) for filename in full_filenames
+-        ]
+-        if all(file is not None for file in resolved_files):
+-            return resolved_files
+-
+-        # Raise based on the flags. Note that we will raise for missing entries at the very end, even when
+-        # not entering this Except block, as it may also happen when `snapshot_download` does not raise
+-        if isinstance(e, GatedRepoError):
+-            if not _raise_exceptions_for_gated_repo:
+-                return None
+-            raise OSError(
+-                "You are trying to access a gated repo.\nMake sure to have access to it at "
+-                f"https://huggingface.co/{path_or_repo_id}.\n{str(e)}"
+-            ) from e
+-        elif isinstance(e, LocalEntryNotFoundError):
+-            if not _raise_exceptions_for_connection_errors:
+-                return None
+-            # Here we only raise if both flags for missing entry and connection errors are True (because it can be raised
+-            # even when `local_files_only` is True, in which case raising for connections errors only would not make sense)
+-            elif _raise_exceptions_for_missing_entries:
+-                raise OSError(
+-                    f"We couldn't connect to '{HUGGINGFACE_CO_RESOLVE_ENDPOINT}' to load the files, and couldn't find them in the"
+-                    f" cached files.\nCheckout your internet connection or see how to run the library in offline mode at"
+-                    " 'https://huggingface.co/docs/transformers/installation#offline-mode'."
+-                ) from e
+-        # snapshot_download will not raise EntryNotFoundError, but hf_hub_download can. If this is the case, it will be treated
+-        # later on anyway and re-raised if needed
+-        elif isinstance(e, HTTPError) and not isinstance(e, EntryNotFoundError):
+-            if not _raise_exceptions_for_connection_errors:
+-                return None
+-            raise OSError(f"There was a specific connection error when trying to load {path_or_repo_id}:\n{e}")
+-        # Any other Exception type should now be re-raised, in order to provide helpful error messages and break the execution flow
+-        # (EntryNotFoundError will be treated outside this block and correctly re-raised if needed)
+-        elif not isinstance(e, EntryNotFoundError):
+-            raise e
+-
+-    resolved_files = [
+-        _get_cache_file_to_return(path_or_repo_id, filename, cache_dir, revision) for filename in full_filenames
+-    ]
++    # try:
++    #     if len(full_filenames) == 1:
++    #         # This is slightly better for only 1 file
++    #         hf_hub_download(
++    #             path_or_repo_id,
++    #             filenames[0],
++    #             subfolder=None if len(subfolder) == 0 else subfolder,
++    #             repo_type=repo_type,
++    #             revision=revision,
++    #             cache_dir=cache_dir,
++    #             user_agent=user_agent,
++    #             force_download=force_download,
++    #             proxies=proxies,
++    #             resume_download=resume_download,
++    #             token=token,
++    #             local_files_only=local_files_only,
++    #         )
++    #     else:
++    #         snapshot_download(
++    #             path_or_repo_id,
++    #             allow_patterns=full_filenames,
++    #             repo_type=repo_type,
++    #             revision=revision,
++    #             cache_dir=cache_dir,
++    #             user_agent=user_agent,
++    #             force_download=force_download,
++    #             proxies=proxies,
++    #             resume_download=resume_download,
++    #             token=token,
++    #             local_files_only=local_files_only,
++    #         )
++
++    # except Exception as e:
++    #     # We cannot recover from them
++    #     if isinstance(e, RepositoryNotFoundError) and not isinstance(e, GatedRepoError):
++    #         raise OSError(
++    #             f"{path_or_repo_id} is not a local folder and is not a valid model identifier "
++    #             "listed on 'https://huggingface.co/models'\nIf this is a private repository, make sure to pass a token "
++    #             "having permission to this repo either by logging in with `huggingface-cli login` or by passing "
++    #             "`token=<your_token>`"
++    #         ) from e
++    #     elif isinstance(e, RevisionNotFoundError):
++    #         raise OSError(
++    #             f"{revision} is not a valid git identifier (branch name, tag name or commit id) that exists "
++    #             "for this model name. Check the model page at "
++    #             f"'https://huggingface.co/{path_or_repo_id}' for available revisions."
++    #         ) from e
++    #     elif isinstance(e, PermissionError):
++    #         raise OSError(
++    #             f"PermissionError at {e.filename} when downloading {path_or_repo_id}. "
++    #             "Check cache directory permissions. Common causes: 1) another user is downloading the same model (please wait); "
++    #             "2) a previous download was canceled and the lock file needs manual removal."
++    #         ) from e
++
++    #     # Now we try to recover if we can find all files correctly in the cache
++    #     resolved_files = [
++    #         _get_cache_file_to_return(path_or_repo_id, filename, cache_dir, revision) for filename in full_filenames
++    #     ]
++    #     if all(file is not None for file in resolved_files):
++    #         return resolved_files
++
++    #     # Raise based on the flags. Note that we will raise for missing entries at the very end, even when
++    #     # not entering this Except block, as it may also happen when `snapshot_download` does not raise
++    #     if isinstance(e, GatedRepoError):
++    #         if not _raise_exceptions_for_gated_repo:
++    #             return None
++    #         raise OSError(
++    #             "You are trying to access a gated repo.\nMake sure to have access to it at "
++    #             f"https://huggingface.co/{path_or_repo_id}.\n{str(e)}"
++    #         ) from e
++    #     elif isinstance(e, LocalEntryNotFoundError):
++    #         if not _raise_exceptions_for_connection_errors:
++    #             return None
++    #         # Here we only raise if both flags for missing entry and connection errors are True (because it can be raised
++    #         # even when `local_files_only` is True, in which case raising for connections errors only would not make sense)
++    #         elif _raise_exceptions_for_missing_entries:
++    #             raise OSError(
++    #                 f"We couldn't connect to '{HUGGINGFACE_CO_RESOLVE_ENDPOINT}' to load the files, and couldn't find them in the"
++    #                 f" cached files.\nCheckout your internet connection or see how to run the library in offline mode at"
++    #                 " 'https://huggingface.co/docs/transformers/installation#offline-mode'."
++    #             ) from e
++    #     # snapshot_download will not raise EntryNotFoundError, but hf_hub_download can. If this is the case, it will be treated
++    #     # later on anyway and re-raised if needed
++    #     elif isinstance(e, HTTPError) and not isinstance(e, EntryNotFoundError):
++    #         if not _raise_exceptions_for_connection_errors:
++    #             return None
++    #         raise OSError(f"There was a specific connection error when trying to load {path_or_repo_id}:\n{e}")
++    #     # Any other Exception type should now be re-raised, in order to provide helpful error messages and break the execution flow
++    #     # (EntryNotFoundError will be treated outside this block and correctly re-raised if needed)
++    #     elif not isinstance(e, EntryNotFoundError):
++    #         raise e
++
++    # resolved_files = [
++    #     _get_cache_file_to_return(path_or_repo_id, filename, cache_dir, revision) for filename in full_filenames
++    # ]
+     # If there are any missing file and the flag is active, raise
+     if any(file is None for file in resolved_files) and _raise_exceptions_for_missing_entries:
+         missing_entries = [original for original, resolved in zip(full_filenames, resolved_files) if resolved is None]
+@@ -665,49 +666,49 @@ def has_file(
+     if local_files_only:
+         return has_file_in_cache
+ 
+-    # Check if the file exists
+-    try:
+-        response = get_session().head(
+-            hf_hub_url(path_or_repo, filename=filename, revision=revision, repo_type=repo_type),
+-            headers=build_hf_headers(token=token, user_agent=http_user_agent()),
+-            allow_redirects=False,
+-            proxies=proxies,
+-            timeout=10,
+-        )
+-    except (requests.exceptions.SSLError, requests.exceptions.ProxyError):
+-        # Actually raise for those subclasses of ConnectionError
+-        raise
+-    except (
+-        requests.exceptions.ConnectionError,
+-        requests.exceptions.Timeout,
+-        OfflineModeIsEnabled,
+-    ):
+-        return has_file_in_cache
+-
+-    try:
+-        hf_raise_for_status(response)
+-        return True
+-    except GatedRepoError as e:
+-        logger.error(e)
+-        raise OSError(
+-            f"{path_or_repo} is a gated repository. Make sure to request access at "
+-            f"https://huggingface.co/{path_or_repo} and pass a token having permission to this repo either by "
+-            "logging in with `huggingface-cli login` or by passing `token=<your_token>`."
+-        ) from e
+-    except RepositoryNotFoundError as e:
+-        logger.error(e)
+-        raise OSError(f"{path_or_repo} is not a local folder or a valid repository name on 'https://hf.co'.") from e
+-    except RevisionNotFoundError as e:
+-        logger.error(e)
+-        raise OSError(
+-            f"{revision} is not a valid git identifier (branch name, tag name or commit id) that exists for this "
+-            f"model name. Check the model page at 'https://huggingface.co/{path_or_repo}' for available revisions."
+-        ) from e
+-    except EntryNotFoundError:
+-        return False  # File does not exist
+-    except requests.HTTPError:
+-        # Any authentication/authorization error will be caught here => default to cache
+-        return has_file_in_cache
++    # # Check if the file exists
++    # try:
++    #     response = get_session().head(
++    #         hf_hub_url(path_or_repo, filename=filename, revision=revision, repo_type=repo_type),
++    #         headers=build_hf_headers(token=token, user_agent=http_user_agent()),
++    #         allow_redirects=False,
++    #         proxies=proxies,
++    #         timeout=10,
++    #     )
++    # except (requests.exceptions.SSLError, requests.exceptions.ProxyError):
++    #     # Actually raise for those subclasses of ConnectionError
++    #     raise
++    # except (
++    #     requests.exceptions.ConnectionError,
++    #     requests.exceptions.Timeout,
++    #     OfflineModeIsEnabled,
++    # ):
++    #     return has_file_in_cache
++
++    # try:
++    #     hf_raise_for_status(response)
++    #     return True
++    # except GatedRepoError as e:
++    #     logger.error(e)
++    #     raise OSError(
++    #         f"{path_or_repo} is a gated repository. Make sure to request access at "
++    #         f"https://huggingface.co/{path_or_repo} and pass a token having permission to this repo either by "
++    #         "logging in with `huggingface-cli login` or by passing `token=<your_token>`."
++    #     ) from e
++    # except RepositoryNotFoundError as e:
++    #     logger.error(e)
++    #     raise OSError(f"{path_or_repo} is not a local folder or a valid repository name on 'https://hf.co'.") from e
++    # except RevisionNotFoundError as e:
++    #     logger.error(e)
++    #     raise OSError(
++    #         f"{revision} is not a valid git identifier (branch name, tag name or commit id) that exists for this "
++    #         f"model name. Check the model page at 'https://huggingface.co/{path_or_repo}' for available revisions."
++    #     ) from e
++    # except EntryNotFoundError:
++    #     return False  # File does not exist
++    # except requests.HTTPError:
++    #     # Any authentication/authorization error will be caught here => default to cache
++    #     return has_file_in_cache
+ 
+ 
+ class PushToHubMixin:
+diff --git a/src/transformers/utils/logging.py b/src/transformers/utils/logging.py
+index a2915e1..5ab1436 100644
+--- a/src/transformers/utils/logging.py
++++ b/src/transformers/utils/logging.py
+@@ -31,7 +31,7 @@ from logging import (
+ from logging import captureWarnings as _captureWarnings
+ from typing import Optional
+ 
+-import huggingface_hub.utils as hf_hub_utils
++# import huggingface_hub.utils as hf_hub_utils
+ from tqdm import auto as tqdm_lib
+ 
+ 
+@@ -49,7 +49,7 @@ log_levels = {
+ 
+ _default_log_level = logging.WARNING
+ 
+-_tqdm_active = not hf_hub_utils.are_progress_bars_disabled()
++_tqdm_active = True
+ 
+ 
+ def _get_default_logging_level():
+@@ -400,11 +400,11 @@ def enable_progress_bar():
+     """Enable tqdm progress bar."""
+     global _tqdm_active
+     _tqdm_active = True
+-    hf_hub_utils.enable_progress_bars()
++    # hf_hub_utils.enable_progress_bars()
+ 
+ 
+ def disable_progress_bar():
+     """Disable tqdm progress bar."""
+     global _tqdm_active
+     _tqdm_active = False
+-    hf_hub_utils.disable_progress_bars()
++    # hf_hub_utils.disable_progress_bars()
+diff --git a/src/transformers/video_processing_utils.py b/src/transformers/video_processing_utils.py
+index c55e394..b0650c4 100644
+--- a/src/transformers/video_processing_utils.py
++++ b/src/transformers/video_processing_utils.py
+@@ -41,7 +41,7 @@ from .utils import (
+     add_start_docstrings,
+     cached_file,
+     copy_func,
+-    download_url,
++    # download_url,
+     is_offline_mode,
+     is_remote_url,
+     is_torch_available,
+@@ -558,7 +558,7 @@ class BaseVideoProcessor(BaseImageProcessorFast):
+             is_local = True
+         elif is_remote_url(pretrained_model_name_or_path):
+             video_processor_file = pretrained_model_name_or_path
+-            resolved_video_processor_file = download_url(pretrained_model_name_or_path)
++            # resolved_video_processor_file = download_url(pretrained_model_name_or_path)
+         else:
+             try:
+                 # Try to load with a new config name first and if not successfull try with
+@@ -793,8 +793,8 @@ class BaseVideoProcessor(BaseImageProcessorFast):
+             raise TypeError(f"only a single or a list of entries is supported but got type={type(video_url_or_urls)}")
+ 
+ 
+-BaseVideoProcessor.push_to_hub = copy_func(BaseVideoProcessor.push_to_hub)
+-if BaseVideoProcessor.push_to_hub.__doc__ is not None:
+-    BaseVideoProcessor.push_to_hub.__doc__ = BaseVideoProcessor.push_to_hub.__doc__.format(
+-        object="video processor", object_class="AutoVideoProcessor", object_files="video processor file"
+-    )
++# BaseVideoProcessor.push_to_hub = copy_func(BaseVideoProcessor.push_to_hub)
++# if BaseVideoProcessor.push_to_hub.__doc__ is not None:
++#     BaseVideoProcessor.push_to_hub.__doc__ = BaseVideoProcessor.push_to_hub.__doc__.format(
++#         object="video processor", object_class="AutoVideoProcessor", object_files="video processor file"
++#     )
+diff --git a/src/transformers/video_utils.py b/src/transformers/video_utils.py
+index af9d80b..a8149fc 100644
+--- a/src/transformers/video_utils.py
++++ b/src/transformers/video_utils.py
+@@ -21,7 +21,7 @@ from typing import Callable, Dict, Iterable, List, Optional, Tuple, Union
+ from urllib.parse import urlparse
+ 
+ import numpy as np
+-import requests
++# import requests
+ 
+ from .image_transforms import PaddingMode, to_channel_dimension_format
+ from .image_utils import ChannelDimension, infer_channel_dimension_format, is_valid_image
